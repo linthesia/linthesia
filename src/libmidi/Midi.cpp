@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <map>
+#include <stdint.h>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ Midi Midi::ReadFromStream(istream &stream) {
   // defined and will always have a 4-byte header.  We use 5 so we get
   // free null termination.
   char           header_id[5] = { 0, 0, 0, 0, 0 };
-  unsigned long  header_length;
+  uint32_t header_length;
   unsigned short format;
   unsigned short track_count;
   unsigned short time_division;
@@ -74,7 +75,7 @@ Midi Midi::ReadFromStream(istream &stream) {
     }
   }
 
-  stream.read(reinterpret_cast<char*>(&header_length), sizeof(unsigned long));
+  stream.read(reinterpret_cast<char*>(&header_length), sizeof(uint32_t));
   stream.read(reinterpret_cast<char*>(&format),        sizeof(unsigned short));
   stream.read(reinterpret_cast<char*>(&track_count),   sizeof(unsigned short));
   stream.read(reinterpret_cast<char*>(&time_division), sizeof(unsigned short));

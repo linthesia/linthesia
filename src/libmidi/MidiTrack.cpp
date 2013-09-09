@@ -11,6 +11,7 @@
 #include "MidiUtil.h"
 #include "Midi.h"
 
+#include <stdint.h>
 #include <sstream>
 #include <string>
 #include <map>
@@ -26,10 +27,10 @@ MidiTrack MidiTrack::ReadFromStream(std::istream &stream) {
   // defined and will always have a 4-byte header.  We use 5 so we get
   // free null termination.
   char header_id[5] = { 0, 0, 0, 0, 0 };
-  unsigned long track_length;
+  uint32_t track_length;
 
   stream.read(header_id, static_cast<streamsize>(MidiTrackHeader.length()));
-  stream.read(reinterpret_cast<char*>(&track_length), sizeof(unsigned long));
+  stream.read(reinterpret_cast<char*>(&track_length), sizeof(uint32_t));
 
   if (stream.fail())
     throw MidiError(MidiError_TrackHeaderTooShort);
