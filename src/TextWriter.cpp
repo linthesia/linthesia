@@ -13,6 +13,7 @@
 #include "UserSettings.h"
 
 #include <map>
+#include <X11/Xlib.h>
 
 using namespace std;
 
@@ -21,6 +22,10 @@ static map<int, int> font_size_lookup;
 
 // TODO: This should be deleted at shutdown
 static map<int, Pango::FontDescription*> font_lookup;
+
+// Returns the most suitable font available on the platform
+// or an empty string if no font is available;
+static const std::string get_default_font();
 
 TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
                        bool in_centered, int in_size, string fontname) :
@@ -47,7 +52,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
 
       // Or set it if there is no default
       if (fontname.empty()) {
-        fontname = "Arial";
+        fontname = get_default_font();
         UserSetting::Set(key, fontname);
       }
     }
@@ -132,3 +137,48 @@ TextWriter& operator<<(TextWriter& tw, const int& i)           { return tw << Te
 TextWriter& operator<<(TextWriter& tw, const unsigned int& i)  { return tw << Text(i, White); }
 TextWriter& operator<<(TextWriter& tw, const long& l)          { return tw << Text(l, White); }
 TextWriter& operator<<(TextWriter& tw, const unsigned long& l) { return tw << Text(l, White); }
+
+static
+const std::string get_default_font()
+{
+  // populate a vector of candidates with the most common choices
+  vector< string > allCandidates;
+  allCandidates.push_back("serif");
+  allCandidates.push_back("sans");
+  allCandidates.push_back("clean");
+  allCandidates.push_back("courier"); // Debian suggests using courier
+
+  vector< string >::const_iterator candidate;
+  const vector< string >::const_iterator end = allCandidates.end();
+
+  // retrieve all fonts from the X server
+  Display * const display = XOpenDisplay(NULL);
+  int nbFonts = 0, i = 0;
+  char ** const allFonts = XListFonts(display, "-*", 32767, &nbFonts);
+
+  string returnedFont = (nbFonts > 0) ? allFonts[0] : "";
+
+  // check if we have a candidate, and returns it if we do
+  string currentFont;
+  bool found = false;
+  for (i = 0; i < nbFonts && !found; ++i)
+  {
+    currentFont = allFonts[i];
+
+    for (candidate = allCandidates.begin();
+         candidate != end && !found; ++candidate)
+    {
+      // any font that contains the name of the candidate ( "serif" ) will do
+      if (currentFont.find(*candidate) != string::npos)
+      {
+        returnedFont = *candidate;
+        found = true;
+      }
+    }
+  }
+
+  XFreeFontNames(allFonts);
+  XCloseDisplay(display);
+
+  return returnedFont;
+}
