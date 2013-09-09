@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=0.3
+Name=Linthesia
+GenericName=Piano game
+Icon=linthesia.xpm
+Exec=linthesia
+Categories=Game;Music;Education
