@@ -1,0 +1,66 @@
+noinst_LTLIBRARIES = libmidi.la
+dist_libmidi_la_SOURCES = libmidi/Midi.cpp \
+						  libmidi/MidiUtil.cpp \
+						  libmidi/MidiTrack.cpp \
+						  libmidi/MidiEvent.cpp
+noinst_HEADERS = 		  libmidi/MidiEvent.h \
+						  libmidi/Midi.h \
+						  libmidi/MidiTrack.h \
+						  libmidi/MidiTypes.h \
+						  libmidi/MidiUtil.h \
+						  libmidi/Note.h
+
+libmidi_la_CPPFLAGS = -iquote $(srcdir)/libmidi
+
+GRAPHDIR = $(pkgdatadir)
+
+bin_PROGRAMS = linthesia
+dist_linthesia_SOURCES = CompatibleSystem.cpp \
+						 KeyboardDisplay.cpp \
+						 MenuLayout.cpp \
+						 Renderer.cpp \
+						 TextWriter.cpp \
+						 TrackSelectionState.cpp \
+						 DeviceTile.cpp \
+						 FileSelector.cpp \
+						 LinthesiaError.cpp \
+						 MidiComm.cpp \
+						 StatsState.cpp \
+						 Tga.cpp \
+						 TrackTile.cpp \
+						 GameState.cpp \
+						 main.cpp \
+						 PlayingState.cpp \
+						 StringTile.cpp \
+						 TitleState.cpp \
+						 UserSettings.cpp
+noinst_HEADERS += 		 CompatibleSystem.h \
+						 DeviceTile.h \
+						 FileSelector.h \
+						 FrameCounter.h \
+						 GameState.h \
+						 KeyboardDisplay.h \
+						 LinthesiaError.h \
+						 MenuLayout.h \
+						 MidiComm.h \
+						 OSGraphics.h \
+						 PlayingState.h \
+						 Renderer.h \
+						 SharedState.h \
+						 StatsState.h \
+						 StringTile.h \
+						 StringUtil.h \
+						 Textures.h \
+						 TextWriter.h \
+						 Tga.h \
+						 TitleState.h \
+						 TrackProperties.h \
+						 TrackSelectionState.h \
+						 TrackTile.h \
+						 UserSettings.h \
+						 Version.h
+
+linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @ALSA_LIBS@
+linthesia_LDADD = libmidi.la
+linthesia_CXXFLAGS = -iquote $(srcdir)/libmidi
+linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"$(GRAPHDIR)\""
