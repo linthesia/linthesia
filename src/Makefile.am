@@ -12,7 +12,7 @@ noinst_HEADERS = 		  libmidi/MidiEvent.h \
 
 libmidi_la_CPPFLAGS = -iquote $(srcdir)/libmidi
 
-GRAPHDIR = $(pkgdatadir)
+GRAPHDIR = $(pkgdatadir)/graphics
 
 bin_PROGRAMS = linthesia
 dist_linthesia_SOURCES = CompatibleSystem.cpp \
