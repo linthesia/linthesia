@@ -182,6 +182,7 @@ ConnectMap pressed;
 
 bool __sendNoteOff(int note) {
 
+  cerr << "Note " << note << endl;
   ConnectMap::iterator it = pressed.find(note);
   if (it == pressed.end())
     return false;

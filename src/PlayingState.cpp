@@ -39,7 +39,8 @@ void PlayingState::SetupNoteState() {
     TranslatedNote n = *i;
 
     n.state = AutoPlayed;
-    if (m_state.track_properties[n.track_id].mode == Track::ModeYouPlay)
+    if (m_state.track_properties[n.track_id].mode == Track::ModeYouPlay ||
+        m_state.track_properties[n.track_id].mode == Track::ModeLearning)
       n.state = UserPlayable;
 
     m_notes.insert(n);
@@ -92,7 +93,8 @@ void PlayingState::Init() {
   m_look_ahead_you_play_note_count = 0;
   for (size_t i = 0; i < m_state.track_properties.size(); ++i) {
 
-    if (m_state.track_properties[i].mode == Track::ModeYouPlay) {
+    if (m_state.track_properties[i].mode == Track::ModeYouPlay ||
+        m_state.track_properties[i].mode == Track::ModeLearning) {
       m_look_ahead_you_play_note_count += m_state.midi->Tracks()[i].Notes().size();
       m_any_you_play_tracks = true;
     }
@@ -144,6 +146,7 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
     case Track::ModeNotPlayed:           draw = false;  play = false;  break;
     case Track::ModePlayedButHidden:     draw = false;  play = true;   break;
     case Track::ModeYouPlay:             draw = false;  play = false;  break;
+    case Track::ModeLearning:            draw = false;  play = false;  break;
     case Track::ModePlayedAutomatically: draw = true;   play = true;   break;
     case Track::ModeCount: break;
     }
@@ -155,12 +158,16 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
         && ev.Type() != MidiEventType_NoteOff)
       play = true;
 
-
-    if (draw && (ev.Type() == MidiEventType_NoteOn || ev.Type() == MidiEventType_NoteOff)) {
+    if (ev.Type() == MidiEventType_NoteOn || ev.Type() == MidiEventType_NoteOff) {
       int vel = ev.NoteVelocity();
       const string name = MidiEvent::NoteName(ev.NoteNumber());
 
-      m_keyboard->SetKeyActive(name, (vel > 0), m_state.track_properties[track_id].color);
+      bool active = (vel > 0);
+      // Display pressed or released a key based on information from a MIDI-file
+      // If this line is deleted, than no notes will be pressed automatically
+      if (draw)
+        m_keyboard->SetKeyActive(name, active, m_state.track_properties[track_id].color);
+      filePressedKey(ev.NoteNumber(), active, track_id);
     }
 
     if (play && m_state.midi_out)
@@ -198,7 +205,8 @@ void PlayingState::Listen() {
     // Octave Sliding
     ev.ShiftNote(m_note_offset);
 
-    string note_name = MidiEvent::NoteName(ev.NoteNumber());
+    int note_number = ev.NoteNumber();
+    string note_name = MidiEvent::NoteName(note_number);
 
     // On key release we have to look for existing "active" notes and turn them off.
     if (ev.Type() == MidiEventType_NoteOff || ev.NoteVelocity() == 0) {
@@ -221,7 +229,11 @@ void PlayingState::Listen() {
         break;
       }
 
+      // User releases the key
+      // If we delete this line, than all pressed keys will be gray until
+      // it is unpressed automatically
       m_keyboard->SetKeyActive(note_name, false, Track::FlatGray);
+      userPressedKey(note_number, false);
       continue;
     }
 
@@ -304,7 +316,14 @@ void PlayingState::Listen() {
       m_state.stats.stray_notes++;
 
     m_state.stats.total_notes_user_pressed++;
+    // Display a pressed key by an user
+    // Display a colored key, if it is pressed correctly
+    // Otherwise display a grey key
+    // 
+    // If we comment this code, than a missed user pressed key will not shown.
+    // But correct presed key will be shown as usual.
     m_keyboard->SetKeyActive(note_name, true, note_color);
+    userPressedKey(note_number, true);
   }
 }
 
@@ -344,7 +363,10 @@ void PlayingState::Update() {
   // long because we just reset the MIDI.  By skipping the "Play" that
   // update, we don't have an artificially fast-forwarded start.
   if (!m_first_update) {
-    Play(delta_microseconds);
+    if (areAllRequiredKeysPressed())
+        Play(delta_microseconds);
+    else
+        m_current_combo = 0;
     Listen();
   }
 
@@ -577,5 +599,42 @@ void PlayingState::Draw(Renderer &renderer) const {
     TextWriter combo_text(combo_x, combo_y, renderer, true, combo_font_size);
     combo_text << STRING(m_current_combo << " Combo!");
   }
+}
+
+
+void PlayingState::userPressedKey(int note_number, bool active)
+{
+    if (active)
+        pressed_notes.insert(note_number);
+    else
+        pressed_notes.erase(note_number);
+}
+
+void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
+{
+    if (m_state.track_properties[track_id].mode == Track::ModeLearning)
+    {
+        if (active)
+            required_notes.insert(note_number);
+        else
+            required_notes.erase(note_number);
+    }
+}
+
+bool PlayingState::isKeyPressed(int note_number)
+{
+    return (pressed_notes.find(note_number) != pressed_notes.end());
+}
+
+bool PlayingState::areAllRequiredKeysPressed()
+{
+    std::set<int>::iterator it;
+    for (it=required_notes.begin(); it!=required_notes.end(); ++it)
+    {
+        int note_number = *it;
+        if (!isKeyPressed(note_number))
+            return false;
+    }
+    return true;
 }
 

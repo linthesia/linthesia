@@ -13,10 +13,13 @@
 
 namespace Track {
 
+  // See ModeText in TrackTile.cpp for titles
+  // See TractSelectionState.cpp for description
   enum Mode {
 
     ModePlayedAutomatically,
     ModeYouPlay,
+    ModeLearning,
     ModePlayedButHidden,
     ModeNotPlayed,
 

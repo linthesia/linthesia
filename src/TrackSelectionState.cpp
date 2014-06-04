@@ -239,6 +239,10 @@ void TrackSelectionState::Update() {
         m_tooltip = "'You Play' means you want to play this track yourself.";
         break;
 
+      case Track::ModeLearning:
+        m_tooltip = "Wait for you to play.";
+        break;
+
       case Track::ModeCount:
         break;
       }

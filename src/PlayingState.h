@@ -56,6 +56,14 @@ protected:
 
 private:
 
+  std::set<int> pressed_notes;
+  std::set<int> required_notes;
+
+  void userPressedKey(int note_number, bool active);
+  void filePressedKey(int note_number, bool active, size_t track_id);
+  bool areAllRequiredKeysPressed();
+  bool isKeyPressed(int note_number);
+
   int CalcKeyboardHeight() const;
   void SetupNoteState();
 
