@@ -605,7 +605,10 @@ void PlayingState::Draw(Renderer &renderer) const {
 void PlayingState::userPressedKey(int note_number, bool active)
 {
     if (active)
+    {
         pressed_notes.insert(note_number);
+        required_notes.erase(note_number);
+    }
     else
         pressed_notes.erase(note_number);
 }
@@ -628,13 +631,6 @@ bool PlayingState::isKeyPressed(int note_number)
 
 bool PlayingState::areAllRequiredKeysPressed()
 {
-    std::set<int>::iterator it;
-    for (it=required_notes.begin(); it!=required_notes.end(); ++it)
-    {
-        int note_number = *it;
-        if (!isKeyPressed(note_number))
-            return false;
-    }
-    return true;
+    return required_notes.empty();
 }
 
