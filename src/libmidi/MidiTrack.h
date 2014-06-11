@@ -79,6 +79,7 @@ public:
 
   void Reset();
   MidiEventList Update(microseconds_t delta_microseconds);
+  void GoTo(microseconds_t microsecond_song_position);
 
   unsigned int AggregateEventsRemain() const {
     return static_cast<unsigned int>(m_events.size() - (m_last_event + 1));

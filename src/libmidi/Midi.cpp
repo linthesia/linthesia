@@ -337,6 +337,7 @@ microseconds_t Midi::GetEventPulseInMicroseconds(unsigned long event_pulses,
 }
 
 void Midi::Reset(microseconds_t lead_in_microseconds, microseconds_t lead_out_microseconds) {
+  m_microsecond_lead_in = lead_in_microseconds;
   m_microsecond_lead_out = lead_out_microseconds;
   m_microsecond_song_position = m_microsecond_dead_start_air - lead_in_microseconds;
   m_first_update_after_reset = true;
@@ -392,6 +393,27 @@ MidiEventListWithTrackId Midi::Update(microseconds_t delta_microseconds) {
   }
 
   return aggregated_events;
+}
+
+void Midi::GoTo(microseconds_t microsecond_song_position) {
+  if (!m_initialized)
+    return;
+
+  // Do not let go back too far (causes bugs)
+  // There is some black magic for negative values of
+  // microsecond_song_position, just skip it
+  if (microsecond_song_position <= 0)
+  {
+      Reset(m_microsecond_lead_in, m_microsecond_lead_out);
+      return;
+  }
+
+  m_microsecond_song_position = microsecond_song_position;
+
+  const size_t track_count = m_tracks.size();
+  for (size_t i = 0; i < track_count; ++i) {
+    m_tracks[i].GoTo(microsecond_song_position);
+  }
 }
 
 microseconds_t Midi::GetSongLengthInMicroseconds() const {

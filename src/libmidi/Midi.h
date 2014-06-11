@@ -42,6 +42,7 @@ public:
   }
 
   MidiEventListWithTrackId Update(microseconds_t delta_microseconds);
+  void GoTo(microseconds_t microsecond_song_position);
 
   void Reset(microseconds_t lead_in_microseconds, 
 	     microseconds_t lead_out_microseconds);
@@ -104,6 +105,7 @@ private:
   microseconds_t m_microsecond_song_position;
   microseconds_t m_microsecond_base_song_length;
 
+  microseconds_t m_microsecond_lead_in;
   microseconds_t m_microsecond_lead_out;
   microseconds_t m_microsecond_dead_start_air;
 

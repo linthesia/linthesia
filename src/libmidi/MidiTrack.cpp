@@ -250,3 +250,21 @@ MidiEventList MidiTrack::Update(microseconds_t delta_microseconds) {
 
   return evs;
 }
+
+void MidiTrack::GoTo(microseconds_t microsecond_song_position) { 
+  m_running_microseconds = microsecond_song_position;
+  m_last_event = -1;
+  m_notes_remaining = static_cast<unsigned int>(m_note_set.size());
+
+  for (size_t i = 0; i < m_events.size(); ++i) {
+    if (m_event_usecs[i] <= m_running_microseconds) {
+      m_last_event = static_cast<long>(i);
+
+      if (m_events[i].Type() == MidiEventType_NoteOn && m_events[i].NoteVelocity() > 0)
+        m_notes_remaining--;
+    }
+
+    else
+      break;
+  }
+}
