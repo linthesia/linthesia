@@ -20,6 +20,7 @@ const static char* ModeText[Track::ModeCount] = {
   "Played Automatically",
   "You Play",
   "Learning",
+  "Learning Silently",
   "Played But Hidden",
   "Not Played"
 };
@@ -53,7 +54,7 @@ void TrackTile::Update(const MouseInfo &translated_mouse) {
 
     int mode = static_cast<int>(m_mode) - 1;
     if (mode < 0)
-      mode = 3;
+      mode = Track::ModeCount - 1;
 
     m_mode = static_cast<Track::Mode>(mode);
   }
@@ -61,7 +62,7 @@ void TrackTile::Update(const MouseInfo &translated_mouse) {
   if (button_mode_right.hit) {
 
     int mode = static_cast<int>(m_mode) + 1;
-    if (mode > 3)
+    if (mode >= Track::ModeCount)
       mode = 0;
 
     m_mode = static_cast<Track::Mode>(mode);
