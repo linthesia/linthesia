@@ -243,6 +243,10 @@ void TrackSelectionState::Update() {
         m_tooltip = "Wait for you to play.";
         break;
 
+      case Track::ModeLearningSilently:
+        m_tooltip = "Wait for you to play, do not produce sounds from MIDI.";
+        break;
+
       case Track::ModeCount:
         break;
       }
