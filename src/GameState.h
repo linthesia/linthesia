@@ -43,6 +43,7 @@ class GameStateManager;
 
 enum GameKey {
 
+  // Magic numbers (used in this app only)
   KeySpace =   0x0001,
   KeyEscape =  0x0002,
   KeyUp =      0x0004,
@@ -54,7 +55,11 @@ enum GameKey {
   KeyF6 =      0x0080,
 
   KeyGreater = 0x0100,
-  KeyLess =    0x0200
+  KeyLess =    0x0200,
+
+  KeyForward  = 0x0300,
+  KeyBackward = 0x0400
+
 };
 
 enum MouseButton {

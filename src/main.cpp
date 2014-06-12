@@ -182,7 +182,6 @@ ConnectMap pressed;
 
 bool __sendNoteOff(int note) {
 
-  cerr << "Note " << note << endl;
   ConnectMap::iterator it = pressed.find(note);
   if (it == pressed.end())
     return false;
@@ -226,6 +225,10 @@ bool DrawingArea::on_key_press(GdkEventKey* event) {
   // increase/decrease octave
   case GDK_greater:  state_manager->KeyPress(KeyGreater); break;
   case GDK_less:     state_manager->KeyPress(KeyLess);    break;
+
+  // +/- 5 seconds
+  case GDK_f:        state_manager->KeyPress(KeyForward);  break;
+  case GDK_b:        state_manager->KeyPress(KeyBackward); break;
 
   default:
     return false;

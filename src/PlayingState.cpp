@@ -448,6 +448,24 @@ void PlayingState::Update() {
       m_state.song_speed = 400;
   }
 
+  if (IsKeyPressed(KeyForward)) {
+    // Go 5 seconds forward
+    microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
+    m_state.midi->GoTo(cur_time + 5000000);
+    required_notes.clear();
+    m_keyboard->ResetActiveKeys();
+    m_notes = m_state.midi->Notes();
+  }
+
+  if (IsKeyPressed(KeyBackward)) {
+    // Go 5 seconds back
+    microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
+    m_state.midi->GoTo(cur_time - 5000000);
+    required_notes.clear();
+    m_keyboard->ResetActiveKeys();
+    m_notes = m_state.midi->Notes();
+  }
+
   if (IsKeyPressed(KeySpace))
     m_paused = !m_paused;
 
