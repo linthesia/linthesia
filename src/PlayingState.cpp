@@ -452,7 +452,7 @@ void PlayingState::Update() {
     // Go 5 seconds forward
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
     m_state.midi->GoTo(cur_time + 5000000);
-    required_notes.clear();
+    m_required_notes.clear();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
   }
@@ -461,7 +461,7 @@ void PlayingState::Update() {
     // Go 5 seconds back
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
     m_state.midi->GoTo(cur_time - 5000000);
-    required_notes.clear();
+    m_required_notes.clear();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
   }
@@ -629,11 +629,11 @@ void PlayingState::userPressedKey(int note_number, bool active)
 {
     if (active)
     {
-        pressed_notes.insert(note_number);
-        required_notes.erase(note_number);
+        m_pressed_notes.insert(note_number);
+        m_required_notes.erase(note_number);
     }
     else
-        pressed_notes.erase(note_number);
+        m_pressed_notes.erase(note_number);
 }
 
 void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
@@ -642,19 +642,19 @@ void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
         m_state.track_properties[track_id].mode == Track::ModeLearningSilently)
     {
         if (active)
-            required_notes.insert(note_number);
+            m_required_notes.insert(note_number);
         else
-            required_notes.erase(note_number);
+            m_required_notes.erase(note_number);
     }
 }
 
 bool PlayingState::isKeyPressed(int note_number)
 {
-    return (pressed_notes.find(note_number) != pressed_notes.end());
+    return (m_pressed_notes.find(note_number) != m_pressed_notes.end());
 }
 
 bool PlayingState::areAllRequiredKeysPressed()
 {
-    return required_notes.empty();
+    return m_required_notes.empty();
 }
 
