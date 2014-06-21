@@ -631,6 +631,7 @@ void PlayingState::userPressedKey(int note_number, bool active)
     {
         m_pressed_notes.insert(note_number);
         m_required_notes.erase(note_number);
+        m_state.dpms_thread->handleKeyPress();
     }
     else
         m_pressed_notes.erase(note_number);
@@ -657,4 +658,3 @@ bool PlayingState::areAllRequiredKeysPressed()
 {
     return m_required_notes.empty();
 }
-

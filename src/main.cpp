@@ -20,6 +20,7 @@
 #include "SharedState.h"
 #include "GameState.h"
 #include "TitleState.h"
+#include "DpmsThread.h"
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
@@ -433,10 +434,13 @@ int main(int argc, char *argv[]) {
     window.add(da);
     window.show_all();
 
+    DpmsThread* dpms_thread = new DpmsThread();
+
     // do this after gl context is created (ie. after da realized)
     SharedState state;
     state.song_title = FileSelector::TrimFilename(command_line);
     state.midi = midi;
+    state.dpms_thread = dpms_thread;
     state_manager->SetInitialState(new TitleState(state));
 
     window.fullscreen();
@@ -465,6 +469,8 @@ int main(int argc, char *argv[]) {
 
     main_loop.run(window);
     window_state.Deactivate();
+
+    delete dpms_thread;
 
     return 0;
   }

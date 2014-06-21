@@ -15,6 +15,7 @@
 #include "TrackProperties.h"
 #include "MidiComm.h"
 #include "libmidi/Midi.h"
+#include "DpmsThread.h"
 
 struct SongStatistics {
 
@@ -50,12 +51,14 @@ struct SharedState {
     midi(0),
     midi_out(0),
     midi_in(0),
+    dpms_thread(0),
     song_speed(100) {
   }
 
   Midi *midi;
   MidiCommOut *midi_out;
   MidiCommIn *midi_in;
+  DpmsThread *dpms_thread;
 
   SongStatistics stats;
 
@@ -63,7 +66,6 @@ struct SharedState {
 
   std::vector<Track::Properties> track_properties;
   std::string song_title;
-
 };
 
 #endif // __SHARED_STATE_H

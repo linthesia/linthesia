@@ -48,6 +48,7 @@ class PlayingState : public GameState {
 public:
   PlayingState(const SharedState &state);
   ~PlayingState();
+  bool ResetKeyboardActive();
 
 protected:
   virtual void Init();
@@ -58,7 +59,6 @@ private:
 
   std::set<int> m_pressed_notes;
   std::set<int> m_required_notes;
-
 
   void userPressedKey(int note_number, bool active);
   void filePressedKey(int note_number, bool active, size_t track_id);

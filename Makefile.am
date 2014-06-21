@@ -199,5 +199,5 @@ nobase_pkgdata_DATA = graphics/app_icon.ico \
 				music/Hannon/Lesson_2.mid \
 				music/Hannon/Lesson_3.mid
 
-SUBDIRS = src
+SUBDIRS = src scripts
 ACLOCAL_AMFLAGS = -I m4
