@@ -231,6 +231,9 @@ bool DrawingArea::on_key_press(GdkEventKey* event) {
   case GDK_f:        state_manager->KeyPress(KeyForward);  break;
   case GDK_b:        state_manager->KeyPress(KeyBackward); break;
 
+  case GDK_bracketleft:  state_manager->KeyPress(KeyVolumeDown); break; // [
+  case GDK_bracketright: state_manager->KeyPress(KeyVolumeUp);   break; // ]
+
   default:
     return false;
   }

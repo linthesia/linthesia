@@ -174,7 +174,14 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
     }
 
     if (play && m_state.midi_out)
-      m_state.midi_out->Write(ev);
+    {
+      // Clone event
+      MidiEvent ev_out = ev;
+      int vel = ev.NoteVelocity();
+      // Scale note's volume before playing
+      ev_out.SetVelocity(vel * m_state.base_volume);
+      m_state.midi_out->Write(ev_out);
+    }
   }
 }
 
@@ -446,6 +453,18 @@ void PlayingState::Update() {
     m_state.song_speed += 10;
     if (m_state.song_speed > 400)
       m_state.song_speed = 400;
+  }
+
+  if (IsKeyPressed(KeyVolumeDown)) {
+    m_state.base_volume -= 0.1;
+    if (m_state.base_volume < 0)
+      m_state.base_volume = 0;
+  }
+
+  if (IsKeyPressed(KeyVolumeUp)) {
+    m_state.base_volume += 0.1;
+    if (m_state.base_volume > 2) // Maximum volume is 200%
+      m_state.base_volume = 2;
   }
 
   if (IsKeyPressed(KeyForward)) {

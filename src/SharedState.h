@@ -52,8 +52,9 @@ struct SharedState {
     midi_out(0),
     midi_in(0),
     dpms_thread(0),
-    song_speed(100) {
-  }
+    song_speed(100),
+    base_volume(1)
+    {}
 
   Midi *midi;
   MidiCommOut *midi_out;
@@ -63,6 +64,7 @@ struct SharedState {
   SongStatistics stats;
 
   int song_speed;
+  double base_volume;
 
   std::vector<Track::Properties> track_properties;
   std::string song_title;

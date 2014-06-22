@@ -60,10 +60,11 @@ enum GameKey {
   KeyLess =    0x0200,
 
   KeyForward  = 0x0400,
-  KeyBackward = 0x0800
+  KeyBackward = 0x0800,
 
-  // = 0x1000
-  // = 0x2000
+  KeyVolumeUp    = 0x1000,
+  KeyVolumeDown  = 0x2000
+
   // = 0x4000
   // = 0x8000
 };
