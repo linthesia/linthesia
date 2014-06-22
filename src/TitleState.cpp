@@ -202,6 +202,7 @@ void TitleState::Update() {
         new_state.midi_in = m_state.midi_in;
         new_state.midi_out = m_state.midi_out;
         new_state.song_title = FileSelector::TrimFilename(filename);
+        new_state.dpms_thread = m_state.dpms_thread;
 
         delete m_state.midi;
         m_state = new_state;

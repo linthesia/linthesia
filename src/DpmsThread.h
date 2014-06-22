@@ -43,7 +43,7 @@ class DpmsThread
       delayScreensaver();
 
       // Reset value
-      m_is_keyboard_active = false;
+      m_is_keyboard_active.store(false);
     }
   }
 
@@ -61,14 +61,14 @@ class DpmsThread
 
   ~DpmsThread()
   {
-    m_should_exit = true;
+    m_should_exit.store(true);
     m_should_exit_cv.notify_all();
     m_thread.join();
   }
 
   void handleKeyPress()
   {
-    m_is_keyboard_active = true;
+    m_is_keyboard_active.store(true);
   }
 };
 

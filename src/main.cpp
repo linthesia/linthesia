@@ -437,6 +437,7 @@ int main(int argc, char *argv[]) {
     window.add(da);
     window.show_all();
 
+    // Init DHMS thread once for the whole program
     DpmsThread* dpms_thread = new DpmsThread();
 
     // do this after gl context is created (ie. after da realized)
