@@ -131,8 +131,11 @@ void MidiEvent::ReadMeta(istream &stream) {
     break;
 
   default:
-    delete[] buffer;
-    throw MidiError(MidiError_UnknownMetaEventType);
+    // Ignore unknown event
+    std::cerr << "Ignore unknown midi event type " << (m_meta_type * 1)
+              << " of length " << meta_length << endl;
+//  delete[] buffer;
+//  throw MidiError(MidiError_UnknownMetaEventType);
   }
 
   delete[] buffer;
