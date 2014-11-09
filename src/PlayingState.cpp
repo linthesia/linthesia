@@ -472,6 +472,7 @@ void PlayingState::Update() {
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
     m_state.midi->GoTo(cur_time + 5000000);
     m_required_notes.clear();
+    m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
   }
@@ -481,6 +482,7 @@ void PlayingState::Update() {
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
     m_state.midi->GoTo(cur_time - 5000000);
     m_required_notes.clear();
+    m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
   }
