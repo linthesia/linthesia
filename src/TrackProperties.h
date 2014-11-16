@@ -19,6 +19,7 @@ namespace Track {
 
     ModePlayedAutomatically,
     ModeYouPlay,
+    ModeYouPlaySilently,
     ModeLearning,
     ModeLearningSilently,
     ModePlayedButHidden,

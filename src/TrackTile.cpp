@@ -18,7 +18,8 @@ const static int GraphicHeight = 36;
 // Only used here
 const static char* ModeText[Track::ModeCount] = {
   "Played Automatically",
-  "You Play",
+  "You Play", // You Press, we help
+  "You Play Silently", // You Play
   "Learning",
   "Learning Silently",
   "Played But Hidden",

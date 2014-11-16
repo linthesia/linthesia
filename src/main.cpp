@@ -24,6 +24,7 @@
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
+#include <gconfmm.h>
 
 #ifndef GRAPHDIR
 #define GRAPHDIR "../graphics"
@@ -492,6 +493,15 @@ int main(int argc, char *argv[]) {
 					" MIDI" <<
 					error_header2 <<
 					e.GetErrorDescription() <<
+					error_footer);
+    Compatible::ShowError(wrapped_description);
+  }
+
+  catch (const Gnome::Conf::Error& e) {
+    string wrapped_description = STRING(error_header1 <<
+					" Gnome::Conf::Error" <<
+					error_header2 <<
+					e.what() <<
 					error_footer);
     Compatible::ShowError(wrapped_description);
   }

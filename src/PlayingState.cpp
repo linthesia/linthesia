@@ -40,6 +40,7 @@ void PlayingState::SetupNoteState() {
 
     n.state = AutoPlayed;
     if (m_state.track_properties[n.track_id].mode == Track::ModeYouPlay ||
+        m_state.track_properties[n.track_id].mode == Track::ModeYouPlaySilently ||
         m_state.track_properties[n.track_id].mode == Track::ModeLearning ||
         m_state.track_properties[n.track_id].mode == Track::ModeLearningSilently)
       n.state = UserPlayable;
@@ -95,6 +96,7 @@ void PlayingState::Init() {
   for (size_t i = 0; i < m_state.track_properties.size(); ++i) {
 
     if (m_state.track_properties[i].mode == Track::ModeYouPlay ||
+        m_state.track_properties[i].mode == Track::ModeYouPlaySilently ||
         m_state.track_properties[i].mode == Track::ModeLearning ||
         m_state.track_properties[i].mode == Track::ModeLearningSilently) {
       m_look_ahead_you_play_note_count += m_state.midi->Tracks()[i].Notes().size();
@@ -148,6 +150,7 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
     case Track::ModeNotPlayed:           draw = false;  play = false;  break;
     case Track::ModePlayedButHidden:     draw = false;  play = true;   break;
     case Track::ModeYouPlay:             draw = false;  play = false;  break;
+    case Track::ModeYouPlaySilently:     draw = false;  play = false;  break;
     case Track::ModeLearning:            draw = false;  play = true;   break;
     case Track::ModeLearningSilently:    draw = false;  play = false;  break;
     case Track::ModePlayedAutomatically: draw = true;   play = true;   break;
@@ -301,8 +304,9 @@ void PlayingState::Listen() {
       ev.SetChannel(n.channel);
       ev.SetVelocity(n.velocity);
 
-      bool silently = m_state.track_properties[closest_match->track_id].mode ==
-                        Track::ModeLearningSilently;
+      bool silently =
+          m_state.track_properties[closest_match->track_id].mode == Track::ModeYouPlaySilently ||
+          m_state.track_properties[closest_match->track_id].mode == Track::ModeLearningSilently;
       if (m_state.midi_out && !silently)
         m_state.midi_out->Write(ev);
 
