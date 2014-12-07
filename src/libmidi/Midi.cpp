@@ -154,6 +154,19 @@ Midi Midi::ReadFromStream(istream &stream) {
    // Eat everything up until *just* before the first note event
    m.m_microsecond_dead_start_air = m.GetEventPulseInMicroseconds(m.FindFirstNotePulse(), pulses_per_quarter_note) - 1;
 
+   // Calculate positions for bar_lines
+   MidiEventMicrosecondList bar_line_usecs;
+   const double len = static_cast<double>(m.GetSongLengthInMicroseconds());
+   double bar_usec = 0;
+   int bar_no = 0;
+   while (bar_usec <= len)
+   {
+       bar_usec = m.GetEventPulseInMicroseconds(bar_no*4, pulses_per_quarter_note);
+       bar_line_usecs.push_back(bar_usec);
+       bar_no++;
+   }
+   m.m_bar_line_usecs = bar_line_usecs;
+
    return m;
 }
 
@@ -367,6 +380,8 @@ MidiEventListWithTrackId Midi::Update(microseconds_t delta_microseconds) {
   if (!m_initialized)
     return aggregated_events;
 
+  // Move everything forward (fallen keys, the screen keyboard)
+  // These variable is used on redraw later
   m_microsecond_song_position += delta_microseconds;
   if (m_first_update_after_reset) {
     delta_microseconds += m_microsecond_song_position;
@@ -383,15 +398,18 @@ MidiEventListWithTrackId Midi::Update(microseconds_t delta_microseconds) {
     delta_microseconds = m_microsecond_song_position;
 
   const size_t track_count = m_tracks.size();
+  // These code is not related to fallen keys
   for (size_t i = 0; i < track_count; ++i) {
     MidiEventList track_events = m_tracks[i].Update(delta_microseconds);
 
     const size_t event_count = track_events.size();
+    // Collect evants to be passed to a screen keyboard
     for (size_t j = 0; j < event_count; ++j) {
       aggregated_events.insert(aggregated_events.end(), make_pair<size_t, MidiEvent>(i, track_events[j]));
     }
   }
 
+  // Pass to a keyboard
   return aggregated_events;
 }
 
@@ -467,6 +485,7 @@ unsigned int Midi::AggregateNoteCount() const {
   return aggregate;
 }
 
+// This function is used for the progress bar
 double Midi::GetSongPercentageComplete() const {
   if (!m_initialized)
     return 0.0;

@@ -133,8 +133,11 @@ int PlayingState::CalcKeyboardHeight() const {
 
 void PlayingState::Play(microseconds_t delta_microseconds) {
 
+  // Move notes, time tracking, everything
+  // delta_microseconds = 0 means, that we are on pause
   MidiEventListWithTrackId evs = m_state.midi->Update(delta_microseconds);
 
+  // These cycle is for keyboard updates (not falling keys)
   const size_t length = evs.size();
   for(size_t i = 0; i < length; ++i) {
 
@@ -169,8 +172,9 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
       const string name = MidiEvent::NoteName(ev.NoteNumber());
 
       bool active = (vel > 0);
-      // Display pressed or released a key based on information from a MIDI-file
-      // If this line is deleted, than no notes will be pressed automatically
+      // Display pressed or released a key based on information from a MIDI-file.
+      // If this line is deleted, than no notes will be pressed automatically.
+      // It is not related to falling notes.
       if (draw)
         m_keyboard->SetKeyActive(name, active, m_state.track_properties[track_id].color);
       filePressedKey(ev.NoteNumber(), active, track_id);
@@ -534,6 +538,7 @@ void PlayingState::Draw(Renderer &renderer) const {
                              GetTexture(PlayNotesBlackColor, true) };
   renderer.ForceTexture(0);
 
+  // Draw a keyboard, fallen keys and background for them
   m_keyboard->Draw(renderer, key_tex, note_tex, Layout::ScreenMarginX, 0, m_notes, m_show_duration,
                    m_state.midi->GetSongPositionInMicroseconds(), m_state.track_properties);
 

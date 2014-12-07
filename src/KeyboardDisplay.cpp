@@ -77,6 +77,7 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
   // Symbolic names for the arbitrary array passed in here
   enum { Rail, Shadow, BlackKey };
 
+  // Draw background for falling notes
   DrawGuides(renderer, white_key_count, white_width, white_space, x + x_offset, y, y_offset);
 
   // Do two passes on the notes, the first for note shadows and the second

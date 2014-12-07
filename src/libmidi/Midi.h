@@ -112,6 +112,7 @@ private:
   bool m_first_update_after_reset;
   double m_playback_speed;
   MidiTrackList m_tracks;
+  MidiEventMicrosecondList m_bar_line_usecs;
 };
 
 #endif
