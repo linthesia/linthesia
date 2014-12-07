@@ -71,6 +71,10 @@ public:
   unsigned int AggregateNotesRemain() const;
   unsigned int AggregateNoteCount() const;
 
+  const MidiEventMicrosecondList & GetBarLines() const {
+   return m_bar_line_usecs;
+  }
+
 private:
   const static unsigned long DefaultBPM = 120;
   const static microseconds_t OneMinuteInMicroseconds = 60000000;

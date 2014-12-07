@@ -41,7 +41,8 @@ KeyboardDisplay::KeyboardDisplay(KeyboardSize size, int pixelWidth, int pixelHei
 
 void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga *note_tex[4], int x, int y,
                            const TranslatedNoteSet &notes, microseconds_t show_duration, microseconds_t current_time,
-                           const vector<Track::Properties> &track_properties) {
+                           const vector<Track::Properties> &track_properties,
+                           const MidiEventMicrosecondList &bar_line_usecs) {
 
   // Source: Measured from Yamaha P-70
   const static double WhiteWidthHeightRatio = 6.8181818;
@@ -79,6 +80,10 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
 
   // Draw background for falling notes
   DrawGuides(renderer, white_key_count, white_width, white_space, x + x_offset, y, y_offset);
+
+  // Draw tempo bars
+  DrawBars(renderer, x+x_offset, y, y_offset, y_roll_under, final_width,
+           show_duration, current_time, bar_line_usecs);
 
   // Do two passes on the notes, the first for note shadows and the second
   // for the note blocks themselves.  This is to avoid shadows being drawn
@@ -349,6 +354,40 @@ void KeyboardDisplay::DrawGuides(Renderer &renderer, int key_count, int key_widt
     if (current_white == 'C')
       current_octave++;
   }
+}
+
+void KeyboardDisplay::DrawBars(Renderer &renderer, int x, int y, int y_offset,
+        int y_roll_under, int final_width,
+        microseconds_t show_duration, microseconds_t current_time,
+        const MidiEventMicrosecondList &bar_line_usecs) const {
+   int i=0;
+   MidiEventMicrosecondList::const_iterator j = bar_line_usecs.begin();
+   const Color bar_color (Renderer::ToColor(0x50,0x50,0x50));
+   const Color text_color (Renderer::ToColor(0x50,0x50,0x50));
+   renderer.SetColor(bar_color);
+   for (; j != bar_line_usecs.end(); ++j, ++i) {
+      microseconds_t bar_usec = *j;
+      // Skip previous bars
+      if (bar_usec < current_time)
+        continue;
+      // This list is sorted by note start time.  The moment we encounter
+      // a bar scrolled off the window, we're done drawing
+      if (bar_usec > current_time + show_duration)
+        break;
+
+      const double scaling_factor = static_cast<double>(y_offset) / static_cast<double>(show_duration);
+
+      const long long roll_under = static_cast<int>(y_roll_under / scaling_factor);
+      const long long adjusted_offset = max(bar_usec - current_time, -roll_under);
+
+      // Convert our times to pixel coordinates
+      const int y_bar_offset = y - static_cast<int>(adjusted_offset * scaling_factor) + y_offset;
+      renderer.DrawQuad(x, y_bar_offset, final_width, 2);
+
+      // Add a label with a bar number
+      TextWriter bar_writer(x+3, y_bar_offset-13, renderer, false, 10);
+      bar_writer << Text(STRING(i+1), text_color);
+   }
 }
 
 void KeyboardDisplay::DrawNote(Renderer &renderer, const Tga *tex, const NoteTexDimensions &tex_dimensions,

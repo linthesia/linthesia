@@ -156,12 +156,12 @@ Midi Midi::ReadFromStream(istream &stream) {
 
    // Calculate positions for bar_lines
    MidiEventMicrosecondList bar_line_usecs;
-   const double len = static_cast<double>(m.GetSongLengthInMicroseconds());
-   double bar_usec = 0;
+   const microseconds_t len = m.GetSongLengthInMicroseconds();
+   microseconds_t bar_usec = 0;
    int bar_no = 0;
    while (bar_usec <= len)
    {
-       bar_usec = m.GetEventPulseInMicroseconds(bar_no*4, pulses_per_quarter_note);
+       bar_usec = m.GetEventPulseInMicroseconds(bar_no*pulses_per_quarter_note*4, pulses_per_quarter_note);
        bar_line_usecs.push_back(bar_usec);
        bar_no++;
    }

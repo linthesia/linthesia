@@ -540,7 +540,8 @@ void PlayingState::Draw(Renderer &renderer) const {
 
   // Draw a keyboard, fallen keys and background for them
   m_keyboard->Draw(renderer, key_tex, note_tex, Layout::ScreenMarginX, 0, m_notes, m_show_duration,
-                   m_state.midi->GetSongPositionInMicroseconds(), m_state.track_properties);
+                   m_state.midi->GetSongPositionInMicroseconds(), m_state.track_properties,
+                   m_state.midi->GetBarLines());
 
   string title_text = m_state.song_title;
 

@@ -39,7 +39,8 @@ public:
 
   void Draw(Renderer &renderer, const Tga *key_tex[3], const Tga *note_tex[4],
             int x, int y, const TranslatedNoteSet &notes, microseconds_t show_duration,
-            microseconds_t current_time, const std::vector<Track::Properties> &track_properties);
+            microseconds_t current_time, const std::vector<Track::Properties> &track_properties,
+            const MidiEventMicrosecondList &bar_line_usecs);
 
   void SetKeyActive(const std::string &key_name, bool active, Track::TrackColor color);
 
@@ -93,6 +94,10 @@ private:
 
   void DrawGuides(Renderer &renderer, int key_count, int key_width, int key_space,
                   int x_offset, int y, int y_offset) const;
+  void DrawBars(Renderer &renderer, int x, int y, int y_offset,       
+                int y_roll_under, int final_width,
+                microseconds_t show_duration, microseconds_t current_time,
+                const MidiEventMicrosecondList &bar_line_usecs) const;
 
   void DrawNotePass(Renderer &renderer, const Tga *tex_white, const Tga *tex_black,
                     int white_width, int key_space, int black_width, int black_offset,
