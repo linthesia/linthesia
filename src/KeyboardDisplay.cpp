@@ -363,9 +363,10 @@ void KeyboardDisplay::DrawBars(Renderer &renderer, int x, int y, int y_offset,
    int i=0;
    MidiEventMicrosecondList::const_iterator j = bar_line_usecs.begin();
    const Color bar_color (Renderer::ToColor(0x50,0x50,0x50));
-   const Color text_color (Renderer::ToColor(0x50,0x50,0x50));
-   renderer.SetColor(bar_color);
+   const Color text_color1 (Renderer::ToColor(0x50,0x50,0x50));
+   const Color text_color2 (Renderer::ToColor(0x90,0x90,0x90));
    for (; j != bar_line_usecs.end(); ++j, ++i) {
+      renderer.SetColor(bar_color);
       microseconds_t bar_usec = *j;
       // Skip previous bars
       if (bar_usec < current_time)
@@ -385,8 +386,22 @@ void KeyboardDisplay::DrawBars(Renderer &renderer, int x, int y, int y_offset,
       renderer.DrawQuad(x, y_bar_offset, final_width, 2);
 
       // Add a label with a bar number
-      TextWriter bar_writer(x+3, y_bar_offset-13, renderer, false, 10);
-      bar_writer << Text(STRING(i+1), text_color);
+      // Background text
+      TextWriter bar_writer2(x+3, y_bar_offset-13, renderer, false, 11);
+      bar_writer2 << Text(STRING(i+1), text_color1);
+
+      TextWriter bar_writer3(x+5, y_bar_offset-15, renderer, false, 11);
+      bar_writer3 << Text(STRING(i+1), text_color1);
+
+      TextWriter bar_writer4(x+3, y_bar_offset-15, renderer, false, 11);
+      bar_writer4 << Text(STRING(i+1), text_color1);
+
+      TextWriter bar_writer5(x+5, y_bar_offset-13, renderer, false, 11);
+      bar_writer5 << Text(STRING(i+1), text_color1);
+
+      // Foreground text
+      TextWriter bar_writer(x+4, y_bar_offset-14, renderer, false, 11);
+      bar_writer << Text(STRING(i+1), text_color2);
    }
 }
 
