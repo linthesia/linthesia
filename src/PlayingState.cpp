@@ -254,8 +254,6 @@ void PlayingState::Listen() {
       continue;
     }
 
-    bool any_found = false;
-
     TranslatedNoteSet::iterator closest_match = m_notes.end();
     for (TranslatedNoteSet::iterator i = m_notes.begin(); i != m_notes.end(); ++i) {
 
@@ -293,7 +291,6 @@ void PlayingState::Listen() {
     Track::TrackColor note_color = Track::FlatGray;
 
     if (closest_match != m_notes.end()) {
-      any_found = true;
       note_color = m_state.track_properties[closest_match->track_id].color;
 
       // "Open" this note so we can catch the close later and turn off
