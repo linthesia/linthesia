@@ -154,7 +154,7 @@ void PlayingState::Play(microseconds_t delta_microseconds) {
     case Track::ModePlayedButHidden:     draw = false;  play = true;   break;
     case Track::ModeYouPlay:             draw = false;  play = false;  break;
     case Track::ModeYouPlaySilently:     draw = false;  play = false;  break;
-    case Track::ModeLearning:            draw = false;  play = true;   break;
+    case Track::ModeLearning:            draw = false;  play = false;   break;
     case Track::ModeLearningSilently:    draw = false;  play = false;  break;
     case Track::ModePlayedAutomatically: draw = true;   play = true;   break;
     case Track::ModeCount: break;
