@@ -23,11 +23,11 @@ elif [ "$screensaver" == "kscreensaver" ]; then
 fi
 
 # SimulateUserActivity disables auto screen dimming in KDE4
-if [ $KDE_FULL_SESSION == true ]; then
+if [ "$KDE_FULL_SESSION" == true ]; then
     simulate=true
 fi
 
-if [ $simulate == true ]; then
+if [ "$simulate" == true ]; then
     qdbus org.freedesktop.ScreenSaver /ScreenSaver SimulateUserActivity > /dev/null
 fi
 
