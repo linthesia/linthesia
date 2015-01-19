@@ -59,9 +59,12 @@ public:
 
   // Returns whether the input device has more buffered events.
   bool KeepReading() const;
+  bool ShouldReconnect() const;
+  void Reconnect();
 
 private:
   MidiCommDescription m_description;
+  bool m_should_reconnect;
 
 };
 
@@ -83,6 +86,8 @@ public:
 
   // Turns all notes off and resets all controllers
   void Reset();
+
+  void Reconnect();
 
 private:
   void Release();

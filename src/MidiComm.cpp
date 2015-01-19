@@ -26,7 +26,7 @@ static bool emulate_kb = false;
 static snd_seq_t* alsa_seq;
 
 // ALSA ports
-static int local_out, local_in, keybd_out = -1;
+static int local_out, local_in, anon_in, keybd_out = -1;
 
 void midiInit() {
 
@@ -34,6 +34,7 @@ void midiInit() {
     return;
 
   int err = snd_seq_open(&alsa_seq, "default", SND_SEQ_OPEN_DUPLEX, 0);
+  int ownid = snd_seq_client_id(alsa_seq);
   midi_initiated = true;
 
   // Could not open sequencer, no out devices
@@ -59,6 +60,33 @@ void midiInit() {
   local_in = snd_seq_create_simple_port(alsa_seq, "Linthesia Input",
                                         SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
                                         SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+
+  anon_in = snd_seq_create_simple_port(alsa_seq, "Linthesia Annonce Listener",
+                                       SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_NO_EXPORT,
+                                       SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+
+   if (anon_in < 0)
+       return; // handle error
+
+  // Subscribe on port opening
+  snd_seq_port_subscribe_t *sub;
+  snd_seq_addr_t sender, dest;
+
+  snd_seq_port_subscribe_alloca(&sub);
+  // Receive events from annoncer's port
+  sender.client = SND_SEQ_CLIENT_SYSTEM;
+  sender.port = SND_SEQ_PORT_SYSTEM_ANNOUNCE;
+  snd_seq_port_subscribe_set_sender(sub, &sender);
+  // Forward them to our port
+  dest.client = ownid;
+  dest.port = anon_in;
+  snd_seq_port_subscribe_set_dest(sub, &dest);
+  err = snd_seq_subscribe_port(alsa_seq, sub);
+  if (err<0) {
+      fprintf(stderr, "Cannot subscribe announce port: %s\n", snd_strerror(err));
+      return;
+  }
+
 }
 
 void midiStop() {
@@ -136,6 +164,7 @@ static bool built_input_list = false;
 static MidiCommDescriptionList in_list(MidiCommIn::GetDeviceList());
 
 MidiCommIn::MidiCommIn(unsigned int device_id) {
+  m_should_reconnect = false;
 
   m_description = GetDeviceList()[device_id];
 
@@ -143,7 +172,7 @@ MidiCommIn::MidiCommIn(unsigned int device_id) {
   int res = snd_seq_connect_from(alsa_seq, local_in, m_description.client, m_description.port);
   if (res < 0) {
     string msg = snd_strerror(res);
-    cout << "[WARNING] Input, cannont connect from '" << m_description.name << "': " << msg << endl;
+    cout << "[WARNING] Input, cannot connect from '" << m_description.name << "': " << msg << endl;
   }
 
   // enable internal keyboard
@@ -199,6 +228,40 @@ MidiEvent MidiCommIn::Read() {
     simple.byte1 = ev->data.control.value;                 // Program number
     break;
 
+  case SND_SEQ_EVENT_PORT_EXIT:
+    // USB device is disconnected - the input client is closed
+    {
+    cout << "MIDI device is lost" << endl;
+    int lost_client = ev->data.addr.client;
+    int lost_port   = ev->data.addr.port;
+    // TODO add better error reporting
+    }
+    break;
+
+  case SND_SEQ_EVENT_PORT_START:
+    {
+    int new_client = ev->data.addr.client;
+    int new_port = ev->data.addr.port;
+    snd_seq_port_info_t* pinfo;
+    snd_seq_port_info_alloca(&pinfo);
+
+    cout << "New MIDI device client=" << new_client << ", port=" << new_port << endl;
+    int err = snd_seq_get_any_port_info(alsa_seq, new_client, new_port, pinfo);
+
+    if (err < 0)
+        return MidiEvent::NullEvent(); // error
+
+    int port = snd_seq_port_info_get_port(pinfo);
+    int client = snd_seq_port_info_get_client(pinfo);
+    cout << "Port info client=" << client << ", port=" << port << endl;
+
+    std::string new_name = snd_seq_port_info_get_name(pinfo);
+    cout << "New MIDI device " << new_name << endl;
+
+    m_should_reconnect = true;
+    }
+    break;
+
   // unknown type, do nothing
   default:
     return MidiEvent::NullEvent();
@@ -217,6 +280,18 @@ void MidiCommIn::Reset() {
   snd_seq_drop_input(alsa_seq);
 }
 
+bool MidiCommIn::ShouldReconnect() const {
+
+  return m_should_reconnect;
+}
+
+void MidiCommIn::Reconnect() {
+  // We assume, that the client and the port is the same after device's reconnect
+  // Connect local in to selected port
+  int res = snd_seq_connect_from(alsa_seq, local_in, m_description.client, m_description.port);
+  m_should_reconnect = false;
+}
+
 
 // Midi OUT Ports
 
@@ -231,7 +306,7 @@ MidiCommOut::MidiCommOut(unsigned int device_id) {
   int res = snd_seq_connect_to(alsa_seq, local_out, m_description.client, m_description.port);
   if (res < 0) {
     string msg = snd_strerror(res);
-    cout << "[WARNING] Output, cannont connect to '" << m_description.name
+    cout << "[WARNING] Output, cannot connect to '" << m_description.name
          << "': " << msg << endl;
   }
 }
@@ -331,3 +406,7 @@ void MidiCommOut::Reset() {
 
 }
 
+void MidiCommOut::Reconnect() {
+  // We assume, that the client and the port is the same after device's reconnect
+  int res = snd_seq_connect_to(alsa_seq, local_out, m_description.client, m_description.port);
+}

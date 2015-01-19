@@ -210,6 +210,13 @@ void PlayingState::Listen() {
 
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
     MidiEvent ev = m_state.midi_in->Read();
+    if (m_state.midi_in->ShouldReconnect())
+    {
+        m_state.midi_in->Reconnect();
+        m_state.midi_out->Reconnect();
+        continue;
+    }
+
 
     // Just eat input if we're paused
     if (m_paused)
