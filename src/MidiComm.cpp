@@ -201,6 +201,12 @@ MidiCommDescriptionList MidiCommIn::GetDeviceList() {
   return devices;
 }
 
+void MidiCommIn::UpdateDeviceList()
+{
+    built_input_list = false;
+    in_list = MidiCommIn::GetDeviceList();
+}
+
 MidiEvent MidiCommIn::Read() {
 
   if (snd_seq_event_input_pending(alsa_seq, 1) < 1)
@@ -318,6 +324,12 @@ MidiCommOut::~MidiCommOut() {
 
   // This does not harm if done everytime...
   emulate_kb = false;
+}
+
+void MidiCommOut::UpdateDeviceList()
+{
+    built_output_list = false;
+    out_list = MidiCommOut::GetDeviceList();
 }
 
 MidiCommDescriptionList MidiCommOut::GetDeviceList() {

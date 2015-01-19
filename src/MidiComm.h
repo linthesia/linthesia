@@ -40,6 +40,7 @@ class MidiCommIn {
 public:
 
   static MidiCommDescriptionList GetDeviceList();
+  static void UpdateDeviceList();
 
    // device_id is obtained from GetDeviceList()
   MidiCommIn(unsigned int device_id);
@@ -72,6 +73,7 @@ class MidiCommOut {
 public:
 
   static MidiCommDescriptionList GetDeviceList();
+  static void UpdateDeviceList();
 
   // device_id is obtained from GetDeviceList()
   MidiCommOut(unsigned int device_id);

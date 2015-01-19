@@ -139,3 +139,30 @@ void DeviceTile::Draw(Renderer &renderer) const {
   renderer.ResetOffset();
 }
 
+void DeviceTile::ReplaceDeviceList(const MidiCommDescriptionList &device_list)
+{
+  if (m_device_id != -1)
+  {
+      // Try to find currently selected device amoung devices in the new list
+      std::string current_name = m_device_list[m_device_id].name;
+      int device_id = 0;
+      bool replaced = false;
+      int size = device_list.size();
+      for (; device_id < size; device_id++)
+      {
+        std::string iter_name = device_list[device_id].name;
+        if (current_name == iter_name)
+        {
+          // Found device
+          m_device_id = device_id;
+          replaced = true;
+          break;
+        }
+      }
+      // The selected device was removed
+      if (!replaced)
+        m_device_id = -1;
+  }
+  m_device_list = device_list;
+}
+

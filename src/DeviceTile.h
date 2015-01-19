@@ -37,6 +37,7 @@ public:
 
   void Update(const MouseInfo &translated_mouse);
   void Draw(Renderer &renderer) const;
+  void ReplaceDeviceList(const MidiCommDescriptionList &device_list);
 
   int GetX() const {
     return m_x;
@@ -87,7 +88,7 @@ private:
   bool m_preview_on;
   int m_device_id;
 
-  const MidiCommDescriptionList m_device_list;
+  MidiCommDescriptionList m_device_list;
 
   DeviceTileType m_tile_type;
 
