@@ -9,9 +9,26 @@ latest source from sourceforge.
 Compile
 -------
 
-To compile, you need a basic c++ toolchain, and satisfy all dependeces
+To compile, you need a basic c++ toolchain, and satisfy all dependences
 which are on BUILD-DEPENDS file. Then, just:
 
-$ make
+    $ autoreconf -ivf
+
+Here you must choose:
+
+ a) For developers
+
+    $ mkdir build
+    $ cd build     # Isolate compilation to speed future compilations
+    $ ../configure
+
+ b) For general public
+
+    $ ../configure --prefix=/usr
+
+Then:
+
+    $ make
+    $ sudo make install
 
 Visit https://sourceforge.net/projects/linthesia/ for more info.
