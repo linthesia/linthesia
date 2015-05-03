@@ -36,7 +36,7 @@ const static char* TextureResourceNames[_TextureEnumCount] = {
   "title_OutputBox",
   "title_SongBox",
 
-  "trackbox",
+  "trackbox", // TrackPanel
 
   "stats_text",
 

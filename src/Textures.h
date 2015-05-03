@@ -11,6 +11,7 @@
 
 enum Texture {
 
+  // TextureResourceNames should have the same order
   TitleLogo,
   InterfaceButtons,
   GameMusicThemes,

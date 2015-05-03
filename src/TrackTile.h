@@ -18,7 +18,7 @@
 
 #include <vector>
 
-const int TrackTileWidth = 300;
+const int TrackTileWidth = 336;
 const int TrackTileHeight = 110;
 
 enum TrackTileGraphic {
@@ -28,6 +28,11 @@ enum TrackTileGraphic {
   GraphicColor,
   GraphicPreviewTurnOn,
   GraphicPreviewTurnOff,
+
+  GraphicComputerPlays,
+  GraphicHumanPlays,
+  GraphicRetryOn,
+  GraphicRetryOff,
 
   Graphic_COUNT
 };
@@ -65,6 +70,10 @@ public:
     return m_preview_on;
   }
 
+  bool IsRetryOn() const {
+    return m_retry_on;
+  }
+
   void TurnOffPreview() {
     m_preview_on = false;
   }
@@ -85,6 +94,10 @@ public:
     return button_color;
   }
 
+  const ButtonState ButtonRetry() const {
+    return button_retry;
+  }
+
   const ButtonState ButtonLeft() const {
     return button_mode_left;
   }
@@ -101,10 +114,12 @@ private:
   Track::TrackColor m_color;
 
   bool m_preview_on;
+  bool m_retry_on;
 
   ButtonState whole_tile;
   ButtonState button_preview;
   ButtonState button_color;
+  ButtonState button_retry;
   ButtonState button_mode_left;
   ButtonState button_mode_right;
 

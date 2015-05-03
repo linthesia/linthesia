@@ -267,6 +267,14 @@ void TrackSelectionState::Update() {
     if (t.ButtonColor().hovering)
       m_tooltip = "Pick a color for this track's notes.";
 
+    if (t.ButtonRetry().hovering) {
+      if (t.IsRetryOn())
+        m_tooltip = "Ignore failed tempo blocks.";
+
+      else
+        m_tooltip = "Repeat failed tempo blocks.";
+    }
+
     if (t.HitPreviewButton()) {
 
       if (m_state.midi_out)
