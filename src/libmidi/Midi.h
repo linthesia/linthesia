@@ -75,6 +75,8 @@ public:
    return m_bar_line_usecs;
   }
 
+  microseconds_t GetNextBarInMicroseconds(const microseconds_t point) const;
+
 private:
   const static unsigned long DefaultBPM = 120;
   const static microseconds_t OneMinuteInMicroseconds = 60000000;

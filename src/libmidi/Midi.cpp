@@ -441,6 +441,20 @@ microseconds_t Midi::GetSongLengthInMicroseconds() const {
   return m_microsecond_base_song_length - m_microsecond_dead_start_air;
 }
 
+
+// Gets next bar after point of time
+microseconds_t Midi::GetNextBarInMicroseconds(const microseconds_t point) const {
+   MidiEventMicrosecondList::const_iterator j = m_bar_line_usecs.begin();
+   for (; j != m_bar_line_usecs.end(); ++j) {
+     microseconds_t bar_usec = *j;
+     // Add offset
+     bar_usec -= m_microsecond_dead_start_air;
+     if (bar_usec > point)
+       return bar_usec;
+   }
+   return 0; // not found
+}
+
 unsigned int Midi::AggregateEventsRemain() const {
   if (!m_initialized)
     return 0;

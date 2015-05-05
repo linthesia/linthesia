@@ -77,6 +77,9 @@ void PlayingState::ResetSong() {
 
   m_note_offset = 0;
   m_max_allowed_title_alpha = 1.0;
+
+  m_should_retry = false;
+  m_retry_start = m_state.midi->GetNextBarInMicroseconds(-1000000000);
 }
 
 PlayingState::PlayingState(const SharedState &state) :
@@ -84,6 +87,8 @@ PlayingState::PlayingState(const SharedState &state) :
   m_keyboard(0),
   m_any_you_play_tracks(false),
   m_first_update(true),
+  m_should_retry(false),
+  m_retry_start(0),
   m_state(state) {
 }
 
@@ -391,6 +396,7 @@ void PlayingState::Update() {
         Play(delta_microseconds);
     else
         m_current_combo = 0;
+
     Listen();
   }
 
@@ -424,6 +430,10 @@ void PlayingState::Update() {
       if (note->state == UserMissed) {
         // They missed a note, reset the combo counter
         m_current_combo = 0;
+
+        if (m_state.track_properties[note->track_id].is_retry_on)
+          // They missed a note and should retry
+          m_should_retry = true;
 
         m_state.stats.notes_user_could_have_played++;
         m_state.stats.speed_integral += m_state.song_speed;
@@ -487,8 +497,9 @@ void PlayingState::Update() {
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
+    SetupNoteState();
   }
-
+  else
   if (IsKeyPressed(KeyBackward)) {
     // Go 5 seconds back
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
@@ -497,6 +508,38 @@ void PlayingState::Update() {
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
+    SetupNoteState();
+  }
+  else
+  {
+    // Check retry conditions
+    // track_properties
+    microseconds_t next_bar_time =
+        m_state.midi->GetNextBarInMicroseconds(m_retry_start);
+    microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
+    bool next_bar_exists = next_bar_time != 0;
+    bool next_bar_reached = cur_time > next_bar_time;
+    if (next_bar_exists && next_bar_reached)
+    {
+      if (m_should_retry)
+      {
+        // Retry
+        m_state.midi->GoTo(m_retry_start);
+        m_required_notes.clear();
+        m_state.midi_out->Reset();
+        m_keyboard->ResetActiveKeys();
+        m_notes = m_state.midi->Notes();
+        SetupNoteState();
+
+        // Forget failed notes
+        m_should_retry = false;
+      }
+      else
+      {
+        // Handle new retry block
+        m_retry_start = cur_time;
+      }
+    }
   }
 
   if (IsKeyPressed(KeySpace))

@@ -95,6 +95,10 @@ private:
 
   // For octave sliding
   int m_note_offset;
+
+  // For retries
+  bool m_should_retry;
+  microseconds_t m_retry_start;
 };
 
 #endif // __PLAYING_STATE_H
