@@ -146,6 +146,7 @@ vector<Track::Properties> TrackSelectionState::BuildTrackProperties() const {
   for (vector<TrackTile>::const_iterator i = m_track_tiles.begin(); i != m_track_tiles.end(); ++i) {
     props[i->GetTrackId()].color = i->GetColor();
     props[i->GetTrackId()].mode = i->GetMode();
+    props[i->GetTrackId()].is_retry_on = i->IsRetryOn();
   }
 
   return props;

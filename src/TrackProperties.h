@@ -88,11 +88,13 @@ namespace Track {
 
     Properties() :
       mode(ModeNotPlayed),
-      color(TangoSkyBlue) {
+      color(TangoSkyBlue),
+      is_retry_on(false) {
     }
 
     Mode mode;
     TrackColor color;
+    bool is_retry_on;
   };
 
 }; // end namespace
