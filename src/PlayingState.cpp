@@ -413,7 +413,7 @@ void PlayingState::Update() {
 
     const microseconds_t window_end = note->start + (KeyboardDisplay::NoteWindowLength / 2);
 
-    if (m_state.midi_in && note->state == UserPlayable && window_end <= cur_time) {
+    if (m_state.midi_in && note->state == UserPlayable && window_end <= cur_time){
       TranslatedNote note_copy = *note;
       note_copy.state = UserMissed;
 
@@ -422,6 +422,12 @@ void PlayingState::Update() {
 
       // Re-connect the (now-invalid) iterator to the replacement
       note = m_notes.find(note_copy);
+
+      if (m_state.track_properties[note->track_id].is_retry_on
+          && !m_should_wait_after_retry)
+        // They missed a note and should retry
+        // We don't count misses while waiting after retry
+        m_should_retry = true;
     }
 
     if (note->start > cur_time)
@@ -432,10 +438,6 @@ void PlayingState::Update() {
       if (note->state == UserMissed) {
         // They missed a note, reset the combo counter
         m_current_combo = 0;
-
-        if (m_state.track_properties[note->track_id].is_retry_on)
-          // They missed a note and should retry
-          m_should_retry = true;
 
         m_state.stats.notes_user_could_have_played++;
         m_state.stats.speed_integral += m_state.song_speed;
@@ -527,25 +529,29 @@ void PlayingState::Update() {
     microseconds_t next_bar_time =
         m_state.midi->GetNextBarInMicroseconds(m_retry_start);
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
+    // Check point in future
+    microseconds_t checkpoint_time = cur_time + delta_microseconds + 1;
+//  microseconds_t checkpoint_time = cur_time;
     bool next_bar_exists = next_bar_time != 0;
-    bool next_bar_reached = cur_time > next_bar_time;
+    bool next_bar_reached = checkpoint_time > next_bar_time;
     if (next_bar_exists && next_bar_reached)
     {
       if (m_should_retry)
       {
-        microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
-        // Retry
-        m_state.midi->GoTo(m_retry_start-delta_microseconds);
-        m_required_notes.clear();
-        m_state.midi_out->Reset();
-        m_keyboard->ResetActiveKeys();
-        m_notes = m_state.midi->Notes();
-        SetupNoteState();
-
         // Forget failed notes
         m_should_retry = false;
         // Should wait after retry for initial keys to be pressed
         m_should_wait_after_retry = true;
+
+        microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
+        // Retry
+        m_state.midi->GoTo(m_retry_start-delta_microseconds);
+        m_required_notes.clear();
+        m_pressed_notes.clear();
+        m_state.midi_out->Reset();
+        m_keyboard->ResetActiveKeys();
+        m_notes = m_state.midi->Notes();
+        SetupNoteState();
       }
       else
       {
@@ -720,6 +726,11 @@ void PlayingState::userPressedKey(int note_number, bool active)
 {
     if (active)
     {
+        if (m_should_wait_after_retry)
+        {
+            m_should_retry = false; // to ensure
+            m_should_wait_after_retry = false;
+        }
         m_pressed_notes.insert(note_number);
         m_required_notes.erase(note_number);
         m_state.dpms_thread->handleKeyPress();
@@ -736,7 +747,6 @@ void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
     {
         if (active)
         {
-            m_should_wait_after_retry = false;
             m_required_notes.insert(note_number);
         }
         else
