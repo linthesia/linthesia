@@ -39,10 +39,7 @@ void PlayingState::SetupNoteState() {
     TranslatedNote n = *i;
 
     n.state = AutoPlayed;
-    if (m_state.track_properties[n.track_id].mode == Track::ModeYouPlay ||
-        m_state.track_properties[n.track_id].mode == Track::ModeYouPlaySilently ||
-        m_state.track_properties[n.track_id].mode == Track::ModeLearning ||
-        m_state.track_properties[n.track_id].mode == Track::ModeLearningSilently)
+    if (isUserPlayableTrack(n.track_id))
       n.state = UserPlayable;
 
     m_notes.insert(n);
@@ -79,6 +76,7 @@ void PlayingState::ResetSong() {
   m_max_allowed_title_alpha = 1.0;
 
   m_should_retry = false;
+  m_should_wait_after_retry = false;
   m_retry_start = m_state.midi->GetNextBarInMicroseconds(-1000000000);
 }
 
@@ -88,6 +86,7 @@ PlayingState::PlayingState(const SharedState &state) :
   m_any_you_play_tracks(false),
   m_first_update(true),
   m_should_retry(false),
+  m_should_wait_after_retry(false),
   m_retry_start(0),
   m_state(state) {
 }
@@ -393,7 +392,10 @@ void PlayingState::Update() {
   // update, we don't have an artificially fast-forwarded start.
   if (!m_first_update) {
     if (areAllRequiredKeysPressed())
+    {
         Play(delta_microseconds);
+//      m_should_wait_after_retry = false; // always reset onces pressed
+    }
     else
         m_current_combo = 0;
 
@@ -492,23 +494,31 @@ void PlayingState::Update() {
   if (IsKeyPressed(KeyForward)) {
     // Go 5 seconds forward
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
-    m_state.midi->GoTo(cur_time + 5000000);
+    microseconds_t new_time = cur_time + 5000000;
+    m_state.midi->GoTo(new_time);
     m_required_notes.clear();
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
     SetupNoteState();
+    m_should_retry = false;
+    m_should_wait_after_retry = false;
+    m_retry_start = new_time;
   }
   else
   if (IsKeyPressed(KeyBackward)) {
     // Go 5 seconds back
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
-    m_state.midi->GoTo(cur_time - 5000000);
+    microseconds_t new_time = cur_time - 5000000;
+    m_state.midi->GoTo(new_time);
     m_required_notes.clear();
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
     SetupNoteState();
+    m_should_retry = false;
+    m_should_wait_after_retry = false;
+    m_retry_start = new_time;
   }
   else
   {
@@ -523,8 +533,9 @@ void PlayingState::Update() {
     {
       if (m_should_retry)
       {
+        microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
         // Retry
-        m_state.midi->GoTo(m_retry_start);
+        m_state.midi->GoTo(m_retry_start-delta_microseconds);
         m_required_notes.clear();
         m_state.midi_out->Reset();
         m_keyboard->ResetActiveKeys();
@@ -533,6 +544,8 @@ void PlayingState::Update() {
 
         // Forget failed notes
         m_should_retry = false;
+        // Should wait after retry for initial keys to be pressed
+        m_should_wait_after_retry = true;
       }
       else
       {
@@ -718,10 +731,14 @@ void PlayingState::userPressedKey(int note_number, bool active)
 void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
 {
     if (m_state.track_properties[track_id].mode == Track::ModeLearning ||
-        m_state.track_properties[track_id].mode == Track::ModeLearningSilently)
+        m_state.track_properties[track_id].mode == Track::ModeLearningSilently ||
+        (m_should_wait_after_retry && isUserPlayableTrack(track_id)))
     {
         if (active)
+        {
+            m_should_wait_after_retry = false;
             m_required_notes.insert(note_number);
+        }
         else
             m_required_notes.erase(note_number);
     }
@@ -735,4 +752,12 @@ bool PlayingState::isKeyPressed(int note_number)
 bool PlayingState::areAllRequiredKeysPressed()
 {
     return m_required_notes.empty();
+}
+
+bool PlayingState::isUserPlayableTrack(size_t track_id)
+{
+  return (m_state.track_properties[track_id].mode == Track::ModeYouPlay ||
+          m_state.track_properties[track_id].mode == Track::ModeYouPlaySilently ||
+          m_state.track_properties[track_id].mode == Track::ModeLearning ||
+          m_state.track_properties[track_id].mode == Track::ModeLearningSilently);
 }

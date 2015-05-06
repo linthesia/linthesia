@@ -420,11 +420,11 @@ void Midi::GoTo(microseconds_t microsecond_song_position) {
   // Do not let go back too far (causes bugs)
   // There is some black magic for negative values of
   // microsecond_song_position, just skip it
-  if (microsecond_song_position <= 0)
-  {
-      Reset(m_microsecond_lead_in, m_microsecond_lead_out);
-      return;
-  }
+//if (microsecond_song_position <= 0)
+//{
+//    Reset(m_microsecond_lead_in, m_microsecond_lead_out);
+//    return;
+//}
 
   m_microsecond_song_position = microsecond_song_position;
 
@@ -445,10 +445,12 @@ microseconds_t Midi::GetSongLengthInMicroseconds() const {
 // Gets next bar after point of time
 microseconds_t Midi::GetNextBarInMicroseconds(const microseconds_t point) const {
    MidiEventMicrosecondList::const_iterator j = m_bar_line_usecs.begin();
+   microseconds_t first_bar_usec = *j;
    for (; j != m_bar_line_usecs.end(); ++j) {
      microseconds_t bar_usec = *j;
+     microseconds_t first_note_and_first_bar_offset = m_microsecond_dead_start_air - first_bar_usec + 1;
      // Add offset
-     bar_usec -= m_microsecond_dead_start_air;
+     bar_usec -= m_microsecond_dead_start_air + first_note_and_first_bar_offset;
      if (bar_usec > point)
        return bar_usec;
    }
