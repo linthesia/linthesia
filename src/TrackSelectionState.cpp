@@ -101,6 +101,7 @@ void TrackSelectionState::Init() {
     int y = current_y;
 
     Track::Mode mode = Track::ModePlayedAutomatically;
+    bool is_retry_on = false;
     if (t.IsPercussion())
       mode = Track::ModePlayedButHidden;
 
@@ -111,9 +112,10 @@ void TrackSelectionState::Init() {
 
       color = m_state.track_properties[i].color;
       mode = m_state.track_properties[i].mode;
+      is_retry_on = m_state.track_properties[i].is_retry_on;
     }
 
-    TrackTile tile(x, y, i, color, mode);
+    TrackTile tile(x, y, i, color, mode, is_retry_on);
 
     m_track_tiles.push_back(tile);
 

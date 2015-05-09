@@ -26,13 +26,14 @@ const static char* ModeText[Track::ModeCount] = {
   "Not Played"
 };
 
-TrackTile::TrackTile(int x, int y, size_t track_id, Track::TrackColor color, Track::Mode mode) :
+TrackTile::TrackTile(int x, int y, size_t track_id, Track::TrackColor color, Track::Mode mode,
+                     bool is_retry_on) :
   m_x(x),
   m_y(y),
   m_mode(mode),
   m_color(color),
   m_preview_on(false),
-  m_retry_on(false),
+  m_retry_on(is_retry_on),
   m_track_id(track_id) {
 
   // Initialize the size and position of each button
