@@ -201,3 +201,9 @@ nobase_pkgdata_DATA = graphics/app_icon.ico \
 
 SUBDIRS = src scripts
 ACLOCAL_AMFLAGS = -I m4
+
+ctags-dependencies:
+	@$(MAKE) -C src ctags-dependencies
+
+.PHONY:ctags-dependencies
+

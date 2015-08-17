@@ -64,3 +64,13 @@ linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @ALSA_LIBS@
 linthesia_LDADD = libmidi.la
 linthesia_CXXFLAGS = -std=c++11 -iquote $(srcdir)/libmidi
 linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"$(GRAPHDIR)\"" -DSCRIPTDIR="\"$(bindir)\""
+
+ctags-dependencies:
+	@$(CC) -M -std=c++11 -I/usr/include @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ \
+		$(dist_libmidi_la_SOURCES) $(noinst_HEADERS) $(dist_linthesia_SOURCES) 2>/dev/null | \
+		sed 's/^.*://;s/^ //;s/ \\//;s/ /\n/g' | \
+	 	sort -u | \
+		$(CTAGS) --tag-relative=yes -L - --c++-kinds=+p --fields=+iaS --extra=+q -f $(top_srcdir)/tags
+
+.PHONY:ctags-dependencies
+
