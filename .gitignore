@@ -18,3 +18,12 @@ src/libmidi/.deps/
 src/libmidi/.dirstamp
 src/linthesia
 stamp-h1
+config.guess
+config.sub
+m4/
+missing
+compile
+config.h.in
+depcomp
+install-sh
+ltmain.sh
