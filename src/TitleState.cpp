@@ -143,6 +143,10 @@ void TitleState::Init() {
 }
 
 void TitleState::Update() {
+  MidiCommOut::UpdateDeviceList();
+  MidiCommIn::UpdateDeviceList();
+  m_input_tile->ReplaceDeviceList(MidiCommIn::GetDeviceList());
+  m_output_tile->ReplaceDeviceList(MidiCommOut::GetDeviceList());
 
   MouseInfo mouse = Mouse();
 

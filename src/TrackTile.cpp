@@ -32,6 +32,7 @@ TrackTile::TrackTile(int x, int y, size_t track_id, Track::TrackColor color, Tra
   m_mode(mode),
   m_color(color),
   m_preview_on(false),
+  m_retry_on(false),
   m_track_id(track_id) {
 
   // Initialize the size and position of each button
@@ -40,6 +41,7 @@ TrackTile::TrackTile(int x, int y, size_t track_id, Track::TrackColor color, Tra
   button_mode_right = ButtonState(192, 68, GraphicWidth, GraphicHeight);
   button_color      = ButtonState(228, 68, GraphicWidth, GraphicHeight);
   button_preview    = ButtonState(264, 68, GraphicWidth, GraphicHeight);
+  button_retry      = ButtonState(300, 68, GraphicWidth, GraphicHeight);
 }
 
 void TrackTile::Update(const MouseInfo &translated_mouse) {
@@ -47,6 +49,7 @@ void TrackTile::Update(const MouseInfo &translated_mouse) {
   // Update the mouse state of each button
   whole_tile.Update(translated_mouse);
   button_preview.Update(translated_mouse);
+  button_retry.Update(translated_mouse);
   button_color.Update(translated_mouse);
   button_mode_left.Update(translated_mouse);
   button_mode_right.Update(translated_mouse);
@@ -71,6 +74,9 @@ void TrackTile::Update(const MouseInfo &translated_mouse) {
 
   if (button_preview.hit)
     m_preview_on = !m_preview_on;
+
+  if (button_retry.hit)
+    m_retry_on = !m_retry_on;
 
   if (button_color.hit && m_mode != Track::ModeNotPlayed && m_mode != Track::ModePlayedButHidden) {
     int color = static_cast<int>(m_color) + 1;
@@ -152,8 +158,16 @@ void TrackTile::Draw(Renderer &renderer, const Midi *midi, Tga *buttons, Tga *bo
   if (m_preview_on)
     preview_graphic = GraphicPreviewTurnOff;
 
+  TrackTileGraphic retry_graphic = GraphicRetryOff;
+  if (m_retry_on)
+    retry_graphic = GraphicRetryOn;
+
   renderer.DrawTga(buttons, BUTTON_RECT(button_preview),
                    LookupGraphic(preview_graphic, button_preview.hovering),
+                   color_offset);
+
+  renderer.DrawTga(buttons, BUTTON_RECT(button_retry),
+                   LookupGraphic(retry_graphic, button_retry.hovering),
                    color_offset);
 
   // Draw mode text

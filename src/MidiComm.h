@@ -40,6 +40,7 @@ class MidiCommIn {
 public:
 
   static MidiCommDescriptionList GetDeviceList();
+  static void UpdateDeviceList();
 
    // device_id is obtained from GetDeviceList()
   MidiCommIn(unsigned int device_id);
@@ -59,9 +60,12 @@ public:
 
   // Returns whether the input device has more buffered events.
   bool KeepReading() const;
+  bool ShouldReconnect() const;
+  void Reconnect();
 
 private:
   MidiCommDescription m_description;
+  bool m_should_reconnect;
 
 };
 
@@ -69,6 +73,7 @@ class MidiCommOut {
 public:
 
   static MidiCommDescriptionList GetDeviceList();
+  static void UpdateDeviceList();
 
   // device_id is obtained from GetDeviceList()
   MidiCommOut(unsigned int device_id);
@@ -83,6 +88,8 @@ public:
 
   // Turns all notes off and resets all controllers
   void Reset();
+
+  void Reconnect();
 
 private:
   void Release();

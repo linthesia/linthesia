@@ -64,6 +64,7 @@ private:
   void filePressedKey(int note_number, bool active, size_t track_id);
   bool areAllRequiredKeysPressed();
   bool isKeyPressed(int note_number);
+  bool isUserPlayableTrack(size_t track_id);
 
   int CalcKeyboardHeight() const;
   void SetupNoteState();
@@ -95,6 +96,11 @@ private:
 
   // For octave sliding
   int m_note_offset;
+
+  // For retries
+  bool m_should_retry;
+  bool m_should_wait_after_retry;
+  microseconds_t m_retry_start;
 };
 
 #endif // __PLAYING_STATE_H

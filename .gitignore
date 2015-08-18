@@ -18,6 +18,8 @@ src/libmidi/.deps/
 src/libmidi/.dirstamp
 src/linthesia
 stamp-h1
+
+# generated with autoreconf -ivf
 config.guess
 config.sub
 m4/
