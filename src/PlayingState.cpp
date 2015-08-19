@@ -82,6 +82,7 @@ void PlayingState::ResetSong() {
   m_state.stats.total_note_count = static_cast<int>(m_notes.size());
 
   m_current_combo = 0;
+  m_add_score = true;
 
   m_note_offset = 0;
   m_max_allowed_title_alpha = 1.0;
@@ -359,8 +360,10 @@ void PlayingState::Listen() {
         m_state.midi_out->Write(ev);
 
       // Adjust our statistics
-      const static double NoteValue = 100.0;
-      m_state.stats.score += NoteValue * CalculateScoreMultiplier() * (m_state.song_speed / 100.0);
+      if (m_add_score) {
+        const static double NoteValue = 100.0;
+        m_state.stats.score += NoteValue * CalculateScoreMultiplier() * (m_state.song_speed / 100.0);
+      }
 
       m_state.stats.notes_user_could_have_played++;
       m_state.stats.speed_integral += m_state.song_speed;
@@ -437,8 +440,10 @@ void PlayingState::Update() {
       Play(delta_microseconds);
 //    m_should_wait_after_retry = false; // always reset onces pressed
     }
-    else {
+    else
+    {
       m_current_combo = 0;
+      m_add_score = false;
     }
 
     Listen();

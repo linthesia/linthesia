@@ -98,6 +98,7 @@ private:
 
   SharedState m_state;
   int m_current_combo;
+  bool m_add_score;
 
   double m_title_alpha;
   double m_max_allowed_title_alpha;
