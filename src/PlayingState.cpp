@@ -502,6 +502,10 @@ void PlayingState::Update() {
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
+
+    // To avoid checks for keys that start before and stop after new_time 
+    setAllHitUntilTime(new_time);
+
     SetupNoteState();
     m_should_retry = false;
     m_should_wait_after_retry = false;
@@ -771,3 +775,22 @@ bool PlayingState::isUserPlayableTrack(size_t track_id)
           m_state.track_properties[track_id].mode == Track::ModeLearning ||
           m_state.track_properties[track_id].mode == Track::ModeLearningSilently);
 }
+
+void PlayingState::setAllHitUntilTime(microseconds_t time)
+{
+  for (TranslatedNoteSet::iterator i = m_notes.begin(); i != m_notes.end(); i++) {
+    TranslatedNoteSet::iterator note = i++;
+
+    const microseconds_t window_end = note->start + (KeyboardDisplay::NoteWindowLength / 2);
+
+    if (window_end <= time) {
+      TranslatedNote note_copy = *note;
+      note_copy.state = UserHit;
+
+      m_notes.erase(note);
+      m_notes.insert(note_copy);
+    }
+    else break;
+  }
+}
+

@@ -101,6 +101,8 @@ private:
   bool m_should_retry;
   bool m_should_wait_after_retry;
   microseconds_t m_retry_start;
+
+  void setAllHitUntilTime(microseconds_t time);
 };
 
 #endif // __PLAYING_STATE_H
