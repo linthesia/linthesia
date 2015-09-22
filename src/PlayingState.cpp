@@ -39,8 +39,12 @@ void PlayingState::SetupNoteState() {
     TranslatedNote n = *i;
 
     n.state = AutoPlayed;
+    n.retry_state = AutoPlayed;
     if (isUserPlayableTrack(n.track_id))
+    {
       n.state = UserPlayable;
+      n.retry_state = UserPlayable;
+    }
 
     m_notes.insert(n);
   }
@@ -65,6 +69,7 @@ void PlayingState::ResetSong() {
   m_state.midi->Reset(LeadIn, LeadOut);
 
   m_notes = m_state.midi->Notes();
+  m_notes_history.clear();
   SetupNoteState();
 
   m_state.stats = SongStatistics();
@@ -443,6 +448,8 @@ void PlayingState::Update() {
         m_state.stats.speed_integral += m_state.song_speed;
       }
 
+      TranslatedNote history_note = *note;
+      m_notes_history.insert(history_note);
       m_notes.erase(note);
     }
   }
@@ -502,10 +509,7 @@ void PlayingState::Update() {
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
-
-    // To avoid checks for keys that start before and stop after new_time 
-    setAllHitUntilTime(new_time);
-
+    m_notes_history.clear();
     SetupNoteState();
     m_should_retry = false;
     m_should_wait_after_retry = false;
@@ -521,6 +525,7 @@ void PlayingState::Update() {
     m_state.midi_out->Reset();
     m_keyboard->ResetActiveKeys();
     m_notes = m_state.midi->Notes();
+    m_notes_history.clear();
     SetupNoteState();
     m_should_retry = false;
     m_should_wait_after_retry = false;
@@ -542,20 +547,45 @@ void PlayingState::Update() {
     {
       if (m_should_retry)
       {
+        TranslatedNoteSet old = m_notes;
+        old.insert(m_notes_history.begin(), m_notes_history.end());
+
         // Forget failed notes
         m_should_retry = false;
         // Should wait after retry for initial keys to be pressed
         m_should_wait_after_retry = true;
 
         microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
+        microseconds_t new_time= m_retry_start-delta_microseconds;
         // Retry
-        m_state.midi->GoTo(m_retry_start-delta_microseconds);
+        m_state.midi->GoTo(new_time);
         m_required_notes.clear();
         m_pressed_notes.clear();
         m_state.midi_out->Reset();
         m_keyboard->ResetActiveKeys();
-        m_notes = m_state.midi->Notes();
-        SetupNoteState();
+        TranslatedNoteSet def = m_state.midi->Notes();
+
+        // Set retry_state
+        // For each current node
+        // from SetupNoteState
+        m_notes.clear();
+        m_notes_history.clear();
+        for (TranslatedNoteSet::iterator i = def.begin(); i != def.end(); i++) {
+          TranslatedNote n = *i;
+
+          n.state = AutoPlayed;
+          n.retry_state = AutoPlayed;
+          if (isUserPlayableTrack(n.track_id))
+          {
+            n.state = UserPlayable;
+            n.retry_state = findNodeState(n, old, UserPlayable);
+          }
+
+          m_notes.insert(n);
+        }
+
+        // To avoid checks for keys that start before and stop after new_time 
+        eraseUntilTime(new_time);
       }
       else
       {
@@ -656,6 +686,12 @@ void PlayingState::Draw(Renderer &renderer) const {
   TextWriter speed(Layout::ScreenMarginX + 412 + speed_x_offset, text_y + 12,
                    renderer, false, Layout::TitleFontSize+2);
   speed << Text(speed_text, Renderer::ToColor(114, 159, 207));
+
+  string retry_text = m_should_retry ? "R" : "";
+
+  TextWriter retry(Layout::ScreenMarginX + 600, text_y + 12,
+                   renderer, false, Layout::TitleFontSize+2);
+  retry << Text(retry_text, Renderer::ToColor(114, 159, 207));
 
   double non_zero_playback_speed = ( (m_state.song_speed == 0) ? 0.1 : (m_state.song_speed/100.0) );
   microseconds_t tot_seconds = static_cast<microseconds_t>((m_state.midi->GetSongLengthInMicroseconds() /
@@ -776,21 +812,33 @@ bool PlayingState::isUserPlayableTrack(size_t track_id)
           m_state.track_properties[track_id].mode == Track::ModeLearningSilently);
 }
 
-void PlayingState::setAllHitUntilTime(microseconds_t time)
+void PlayingState::eraseUntilTime(microseconds_t time)
 {
-  for (TranslatedNoteSet::iterator i = m_notes.begin(); i != m_notes.end(); i++) {
-    TranslatedNoteSet::iterator note = i++;
+  for (TranslatedNoteSet::const_iterator i = m_notes.begin(); i != m_notes.end();) {
+    TranslatedNoteSet::const_iterator j = i;
+    TranslatedNote n = *i;
+    i++;
 
-    const microseconds_t window_end = note->start + (KeyboardDisplay::NoteWindowLength / 2);
-
-    if (window_end <= time) {
-      TranslatedNote note_copy = *note;
-      note_copy.state = UserHit;
-
-      m_notes.erase(note);
-      m_notes.insert(note_copy);
+    // Erase very old notes
+    if (n.end < time)
+      m_notes.erase(j);
+    else
+    // Hit still visible once
+    if (n.start <= time)
+    {
+      n.state = UserHit;
+      m_notes.erase(j);
+      m_notes.insert(n);
     }
-    else break;
   }
 }
 
+NoteState PlayingState::findNodeState(const TranslatedNote& note, TranslatedNoteSet& notes, NoteState default_note_state)
+{
+  // Search by comparing start, end, note_id and track_id
+  TranslatedNoteSet::iterator n = notes.find(note);
+  if (n == notes.end())
+      return default_note_state;
+
+  return n->state;
+}

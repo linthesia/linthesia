@@ -80,6 +80,7 @@ private:
   KeyboardDisplay *m_keyboard;
   microseconds_t m_show_duration;
   TranslatedNoteSet m_notes;
+  TranslatedNoteSet m_notes_history;
 
   bool m_any_you_play_tracks;
   size_t m_look_ahead_you_play_note_count;
@@ -102,7 +103,9 @@ private:
   bool m_should_wait_after_retry;
   microseconds_t m_retry_start;
 
-  void setAllHitUntilTime(microseconds_t time);
+  void eraseUntilTime(microseconds_t time);
+
+  NoteState findNodeState(const TranslatedNote& note, TranslatedNoteSet& notes, NoteState default_note_state);
 };
 
 #endif // __PLAYING_STATE_H
