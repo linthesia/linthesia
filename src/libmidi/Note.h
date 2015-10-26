@@ -56,6 +56,8 @@ struct GenericNote  {
   int velocity;
 
   NoteState state;
+  // State before retry (last try)
+  NoteState retry_state;
 };
 
 // Note keeps the internal pulses found in the MIDI file which are

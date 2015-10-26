@@ -546,7 +546,7 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
       }
 
       const Track::TrackColor color = track_properties[i->track_id].color;
-      const int &brush_id = (i->state == UserMissed ? Track::MissedNote : color);
+      const int &brush_id = (((i->state == UserMissed) || (i->retry_state == UserMissed)) ? Track::MissedNote : color);
 
       DrawNote(renderer, (drawing_black ? tex_black : tex_white),
                (drawing_black ? BlackNoteDimensions : WhiteNoteDimensions), left, top, width, height, brush_id);

@@ -41,7 +41,8 @@ class TrackTile {
 public:
 
   TrackTile(int x, int y, size_t track_id,
-            Track::TrackColor color, Track::Mode mode);
+            Track::TrackColor color, Track::Mode mode,
+            bool is_retry_on);
 
   void Update(const MouseInfo &translated_mouse);
   void Draw(Renderer &renderer, const Midi *midi, Tga *buttons, Tga *box) const;

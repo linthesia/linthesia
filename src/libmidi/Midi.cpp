@@ -448,9 +448,8 @@ microseconds_t Midi::GetNextBarInMicroseconds(const microseconds_t point) const 
    microseconds_t first_bar_usec = *j;
    for (; j != m_bar_line_usecs.end(); ++j) {
      microseconds_t bar_usec = *j;
-     microseconds_t first_note_and_first_bar_offset = m_microsecond_dead_start_air - first_bar_usec + 1;
      // Add offset
-     bar_usec -= m_microsecond_dead_start_air + first_note_and_first_bar_offset;
+     bar_usec -= first_bar_usec + 1;
      if (bar_usec > point)
        return bar_usec;
    }
