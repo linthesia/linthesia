@@ -13,7 +13,7 @@ LT_INIT()
 
 AC_ARG_WITH(
     [scriptdir],
-    [AS_HELP_STRING([--with-scriptdir=<path to scripts>],[load scripts from this directory, default: $(pkgdatadir)/scriptdir])],
+    [AS_HELP_STRING([--with-scriptdir=<path to scripts>],[load scripts from this directory, default: $(bindir)])],
     [scriptdir="${with_scriptdir}"],
     [scriptdir="\$(bindir)"]
 )
