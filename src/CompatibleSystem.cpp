@@ -45,12 +45,50 @@ namespace Compatible {
     // TODO
   }
 
+  void GetDisplayRect(Gdk::Rectangle &rect) {
+	  static bool inited = false;
+	  static Gdk::Rectangle monitor_geometry;
+
+	  if (!inited) {
+		  auto display = Gdk::Display::get_default();
+
+		  int pointer_x, pointer_y;
+		  Gdk::ModifierType pointer_mask;
+		  display->get_pointer(pointer_x, pointer_y, pointer_mask);
+
+		  auto screen = display->get_default_screen();
+
+		  screen->get_monitor_geometry(
+				  screen->get_monitor_at_point(pointer_x, pointer_y),
+				  monitor_geometry
+		  );
+		  inited = true;
+	  }
+	  rect = monitor_geometry;
+  }
+
+  int GetDisplayLeft() {
+		Gdk::Rectangle rect;
+		GetDisplayRect(rect);
+	    return rect.get_x();
+  }
+
+  int GetDisplayTop() {
+		Gdk::Rectangle rect;
+		GetDisplayRect(rect);
+	    return rect.get_y();
+  }
+
   int GetDisplayWidth() {
-    return Gdk::Screen::get_default()->get_width();
+	Gdk::Rectangle rect;
+	GetDisplayRect(rect);
+    return rect.get_width();
   }
 
   int GetDisplayHeight() {
-    return Gdk::Screen::get_default()->get_height();
+		Gdk::Rectangle rect;
+		GetDisplayRect(rect);
+	    return rect.get_height();
   }
 
   void GracefulShutdown() {

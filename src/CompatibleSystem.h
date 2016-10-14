@@ -20,6 +20,8 @@ namespace Compatible {
   // Shows an error box with an OK button
   void ShowError(const std::string &err);
   
+  int GetDisplayLeft();
+  int GetDisplayTop();
   int GetDisplayWidth();
   int GetDisplayHeight();
   

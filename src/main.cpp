@@ -338,53 +338,9 @@ int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
   Gtk::GL::init(argc, argv);
 
-/*
-  char message[1024];
-
-  auto display = Gdk::Display::get_default();
-
-  int pointer_x, pointer_y;
-  Gdk::ModifierType pointer_mask;
-  display->get_pointer(pointer_x, pointer_y, pointer_mask);
-
-  snprintf(message, sizeof(message), "Default display: %s, pointer at: (%d, %d), monitor at pointer: %d",
-  		display->get_name().c_str(),
-			pointer_x,
-			pointer_y,
-			display->get_default_screen()->get_monitor_at_point(pointer_x, pointer_y)
-			);
-  cout << message << endl;
-
-  for (int n_screen = 0; n_screen < display->get_n_screens(); ++n_screen) {
-  	snprintf(message, sizeof(message), "found screen %d", n_screen);
-  	cout << message << endl;
-  	auto screen = display->get_screen(n_screen);
-      for (int n_monitor = 0; n_monitor < screen->get_n_monitors(); ++n_monitor) {
-      	Gdk::Rectangle mg;
-      	screen->get_monitor_geometry(n_monitor, mg);
-      	snprintf(message, sizeof(message), "  monitor (%d, %d) %dx%d", mg.get_x(), mg.get_y(), mg.get_width(), mg.get_height());
-      	cout << message << endl;
-      }
-  }
-*/
-
-  auto display = Gdk::Display::get_default();
-
-  int pointer_x, pointer_y;
-  Gdk::ModifierType pointer_mask;
-  display->get_pointer(pointer_x, pointer_y, pointer_mask);
-
-  auto screen = display->get_default_screen();
-  Gdk::Rectangle monitor_geometry;
-
-  screen->get_monitor_geometry(
-		  screen->get_monitor_at_point(pointer_x, pointer_y),
-		  monitor_geometry
-	);
-
   state_manager = new GameStateManager(
-		  	  	  	  	  monitor_geometry.get_width(),
-						  monitor_geometry.get_height()
+		  	  	  	  	  Compatible::GetDisplayWidth(),
+						  Compatible::GetDisplayHeight()
 					);
 
   try {
@@ -483,7 +439,8 @@ int main(int argc, char *argv[]) {
     DrawingArea da(glconfig);
     window.add(da);
     window.show_all();
-    window.move(pointer_x, pointer_y);
+    window.move(Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth()/2, Compatible::GetDisplayTop() + Compatible::GetDisplayHeight()/2);
+
 
     // Init DHMS thread once for the whole program
     DpmsThread* dpms_thread = new DpmsThread();
