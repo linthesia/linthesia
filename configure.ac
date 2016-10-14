@@ -15,7 +15,7 @@ AC_ARG_WITH(
     [scriptdir],
     [AS_HELP_STRING([--with-scriptdir=<path to scripts>],[load scripts from this directory, default: $(pkgdatadir)/scriptdir])],
     [scriptdir="${with_scriptdir}"],
-    [scriptdir="\$(pkgdatadir)/scriptdir"]
+    [scriptdir="\$(bindir)"]
 )
 AC_SUBST([scriptdir])
 
