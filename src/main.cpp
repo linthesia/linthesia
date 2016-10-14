@@ -338,8 +338,10 @@ int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
   Gtk::GL::init(argc, argv);
 
-  state_manager = new GameStateManager(Compatible::GetDisplayWidth(),
-                                       Compatible::GetDisplayHeight());
+  state_manager = new GameStateManager(
+		  	  	  	  	  Compatible::GetDisplayWidth(),
+						  Compatible::GetDisplayHeight()
+					);
 
   try {
     string command_line("");
@@ -437,6 +439,8 @@ int main(int argc, char *argv[]) {
     DrawingArea da(glconfig);
     window.add(da);
     window.show_all();
+    window.move(Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth()/2, Compatible::GetDisplayTop() + Compatible::GetDisplayHeight()/2);
+
 
     // Init DHMS thread once for the whole program
     DpmsThread* dpms_thread = new DpmsThread();
