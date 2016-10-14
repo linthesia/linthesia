@@ -11,6 +11,22 @@ AC_CONFIG_MACRO_DIR([m4])
 LT_PREREQ([2.2])
 LT_INIT()
 
+AC_ARG_WITH(
+    [scriptdir],
+    [AS_HELP_STRING([--with-scriptdir=<path to scripts>],[load scripts from this directory, default: $(pkgdatadir)/scriptdir])],
+    [scriptdir="${with_scriptdir}"],
+    [scriptdir="\$(pkgdatadir)/scriptdir"]
+)
+AC_SUBST([scriptdir])
+
+AC_ARG_WITH(
+    [graphdir],
+    [AS_HELP_STRING([--with-graphdir=<path to images>],[load graphic resources from this directory, default: $(pkgdatadir)/graphics])],
+    [graphdir="${with_graphdir}"],
+    [graphdir="\$(pkgdatadir)/graphics"]
+)
+AC_SUBST([graphdir])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_INSTALL
