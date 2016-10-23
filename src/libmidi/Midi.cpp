@@ -403,9 +403,9 @@ MidiEventListWithTrackId Midi::Update(microseconds_t delta_microseconds) {
     MidiEventList track_events = m_tracks[i].Update(delta_microseconds);
 
     const size_t event_count = track_events.size();
-    // Collect evants to be passed to a screen keyboard
+    // Collect events to be passed to a screen keyboard
     for (size_t j = 0; j < event_count; ++j) {
-      aggregated_events.insert(aggregated_events.end(), make_pair<size_t, MidiEvent>(i, track_events[j]));
+      aggregated_events.insert(aggregated_events.end(), make_pair(i, track_events[j]));
     }
   }
 
