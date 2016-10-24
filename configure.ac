@@ -33,5 +33,5 @@ AC_TYPE_UINT32_T
 # Checks for library functions.
 AC_CHECK_FUNCS([gettimeofday])
 
-AC_CONFIG_FILES([Makefile src/Makefile scripts/Makefile]) 
+AC_CONFIG_FILES([Makefile src/Makefile scripts/Makefile])
 AC_OUTPUT
