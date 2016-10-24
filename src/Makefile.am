@@ -12,8 +12,6 @@ noinst_HEADERS =		libmidi/MidiEvent.h \
 
 libmidi_la_CPPFLAGS = -iquote $(srcdir)/libmidi
 
-GRAPHDIR = $(pkgdatadir)/graphics
-
 bin_PROGRAMS = linthesia
 dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				KeyboardDisplay.cpp \
@@ -63,7 +61,7 @@ noinst_HEADERS +=		CompatibleSystem.h \
 linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @ALSA_LIBS@
 linthesia_LDADD = libmidi.la
 linthesia_CXXFLAGS = -std=c++11 -iquote $(srcdir)/libmidi
-linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@
+linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
 
 ctags-dependencies:
 	@$(CC) -M -std=c++11 -I/usr/include @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ \
