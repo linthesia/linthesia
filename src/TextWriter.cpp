@@ -61,7 +61,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
     fontname = STRING(fontname << " " << in_size);
     Pango::FontDescription* font_desc = new Pango::FontDescription(fontname);
     Glib::RefPtr<Pango::Font> ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-    if (ret == 0)
+    if (!ret)
       throw LinthesiaError("An error ocurred while trying to use use_pango_font() with "
                            "font '" + fontname + "'");
 
