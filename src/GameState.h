@@ -220,6 +220,8 @@ public:
   int GetStateWidth() const { return m_screen_x; }
   int GetStateHeight() const { return m_screen_y; }
 
+  void SetStateDimensions(int w, int h);
+
 private:
   GameState *m_next_state;
   GameState *m_current_state;

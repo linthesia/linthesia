@@ -36,13 +36,15 @@ GameStateManager* state_manager;
 
 const static string application_name = "Linthesia";
 const static string friendly_app_name = STRING("Linthesia " <<
-					       LinthesiaVersionString);
+                                               LinthesiaVersionString);
 
 const static string error_header1 = "Linthesia detected a";
 const static string error_header2 = " problem and must close:\n\n";
 const static string error_footer = "\n\nIf you don't think this should have "
   "happened, please\ncontact Oscar (on Linthesia sourceforge site) and\n"
   "describe what you were doing when the problem\noccurred. Thanks.";
+
+const static int vsync_interval = 2;
 
 class EdgeTracker  {
 public:
@@ -290,6 +292,7 @@ bool DrawingArea::on_configure_event(GdkEventConfigure* event) {
   glLoadIdentity();
   gluOrtho2D(0, get_width(), 0, get_height());
 
+  state_manager->SetStateDimensions(get_width(), get_height());
   state_manager->Update(window_state.JustActivated());
 
   glwindow->gl_end();
@@ -306,7 +309,7 @@ bool DrawingArea::on_expose_event(GdkEventExpose* event) {
   glCallList(1);
 
   Renderer rend(get_gl_context(), get_pango_context());
-  rend.SetVSyncInterval(1);
+  rend.SetVSyncInterval(vsync_interval);
   state_manager->Draw(rend);
 
   // swap buffers.
@@ -326,7 +329,7 @@ bool DrawingArea::GameLoop() {
     state_manager->Update(window_state.JustActivated());
 
     Renderer rend(get_gl_context(), get_pango_context());
-    rend.SetVSyncInterval(1);
+    rend.SetVSyncInterval(vsync_interval);
 
     state_manager->Draw(rend);
   }
@@ -338,11 +341,6 @@ int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
   Gtk::GL::init(argc, argv);
 
-  state_manager = new GameStateManager(
-		  	  	  	  	  Compatible::GetDisplayWidth(),
-						  Compatible::GetDisplayHeight()
-					);
-
   try {
     string command_line("");
 
@@ -351,15 +349,18 @@ int main(int argc, char *argv[]) {
     if (argc > 1)
       command_line = string(argv[1]);
 
+    // TODO: parse from command line args
+    bool fullscreen = false;
+
     // strip any leading or trailing quotes from the filename
     // argument (to match the format returned by the open-file
     // dialog later).
     if (command_line.length() > 0 &&
-	command_line[0] == '\"')
+        command_line[0] == '\"')
       command_line = command_line.substr(1, command_line.length() - 1);
 
     if (command_line.length() > 0 &&
-	command_line[command_line.length()-1] == '\"')
+        command_line[command_line.length()-1] == '\"')
       command_line = command_line.substr(0, command_line.length() - 1);
 
     Midi *midi = 0;
@@ -367,17 +368,17 @@ int main(int argc, char *argv[]) {
     // attempt to open the midi file given on the command line first
     if (command_line != "") {
       try {
-	midi = new Midi(Midi::ReadFromFile(command_line));
+        midi = new Midi(Midi::ReadFromFile(command_line));
       }
 
       catch (const MidiError &e) {
-	string wrapped_description = STRING("Problem while loading file: " <<
-					    command_line <<
-					    "\n") + e.GetErrorDescription();
-	Compatible::ShowError(wrapped_description);
+        string wrapped_description = STRING("Problem while loading file: " <<
+                                            command_line <<
+                                            "\n") + e.GetErrorDescription();
+        Compatible::ShowError(wrapped_description);
 
-	command_line = "";
-	midi = 0;
+        command_line = "";
+        midi = 0;
       }
     }
 
@@ -385,29 +386,29 @@ int main(int argc, char *argv[]) {
     // simply was no command line filename, use a "file open" dialog.
     if (command_line == "") {
       while (!midi) {
-	string file_title;
-	FileSelector::RequestMidiFilename(&command_line, &file_title);
+        string file_title;
+        FileSelector::RequestMidiFilename(&command_line, &file_title);
 
-	if (command_line != "") {
-	  try {
-	    midi = new Midi(Midi::ReadFromFile(command_line));
-	  }
-	  catch (const MidiError &e) {
-	    string wrapped_description = \
-	      STRING("Problem while loading file: " <<
-		     file_title <<
-		     "\n") + e.GetErrorDescription();
-	    Compatible::ShowError(wrapped_description);
+        if (command_line != "") {
+          try {
+            midi = new Midi(Midi::ReadFromFile(command_line));
+          }
+          catch (const MidiError &e) {
+            string wrapped_description = \
+              STRING("Problem while loading file: " <<
+                     file_title <<
+                     "\n") + e.GetErrorDescription();
+            Compatible::ShowError(wrapped_description);
 
-	    midi = 0;
-	  }
-	}
+            midi = 0;
+          }
+        }
 
-	else {
-	  // they pressed cancel, so they must not want to run
-	  // the app anymore.
-	  return 0;
-	}
+        else {
+          // they pressed cancel, so they must not want to run
+          // the app anymore.
+          return 0;
+        }
       }
     }
 
@@ -415,8 +416,8 @@ int main(int argc, char *argv[]) {
 
     // try double-buffered visual
     glconfig = Gdk::GL::Config::create(Gdk::GL::MODE_RGB    |
-        			       Gdk::GL::MODE_DEPTH  |
-        			       Gdk::GL::MODE_DOUBLE);
+                                       Gdk::GL::MODE_DEPTH  |
+                                       Gdk::GL::MODE_DOUBLE);
     if (!glconfig) {
       cerr << "*** Cannot find the double-buffered visual.\n"
            << "*** Trying single-buffered visual.\n";
@@ -425,22 +426,37 @@ int main(int argc, char *argv[]) {
       glconfig = Gdk::GL::Config::create(Gdk::GL::MODE_RGB |
                                          Gdk::GL::MODE_DEPTH);
       if (!glconfig) {
-	string description = STRING(error_header1 <<
-				    " OpenGL" <<
-				    error_header2 <<
-				    "Cannot find any OpenGL-capable visual." <<
-				    error_footer);
-	Compatible::ShowError(description);
-	return 1;
+        string description = STRING(error_header1 <<
+                                    " OpenGL" <<
+                                    error_header2 <<
+                                    "Cannot find any OpenGL-capable visual." <<
+                                    error_footer);
+        Compatible::ShowError(description);
+        return 1;
       }
     }
+
+    int sh = Compatible::GetDisplayHeight();
+    int sw = Compatible::GetDisplayWidth();
+    state_manager = new GameStateManager(sw, sh);
 
     Gtk::Window window;
     DrawingArea da(glconfig);
     window.add(da);
     window.show_all();
-    window.move(Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth()/2, Compatible::GetDisplayTop() + Compatible::GetDisplayHeight()/2);
 
+    window.set_title(friendly_app_name);
+    window.set_icon_from_file(string(GRAPHDIR) + "/app_icon.ico");
+
+    if (fullscreen) {
+        window.fullscreen();
+        window.move(
+            Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth() / 2, 
+            Compatible::GetDisplayTop() + Compatible::GetDisplayHeight() / 2);
+    }
+    else {
+        window.maximize();
+    }
 
     // Init DHMS thread once for the whole program
     DpmsThread* dpms_thread = new DpmsThread();
@@ -451,11 +467,6 @@ int main(int argc, char *argv[]) {
     state.midi = midi;
     state.dpms_thread = dpms_thread;
     state_manager->SetInitialState(new TitleState(state));
-
-    window.fullscreen();
-    window.set_title(friendly_app_name);
-
-    window.set_icon_from_file(string(GRAPHDIR) + "/app_icon.ico");
 
     // get refresh rate from user settings
     string key = "refresh_rate";
@@ -486,41 +497,41 @@ int main(int argc, char *argv[]) {
 
   catch (const LinthesiaError &e) {
     string wrapped_description = STRING(error_header1 <<
-					error_header2 <<
-					e.GetErrorDescription() <<
-					error_footer);
+                                        error_header2 <<
+                                        e.GetErrorDescription() <<
+                                        error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
   catch (const MidiError &e) {
     string wrapped_description = STRING(error_header1 <<
-					" MIDI" <<
-					error_header2 <<
-					e.GetErrorDescription() <<
-					error_footer);
+                                        " MIDI" <<
+                                        error_header2 <<
+                                        e.GetErrorDescription() <<
+                                        error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
   catch (const Gnome::Conf::Error& e) {
     string wrapped_description = STRING(error_header1 <<
-					" Gnome::Conf::Error" <<
-					error_header2 <<
-					e.what() <<
-					error_footer);
+                                        " Gnome::Conf::Error" <<
+                                        error_header2 <<
+                                        e.what() <<
+                                        error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
   catch (const exception &e) {
     string wrapped_description = STRING("Linthesia detected an unknown "
-					"problem and must close!  '" <<
-					e.what() << "'" << error_footer);
+                                        "problem and must close!  '" <<
+                                        e.what() << "'" << error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
   catch (...) {
     string wrapped_description = STRING("Linthesia detected an unknown "
-					"problem and must close!" <<
-					error_footer);
+                                        "problem and must close!" <<
+                                        error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
