@@ -131,6 +131,18 @@ Tga *GameStateManager::GetTexture(Texture tex_name, bool smooth) const {
   return m_textures[tex_name];
 }
 
+void GameStateManager::SetStateDimensions(int w, int h) {
+  bool dirty = (m_screen_x != w && m_screen_y != h);
+  
+  m_screen_x = w;
+  m_screen_y = h;
+  
+  if (dirty && m_current_state) {
+    m_current_state->Init();
+    //m_current_state->Update();
+  }
+}
+
 void GameStateManager::KeyPress(GameKey key) {
 
   m_key_presses |= static_cast<unsigned long>(key);
