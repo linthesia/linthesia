@@ -29,3 +29,6 @@ config.h.in
 depcomp
 install-sh
 ltmain.sh
+
+build/
+config.h.in~
