@@ -34,6 +34,14 @@ struct ButtonState {
     hit = hovering && mouse.released.left;
   }
 
+  void SetX(int _x) {
+    x = _x;
+  }
+
+  void SetY(int _y) {
+    y = _y;
+  }
+
   // Simple mouse over
   bool hovering;
 

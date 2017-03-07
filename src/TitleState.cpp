@@ -142,6 +142,27 @@ void TitleState::Init() {
                                  GetTexture(InputBox));
 }
 
+void TitleState::Resize() {
+    const bool compress_height = (GetStateHeight() < 750);
+    const int initial_y = (compress_height ? 230 : 360);
+    const int each_y = (compress_height ? 94 : 100);
+
+    m_file_tile->SetX((GetStateWidth() - StringTileWidth) / 2);
+    m_file_tile->SetY(initial_y + each_y * 0);
+
+    m_output_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
+    m_output_tile->SetY(initial_y + each_y * 1);
+    
+    m_input_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
+    m_input_tile->SetY(initial_y + each_y*2);
+
+    m_back_button.SetX(Layout::ScreenMarginX);
+    m_back_button.SetY(GetStateHeight() - Layout::ScreenMarginY / 2 - Layout::ButtonHeight / 2);
+
+    m_continue_button.SetX(GetStateWidth() - Layout::ScreenMarginX - Layout::ButtonWidth);
+    m_continue_button.SetY(GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2);
+}
+
 void TitleState::Update() {
   MidiCommOut::UpdateDeviceList();
   MidiCommIn::UpdateDeviceList();

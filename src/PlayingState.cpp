@@ -360,6 +360,11 @@ void PlayingState::Listen() {
   }
 }
 
+void PlayingState::Resize() {
+    delete  m_keyboard;
+    m_keyboard = new KeyboardDisplay(KeyboardSize88, GetStateWidth() - Layout::ScreenMarginX*2, CalcKeyboardHeight());
+}
+
 void PlayingState::Update() {
 
   // Calculate how visible the title bar should be
