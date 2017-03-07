@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "TitleState.h"
 #include "DpmsThread.h"
+#include "SongLibState.h"
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
@@ -350,7 +351,7 @@ int main(int argc, char *argv[]) {
       command_line = string(argv[1]);
 
     // TODO: parse from command line args
-    bool fullscreen = false;
+    bool fullscreen = true;
 
     // strip any leading or trailing quotes from the filename
     // argument (to match the format returned by the open-file
@@ -466,7 +467,8 @@ int main(int argc, char *argv[]) {
     state.song_title = FileSelector::TrimFilename(command_line);
     state.midi = midi;
     state.dpms_thread = dpms_thread;
-    state_manager->SetInitialState(new TitleState(state));
+    //state_manager->SetInitialState(new TitleState(state));
+    state_manager->SetInitialState(new SongLibState(state));
 
     // get refresh rate from user settings
     string key = "refresh_rate";

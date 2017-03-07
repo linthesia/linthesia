@@ -28,6 +28,14 @@ void StatsState::Init() {
       Layout::ButtonWidth, Layout::ButtonHeight);
 }
 
+void StatsState::Resize() {
+    m_back_button.SetX(Layout::ScreenMarginX);
+    m_back_button.SetY(GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2);
+
+    m_continue_button.SetX(GetStateWidth() - Layout::ScreenMarginX - Layout::ButtonWidth);
+    m_continue_button.SetY(GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2);
+}
+
 void StatsState::Update() {
 
   MouseInfo mouse = Mouse();

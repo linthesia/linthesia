@@ -25,6 +25,7 @@ public:
 protected:
   virtual void Init();
   virtual void Update();
+  virtual void Resize();
   virtual void Draw(Renderer &renderer) const;
 
 private:

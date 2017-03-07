@@ -47,6 +47,14 @@ public:
     return m_y;
   }
 
+  void SetX(const int x) {
+    m_x = x;
+  }
+
+  void SetY(const int y) {
+    m_y = y;
+  }
+
   bool HitPreviewButton() const {
     return button_preview.hit;
   }

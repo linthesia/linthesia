@@ -138,13 +138,11 @@ void GameStateManager::SetStateDimensions(int w, int h) {
   m_screen_y = h;
   
   if (dirty && m_current_state) {
-    m_current_state->Init();
-    //m_current_state->Update();
+    m_current_state->Resize();
   }
 }
 
 void GameStateManager::KeyPress(GameKey key) {
-
   m_key_presses |= static_cast<unsigned long>(key);
 }
 

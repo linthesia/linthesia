@@ -137,6 +137,12 @@ void TrackSelectionState::Init() {
   }
 }
 
+void TrackSelectionState::Resize() {
+    /*delete m_back_button;
+    delete m_continue_button;
+    Init();*/
+}
+
 vector<Track::Properties> TrackSelectionState::BuildTrackProperties() const {
 
   vector<Track::Properties> props;
