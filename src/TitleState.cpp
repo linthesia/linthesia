@@ -18,6 +18,7 @@
 #include "Renderer.h"
 #include "Textures.h"
 #include "GameState.h"
+#include "SongLibState.h"
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
@@ -203,38 +204,7 @@ void TitleState::Update() {
       m_output_tile->TurnOffPreview();
     }
 
-    Midi *new_midi = 0;
-
-    string filename;
-    string file_title;
-    FileSelector::RequestMidiFilename(&filename, &file_title);
-
-    if (filename != "") {
-      try {
-        new_midi = new Midi(Midi::ReadFromFile(filename));
-      }
-      catch (const MidiError &e) {
-        string description = STRING("Problem while loading file: " <<
-                                    file_title << "\n") + e.GetErrorDescription();
-        Compatible::ShowError(description);
-        new_midi = 0;
-      }
-
-      if (new_midi) {
-
-        SharedState new_state;
-        new_state.midi = new_midi;
-        new_state.midi_in = m_state.midi_in;
-        new_state.midi_out = m_state.midi_out;
-        new_state.song_title = FileSelector::TrimFilename(filename);
-        new_state.dpms_thread = m_state.dpms_thread;
-
-        delete m_state.midi;
-        m_state = new_state;
-
-        m_file_tile->SetString(m_state.song_title);
-      }
-    }
+    ChangeState(new SongLibState(m_state));
   }
 
   // Check to see if we need to switch to a newly selected output device

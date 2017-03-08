@@ -467,8 +467,7 @@ int main(int argc, char *argv[]) {
     state.song_title = FileSelector::TrimFilename(command_line);
     state.midi = midi;
     state.dpms_thread = dpms_thread;
-    //state_manager->SetInitialState(new TitleState(state));
-    state_manager->SetInitialState(new SongLibState(state));
+    state_manager->SetInitialState(new TitleState(state));
 
     // get refresh rate from user settings
     string key = "refresh_rate";
