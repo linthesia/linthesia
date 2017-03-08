@@ -32,7 +32,8 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				StringTile.cpp \
 				TitleState.cpp \
 				UserSettings.cpp \
-				SongLibState.cpp
+				SongLibState.cpp \
+				SongTile.cpp
 noinst_HEADERS +=		CompatibleSystem.h \
 				DeviceTile.h \
 				FileSelector.h \
@@ -53,6 +54,7 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				TextWriter.h \
 				Tga.h \
 				SongLibState.h \
+				SongTile.h \
 				TitleState.h \
 				TrackProperties.h \
 				TrackSelectionState.h \

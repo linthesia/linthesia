@@ -7,8 +7,9 @@
 
 #include "SharedState.h"
 #include "GameState.h"
-#include "StringTile.h"
+#include "SongTile.h"
 #include "CompatibleSystem.h"
+#include "FileSelector.h"
 
 #include <vector>
 #include <string>
@@ -31,6 +32,10 @@ protected:
     virtual void Draw(Renderer &renderer) const;
 
 private:
+
+    void UpdateSongTiles();
+    void OpenTitleState(string path);
+
     int m_page_count;
     int m_current_page;
     int m_tiles_per_page;
@@ -38,9 +43,12 @@ private:
     ButtonState m_continue_button;
     ButtonState m_back_button;
 
-    std::vector<StringTile> m_song_tiles;
+    string m_curent_path;
+
+    std::vector<SongTile> m_song_tiles;
 
     SharedState m_state;
+    bool m_skip_next_mouse_up;
 };
 
 #endif // __SONGLIB_STATE_H
