@@ -10,6 +10,7 @@
 #include "SongTile.h"
 #include "CompatibleSystem.h"
 #include "FileSelector.h"
+#include "MenuLayout.h"
 
 #include <vector>
 #include <string>
@@ -17,6 +18,11 @@
 #ifndef SONGLIBDIR
 #define SONGLIBDIR "../music"
 #endif
+
+const int ColumnMargin = Layout::ScreenMarginX * 2;
+const int PagesButtonsY = 
+    Layout::ScreenMarginY + Layout::ScreenMarginY / 2 + 
+    SongTileHeight / 2 - Layout::ButtonHeight/2;
 
 class SongLibState : public GameState {
 
@@ -35,15 +41,25 @@ private:
 
     void UpdateSongTiles();
     void OpenTitleState(string path);
+    void UpdateSongTilesPage();
+
+    void GoUpDirectory();
+
+    int ContentLeft();
+    int ContentRight();
 
     int m_page_count;
     int m_current_page;
+    int m_columns;
     int m_tiles_per_page;
 
-    ButtonState m_continue_button;
     ButtonState m_back_button;
+    ButtonState m_path_up_button;
+    ButtonState m_next_page_button;
+    ButtonState m_prev_page_button;
 
     string m_curent_path;
+    string m_base_path;
 
     std::vector<SongTile> m_song_tiles;
 

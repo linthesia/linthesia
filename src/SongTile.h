@@ -28,12 +28,20 @@ public:
     return m_y;
   }
 
+  bool IsVisible() const {
+     return m_visible;
+  }
+
   void SetX(const int x) {
     m_x = x;
   }
 
   void SetY(const int y) {
     m_y = y;
+  }
+
+  void SetVisible(const bool visible) {
+    m_visible = visible;
   }
 
   bool IsDir() const {
@@ -54,6 +62,7 @@ private:
   int m_y;
 
   bool m_dir;
+  bool m_visible;
 
   string m_path;
   string m_name;
