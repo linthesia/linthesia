@@ -22,9 +22,50 @@ void SongLibState::Init() {
         Compatible::GetDisplayHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
+    m_base_path = UserSetting::Get("default_music_directory", SONGLIBDIR);
     m_curent_path = UserSetting::Get("default_music_directory", SONGLIBDIR);
+    m_current_page = 0;
 
     UpdateSongTiles();
+
+    m_next_page_button = ButtonState(
+        ContentRight() + ColumnMargin,
+        PagesButtonsY,
+        Layout::ButtonWidth, Layout::ButtonHeight);
+
+    m_prev_page_button = ButtonState(
+        ContentLeft() - ColumnMargin - Layout::ButtonWidth,
+        PagesButtonsY,
+        Layout::ButtonWidth, Layout::ButtonHeight);
+
+    m_path_up_button = ButtonState(
+        Layout::ScreenMarginX,
+        (Layout::ScreenMarginY - Layout::ButtonHeight) / 2,
+        Layout::ButtonWidth, Layout::ButtonHeight);
+}
+
+int SongLibState::ContentLeft() {
+    int columns_margins = ColumnMargin * (m_columns - 1);
+    int columns_content = SongTileWidth * m_columns;
+    
+    int content_left_slim  = (GetStateWidth()  - SongTileWidth) / 2;
+
+    int content_left_wide  = (GetStateWidth()  - columns_content - columns_margins) / 2;
+
+    return (m_columns > 1) ? content_left_wide  : content_left_slim;
+}
+
+int SongLibState::ContentRight() {
+    int columns_margins = ColumnMargin * (m_columns - 1);
+    int columns_content = SongTileWidth * m_columns;
+    
+    int content_left_slim  = (GetStateWidth()  - SongTileWidth) / 2;
+    int content_right_slim = content_left_slim + SongTileWidth;
+
+    int content_left_wide  = (GetStateWidth()  - columns_content - columns_margins) / 2;
+    int content_right_wide = content_left_wide + columns_content + columns_margins;
+
+    return (m_columns > 1) ? content_right_wide : content_right_slim;
 }
 
 bool hasEnding (string fullString, string ending) {
@@ -39,6 +80,17 @@ bool isMidiFile(string f) {
     return hasEnding(f, string(".midi")) || hasEnding(f, string(".mid"));
 }
 
+string eraseSubstring(string subj, string erase) {
+    std::string t = subj;
+    std::string s = erase;
+    std::string::size_type i = t.find(s);
+
+    if (i != std::string::npos)
+        t.erase(i, s.length());
+    
+    return t;
+}
+
 void SongLibState::UpdateSongTiles() {
     
     m_song_tiles.clear();
@@ -48,10 +100,6 @@ void SongLibState::UpdateSongTiles() {
     
     if ((dir = opendir (m_curent_path.c_str())) != NULL) {
 
-        int initial_y = Layout::ScreenMarginY;
-        int each_y = SongTileHeight + SongTileHeight / 5;
-        int tile_index = 0;
-        
         Tga* song_tile_graphics = GetTexture(SongBox);
 
         while ((ent = readdir (dir)) != NULL) {
@@ -59,11 +107,10 @@ void SongLibState::UpdateSongTiles() {
             if (f_name.compare(".") != 0 && f_name.compare("..") != 0) {
 
                 if (ent->d_type == DT_DIR || isMidiFile(string(ent->d_name))) {
-                    SongTile song_tile = SongTile(
-                                        (GetStateWidth() - SongTileWidth) / 2,
-                                        initial_y + each_y * tile_index++,
-                                        m_curent_path + "/" + ent->d_name,
-                                        string(ent->d_name),
+
+                    string path = m_curent_path + "/" + ent->d_name;
+                    string title = string(FileSelector::TrimFilename(ent->d_name));
+                    SongTile song_tile = SongTile(0, 0, path, title,
                                         ent->d_type == DT_DIR,
                                         song_tile_graphics);
                     m_song_tiles.push_back(song_tile);
@@ -71,8 +118,10 @@ void SongLibState::UpdateSongTiles() {
 
             }
         }
-
         closedir (dir);
+
+        //Assign coordinates for the first time
+        Resize();
     }
     else {
         throw LinthesiaError("Can't open dir");
@@ -82,16 +131,57 @@ void SongLibState::UpdateSongTiles() {
 
 void SongLibState::Resize() {
 
-    int initial_y = Layout::ScreenMarginY;
-    int each_y = SongTileHeight + 80;
-
-    for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
-        m_song_tiles[i].SetX((GetStateWidth() - SongTileWidth) / 2);
-        m_song_tiles[i].SetY(initial_y + each_y * i);
-    }
+    UpdateSongTilesPage();
 
     m_back_button.SetX(Layout::ScreenMarginX);
     m_back_button.SetY(GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2);
+
+    m_prev_page_button.SetX(ContentLeft() - ColumnMargin - Layout::ButtonWidth);
+    m_prev_page_button.SetY(PagesButtonsY);
+
+    m_next_page_button.SetX(ContentRight() + ColumnMargin);
+    m_next_page_button.SetY(PagesButtonsY);
+}
+
+void SongLibState::UpdateSongTilesPage() {
+    int initial_y = Layout::ScreenMarginY + SongTileHeight / 2;
+    int each_y = SongTileHeight + SongTileHeight / 4;
+
+    // Can't we place songs in two columns?
+    int max_columns = 2;
+    bool slim = GetStateWidth() < ColumnMargin + SongTileWidth * max_columns;
+    m_columns = slim ? 1 : max_columns;
+
+    int rows = (GetStateHeight() - initial_y - Layout::ScreenMarginY) / each_y;
+    int tiles_per_page = rows * m_columns;
+    
+    std::vector<SongTile>::size_type tiles_total = m_song_tiles.size();
+    m_page_count = (tiles_per_page == 0 ? 0 : (tiles_total / tiles_per_page)) + 1;
+
+    for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
+        m_song_tiles[i].SetVisible(false);
+    }
+
+    for(std::vector<SongTile>::size_type i = m_current_page * tiles_per_page; i < m_song_tiles.size() && i < tiles_per_page * (m_current_page + 1) ; i++) {
+
+        int tx = 0;
+        int ty = 0;
+        if (slim) {
+            tx = (GetStateWidth() - SongTileWidth) / 2;
+            ty = initial_y + each_y * (i - m_current_page * tiles_per_page);
+        }
+        else {
+            int column = i % m_columns;
+            int columns_base_offset = (GetStateWidth() - SongTileWidth * m_columns - ColumnMargin * (m_columns - 1)) / 2;
+            tx = columns_base_offset + column * (ColumnMargin + SongTileWidth);
+            ty = initial_y + each_y * ((i - m_current_page * tiles_per_page) / m_columns);
+        }
+
+        m_song_tiles[i].SetX(tx);
+        m_song_tiles[i].SetY(ty);
+
+        m_song_tiles[i].SetVisible(true);
+    }
 }
 
 void SongLibState::Update() {
@@ -101,21 +191,54 @@ void SongLibState::Update() {
         mouse.released.left = false;
         m_skip_next_mouse_up = false;
     }
-    
+
     m_back_button.Update(mouse);
 
     if (IsKeyPressed(KeyEscape) || m_back_button.hit) {
-        delete m_state.midi_out;
-        m_state.midi_out = 0;
+        if (m_state.midi) {
+            ChangeState(new TitleState(m_state));
+        }
+        else {
+            delete m_state.midi_out;
+            m_state.midi_out = 0;
 
-        delete m_state.midi_in;
-        m_state.midi_in = 0;
+            delete m_state.midi_in;
+            m_state.midi_in = 0;
 
-        delete m_state.midi;
-        m_state.midi = 0;
+            delete m_state.midi;
+            m_state.midi = 0;
 
-        Compatible::GracefulShutdown();
-        return;
+            Compatible::GracefulShutdown();
+            return;
+        }
+    }
+
+    if (m_current_page + 1 < m_page_count) {
+        m_next_page_button.Update(mouse);
+
+        if (IsKeyPressed(KeyRight) || m_next_page_button.hit) {
+            m_current_page++;
+            UpdateSongTilesPage();
+        }
+    }
+
+    if (m_current_page > 0) {
+        m_prev_page_button.Update(mouse);
+
+        if (IsKeyPressed(KeyLeft) || m_prev_page_button.hit) {
+            m_current_page--;
+            UpdateSongTilesPage();
+        }
+    }
+
+    string path_title = eraseSubstring(m_curent_path, m_base_path);
+    if (path_title.length() > 0) {
+        m_path_up_button.Update(mouse);
+
+        if (IsKeyPressed(KeyBackward) || m_path_up_button.hit) {
+            m_skip_next_mouse_up = true;
+            GoUpDirectory();
+        }
     }
 
     for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
@@ -126,7 +249,7 @@ void SongLibState::Update() {
     }
 
     for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
-        if(m_song_tiles[i].WholeTile().hit) {
+        if(m_song_tiles[i].IsVisible() && m_song_tiles[i].WholeTile().hit) {
 
             if (m_song_tiles[i].IsDir()) {
                 m_skip_next_mouse_up = true;
@@ -140,6 +263,11 @@ void SongLibState::Update() {
             return;
         }
     }
+}
+
+void SongLibState::GoUpDirectory() {
+    m_curent_path = m_curent_path.substr(0, m_curent_path.find_last_of("\\/"));
+    UpdateSongTiles();
 }
 
 void SongLibState::OpenTitleState(string path) {
@@ -168,14 +296,40 @@ void SongLibState::OpenTitleState(string path) {
 
 void SongLibState::Draw(Renderer &renderer) const {
 
-    Layout::DrawButton(renderer, m_back_button, GetTexture(ButtonExit));
+    Layout::DrawButton(renderer, m_back_button, 
+        m_state.midi ? GetTexture(ButtonBackToTitle) : GetTexture(ButtonExit));
+    
+    if(m_current_page > 0) {
+        Layout::DrawButton(renderer, m_prev_page_button, GetTexture(ButtonExit));
+    }
+    if(m_current_page + 1 < m_page_count) {
+        Layout::DrawButton(renderer, m_next_page_button, GetTexture(ButtonExit));
+    }
 
     Layout::DrawHorizontalRule(renderer,
                              GetStateWidth(),
                              GetStateHeight() - Layout::ScreenMarginY);
 
+    Layout::DrawHorizontalRule(renderer,
+                             GetStateWidth(),
+                             Layout::ScreenMarginY);
+    
     for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
-        renderer.ForceTexture(0);
-        m_song_tiles[i].Draw(renderer);
+        if(m_song_tiles[i].IsVisible()) {
+            renderer.ForceTexture(0);
+            m_song_tiles[i].Draw(renderer);
+        }
     }
+
+    string path_title = eraseSubstring(m_curent_path, m_base_path);
+    if (path_title.length() > 0) {
+        // Draw mode text
+        TextWriter title(Layout::ScreenMarginX + Layout::ButtonWidth + ColumnMargin, Layout::ScreenMarginY / 2 - 6, renderer, false, 14);
+        title << path_title.c_str();
+
+        Layout::DrawButton(renderer, m_path_up_button, GetTexture(ButtonExit));
+    }
+
+    //TextWriter dbg(Layout::ScreenMarginX, GetStateHeight() - Layout::ScreenMarginY * 2, renderer, false, 14);
+    //dbg << m_current_page;
 }

@@ -383,36 +383,6 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    // if midi couldn't be opened from command line filename or there
-    // simply was no command line filename, use a "file open" dialog.
-    if (command_line == "") {
-      while (!midi) {
-        string file_title;
-        FileSelector::RequestMidiFilename(&command_line, &file_title);
-
-        if (command_line != "") {
-          try {
-            midi = new Midi(Midi::ReadFromFile(command_line));
-          }
-          catch (const MidiError &e) {
-            string wrapped_description = \
-              STRING("Problem while loading file: " <<
-                     file_title <<
-                     "\n") + e.GetErrorDescription();
-            Compatible::ShowError(wrapped_description);
-
-            midi = 0;
-          }
-        }
-
-        else {
-          // they pressed cancel, so they must not want to run
-          // the app anymore.
-          return 0;
-        }
-      }
-    }
-
     Glib::RefPtr<Gdk::GL::Config> glconfig;
 
     // try double-buffered visual
@@ -464,10 +434,17 @@ int main(int argc, char *argv[]) {
 
     // do this after gl context is created (ie. after da realized)
     SharedState state;
-    state.song_title = FileSelector::TrimFilename(command_line);
-    state.midi = midi;
     state.dpms_thread = dpms_thread;
-    state_manager->SetInitialState(new TitleState(state));
+    if (midi) {
+      state.song_title = FileSelector::TrimFilename(command_line);
+      state.midi = midi;
+      state_manager->SetInitialState(new TitleState(state));
+    }
+    else {
+      // if midi couldn't be opened from command line filename or there
+      // simply was no command line filename, use a song-lib.
+      state_manager->SetInitialState(new SongLibState(state));
+    }
 
     // get refresh rate from user settings
     string key = "refresh_rate";
