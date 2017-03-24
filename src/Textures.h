@@ -25,6 +25,7 @@ enum Texture {
   InputBox,
   OutputBox,
   SongBox,
+  DirBox,
 
   TrackPanel,
 

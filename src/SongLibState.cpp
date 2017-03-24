@@ -103,18 +103,19 @@ void SongLibState::UpdateSongTiles() {
     if ((dir = opendir (m_curent_path.c_str())) != NULL) {
 
         Tga* song_tile_graphics = GetTexture(SongBox);
+        Tga* dir_tile_graphics = GetTexture(DirBox);
 
         while ((ent = readdir (dir)) != NULL) {
             string f_name = string(ent->d_name);
             if (f_name.compare(".") != 0 && f_name.compare("..") != 0) {
 
                 if (ent->d_type == DT_DIR || isMidiFile(string(ent->d_name))) {
-
+                    Tga * graphics = ent->d_type == DT_DIR ? dir_tile_graphics : song_tile_graphics;
                     string path = m_curent_path + "/" + ent->d_name;
                     string title = string(FileSelector::TrimFilename(ent->d_name));
                     SongTile song_tile = SongTile(0, 0, path, title,
                                         ent->d_type == DT_DIR,
-                                        song_tile_graphics);
+                                        graphics);
                     m_song_tiles.push_back(song_tile);
                 }
 
