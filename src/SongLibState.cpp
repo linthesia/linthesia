@@ -15,6 +15,8 @@
 
 using namespace std;
 
+const static string SONG_LIB_DIR_SETTINGS_KEY = "song_lib_last_dir";
+
 void SongLibState::Init() {
 
     m_back_button = ButtonState(
@@ -22,8 +24,8 @@ void SongLibState::Init() {
         Compatible::GetDisplayHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
-    m_base_path = UserSetting::Get("default_music_directory", SONGLIBDIR);
-    m_curent_path = UserSetting::Get("default_music_directory", SONGLIBDIR);
+    m_base_path = SONGLIBDIR;
+    m_curent_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, SONGLIBDIR);
     m_current_page = 0;
 
     UpdateSongTiles();
@@ -254,6 +256,7 @@ void SongLibState::Update() {
             if (m_song_tiles[i].IsDir()) {
                 m_skip_next_mouse_up = true;
                 m_curent_path = m_song_tiles[i].GetPath();
+                UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_curent_path);
                 UpdateSongTiles();
             }
             else {
@@ -267,6 +270,7 @@ void SongLibState::Update() {
 
 void SongLibState::GoUpDirectory() {
     m_curent_path = m_curent_path.substr(0, m_curent_path.find_last_of("\\/"));
+    UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_curent_path);
     UpdateSongTiles();
 }
 
