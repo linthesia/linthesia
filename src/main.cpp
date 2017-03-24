@@ -45,7 +45,7 @@ const static string error_footer = "\n\nIf you don't think this should have "
   "happened, please\ncontact Oscar (on Linthesia sourceforge site) and\n"
   "describe what you were doing when the problem\noccurred. Thanks.";
 
-const static int vsync_interval = 2;
+const static int vsync_interval = 1;
 
 class EdgeTracker  {
 public:

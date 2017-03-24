@@ -19,6 +19,8 @@ struct Color {
   int r, g, b, a;
 };
 
+static bool m_vsync_initialized;
+
 class Renderer {
 public:
 
