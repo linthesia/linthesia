@@ -550,6 +550,10 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
 
       DrawNote(renderer, (drawing_black ? tex_black : tex_white),
                (drawing_black ? BlackNoteDimensions : WhiteNoteDimensions), left, top, width, height, brush_id);
+
+      //const Color text_color (Renderer::ToColor(0x90,0x90,0x90));
+      //TextWriter note_text(left + 3, y + height - 20, renderer, false, 11);
+      //note_text << Text(STRING(i->note_id), text_color);
     }
 
     drawing_black = !drawing_black;
