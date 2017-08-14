@@ -13,6 +13,7 @@
 #include "Textures.h"
 #include "CompatibleSystem.h"
 
+#include <stdio.h>
 #include <string>
 #include <iomanip>
 
@@ -40,14 +41,17 @@ void PlayingState::SetupNoteState() {
 
     n.state = AutoPlayed;
     n.retry_state = AutoPlayed;
-    if (isUserPlayableTrack(n.track_id))
+    if (isUserPlayableTrack(n.track_id) && isNoteInPlayableRange(n.note_id))
     {
       n.state = UserPlayable;
       n.retry_state = UserPlayable;
     }
-
     m_notes.insert(n);
   }
+}
+
+bool PlayingState::isNoteInPlayableRange(int note_number) {
+  return note_number >= MinPlayableNote && note_number <= MaxPlayableNote;
 }
 
 void PlayingState::ResetSong() {
@@ -403,11 +407,12 @@ void PlayingState::Update() {
   if (!m_first_update) {
     if (areAllRequiredKeysPressed())
     {
-        Play(delta_microseconds);
-//      m_should_wait_after_retry = false; // always reset onces pressed
+      Play(delta_microseconds);
+//    m_should_wait_after_retry = false; // always reset onces pressed
     }
-    else
-        m_current_combo = 0;
+    else {
+      m_current_combo = 0;
+    }
 
     Listen();
   }
@@ -580,7 +585,7 @@ void PlayingState::Update() {
 
           n.state = AutoPlayed;
           n.retry_state = AutoPlayed;
-          if (isUserPlayableTrack(n.track_id))
+          if (isUserPlayableTrack(n.track_id) && isNoteInPlayableRange(n.note_id))
           {
             n.state = UserPlayable;
             n.retry_state = findNodeState(n, old, UserPlayable);
@@ -776,6 +781,7 @@ void PlayingState::userPressedKey(int note_number, bool active)
             m_should_retry = false; // to ensure
             m_should_wait_after_retry = false;
         }
+        printf("Pressed note_number %d\n", note_number);
         m_pressed_notes.insert(note_number);
         m_required_notes.erase(note_number);
         m_state.dpms_thread->handleKeyPress();
@@ -790,7 +796,7 @@ void PlayingState::filePressedKey(int note_number, bool active, size_t track_id)
         m_state.track_properties[track_id].mode == Track::ModeLearningSilently ||
         (m_should_wait_after_retry && isUserPlayableTrack(track_id)))
     {
-        if (active)
+        if (active && isNoteInPlayableRange(note_number))
         {
             m_required_notes.insert(note_number);
         }

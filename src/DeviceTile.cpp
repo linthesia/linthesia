@@ -29,7 +29,8 @@ DeviceTile::DeviceTile(int x, int y, int device_id, DeviceTileType type,
   // Initialize the size and position of each button
   whole_tile = ButtonState(0, 0, DeviceTileWidth, DeviceTileHeight);
   button_mode_left  = ButtonState(  6, 38, GraphicWidth, GraphicHeight);
-  button_mode_right = ButtonState(428, 38, GraphicWidth, GraphicHeight);
+  button_mode_right = ButtonState(387, 38, GraphicWidth, GraphicHeight);
+  button_mode_opts  = ButtonState(428, 38, GraphicWidth, GraphicHeight);
   button_preview    = ButtonState(469, 38, GraphicWidth, GraphicHeight);
 }
 
@@ -40,6 +41,7 @@ void DeviceTile::Update(const MouseInfo &translated_mouse) {
   button_preview.Update(translated_mouse);
   button_mode_left.Update(translated_mouse);
   button_mode_right.Update(translated_mouse);
+  button_mode_opts.Update(translated_mouse);
 
   if (m_device_list.size() > 0) {
     const int last_device = static_cast<int>(m_device_list.size() - 1);
@@ -63,6 +65,10 @@ void DeviceTile::Update(const MouseInfo &translated_mouse) {
 
   if (button_preview.hit)
     m_preview_on = !m_preview_on;
+  
+  if (button_mode_opts.hit) {
+    // Open keyboard range dialog
+  }
 }
 
 int DeviceTile::LookupGraphic(TrackTileGraphic graphic, bool button_hovering) const {
@@ -102,6 +108,10 @@ void DeviceTile::Draw(Renderer &renderer) const {
 
   renderer.DrawTga(m_button_graphics, BUTTON_RECT(button_mode_right),
                    LookupGraphic(GraphicRightArrow, button_mode_right.hovering),
+                   color_offset);
+  
+  renderer.DrawTga(m_button_graphics, BUTTON_RECT(button_mode_opts),
+                   LookupGraphic(GraphicColor, button_mode_opts.hovering),
                    color_offset);
 
   TrackTileGraphic preview_graphic = GraphicPreviewTurnOn;
