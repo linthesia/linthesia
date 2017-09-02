@@ -106,7 +106,6 @@ private:
   ButtonState button_preview;
   ButtonState button_mode_left;
   ButtonState button_mode_right;
-  ButtonState button_mode_opts;
 
   int LookupGraphic(TrackTileGraphic graphic, bool button_hovering) const;
 };
