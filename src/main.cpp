@@ -478,6 +478,19 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    UserSetting::Set("min_key", "");
+    UserSetting::Set("max_key", "");
+
+    if (cmdOptionExists(argv, argv+argc, "--min-key")) {
+      string min_key = STRING(getCmdOption(argv, argv + argc, "--min-key"));
+      UserSetting::Set("min_key", min_key);
+    }
+
+    if (cmdOptionExists(argv, argv+argc, "--max-key")) {
+      string max_key = STRING(getCmdOption(argv, argv + argc, "--max-key"));
+      UserSetting::Set("max_key", max_key);
+    }
+
     Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/rate);
 
     main_loop.run(window);

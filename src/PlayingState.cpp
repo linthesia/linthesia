@@ -20,6 +20,7 @@
 #include "StringUtil.h"
 #include "MenuLayout.h"
 #include "TextWriter.h"
+#include "UserSettings.h"
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiTrack.h"
@@ -115,6 +116,17 @@ void PlayingState::Init() {
       m_look_ahead_you_play_note_count += m_state.midi->Tracks()[i].Notes().size();
       m_any_you_play_tracks = true;
     }
+  }
+
+  string min_key = UserSetting::Get("min_key", "");
+  if (strtol(min_key.c_str(), NULL, 10) > 0) {
+    MinPlayableNote = strtol(min_key.c_str(), NULL, 10);
+    printf("Set minimal key to %d\n", MinPlayableNote);
+  }
+  string max_key = UserSetting::Get("max_key", "");
+  if (strtol(max_key.c_str(), NULL, 10) > 0) {
+    MaxPlayableNote = strtol(max_key.c_str(), NULL, 10);
+    printf("Set maximal key to %d\n", MaxPlayableNote);
   }
 
   // This many microseconds of the song will
@@ -781,7 +793,6 @@ void PlayingState::userPressedKey(int note_number, bool active)
             m_should_retry = false; // to ensure
             m_should_wait_after_retry = false;
         }
-        printf("Pressed note_number %d\n", note_number);
         m_pressed_notes.insert(note_number);
         m_required_notes.erase(note_number);
         m_state.dpms_thread->handleKeyPress();
