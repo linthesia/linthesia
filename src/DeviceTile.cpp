@@ -30,7 +30,6 @@ DeviceTile::DeviceTile(int x, int y, int device_id, DeviceTileType type,
   whole_tile = ButtonState(0, 0, DeviceTileWidth, DeviceTileHeight);
   button_mode_left  = ButtonState(  6, 38, GraphicWidth, GraphicHeight);
   button_mode_right = ButtonState(428, 38, GraphicWidth, GraphicHeight);
-  //button_mode_opts  = ButtonState(428, 38, GraphicWidth, GraphicHeight);
   button_preview    = ButtonState(469, 38, GraphicWidth, GraphicHeight);
 }
 
