@@ -80,7 +80,7 @@ private:
   bool m_paused;
 
   int MinPlayableNote = 0;
-  int MaxPlayableNote = 256;
+  int MaxPlayableNote = 120;
 
   KeyboardDisplay *m_keyboard;
   microseconds_t m_show_duration;

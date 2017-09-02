@@ -338,47 +338,62 @@ bool DrawingArea::GameLoop() {
   return true;
 }
 
+char* getCmdOption(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return *itr;
+    }
+    return 0;
+}
+
+bool cmdOptionExists(char** begin, char** end, const std::string & option)
+{
+    return std::find(begin, end, option) != end;
+}
+
 int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
   Gtk::GL::init(argc, argv);
 
   try {
-    string command_line("");
+    string file_opt("");
 
     UserSetting::Initialize(application_name);
 
-    if (argc > 1)
-      command_line = string(argv[1]);
+    if (cmdOptionExists(argv, argv+argc, "-f"))
+      file_opt = string(getCmdOption(argv, argv + argc, "-f"));
 
     // TODO: parse from command line args
-    bool fullscreen = true;
+    bool fullscreen = !cmdOptionExists(argv, argv+argc, "-w");
 
     // strip any leading or trailing quotes from the filename
     // argument (to match the format returned by the open-file
     // dialog later).
-    if (command_line.length() > 0 &&
-        command_line[0] == '\"')
-      command_line = command_line.substr(1, command_line.length() - 1);
+    if (file_opt.length() > 0 &&
+        file_opt[0] == '\"')
+      file_opt = file_opt.substr(1, file_opt.length() - 1);
 
-    if (command_line.length() > 0 &&
-        command_line[command_line.length()-1] == '\"')
-      command_line = command_line.substr(0, command_line.length() - 1);
+    if (file_opt.length() > 0 &&
+        file_opt[file_opt.length()-1] == '\"')
+      file_opt = file_opt.substr(0, file_opt.length() - 1);
 
     Midi *midi = 0;
 
     // attempt to open the midi file given on the command line first
-    if (command_line != "") {
+    if (file_opt != "") {
       try {
-        midi = new Midi(Midi::ReadFromFile(command_line));
+        midi = new Midi(Midi::ReadFromFile(file_opt));
       }
 
       catch (const MidiError &e) {
         string wrapped_description = STRING("Problem while loading file: " <<
-                                            command_line <<
+                                            file_opt <<
                                             "\n") + e.GetErrorDescription();
         Compatible::ShowError(wrapped_description);
 
-        command_line = "";
+        file_opt = "";
         midi = 0;
       }
     }
@@ -436,7 +451,7 @@ int main(int argc, char *argv[]) {
     SharedState state;
     state.dpms_thread = dpms_thread;
     if (midi) {
-      state.song_title = FileSelector::TrimFilename(command_line);
+      state.song_title = FileSelector::TrimFilename(file_opt);
       state.midi = midi;
       state_manager->SetInitialState(new TitleState(state));
     }
