@@ -491,6 +491,12 @@ int main(int argc, char *argv[]) {
       UserSetting::Set("max_key", max_key);
     }
 
+    if (cmdOptionExists(argv, argv+argc, "--song-lib")) {
+      string song_lib_path = STRING(getCmdOption(argv, argv + argc, "--song-lib"));
+      Compatible::ShowError("Open " + song_lib_path + "'");
+      UserSetting::Set("song_lib_path", song_lib_path);
+    }
+
     Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/rate);
 
     main_loop.run(window);

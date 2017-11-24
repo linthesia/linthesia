@@ -16,7 +16,7 @@
 #include <string>
 
 #ifndef SONGLIBDIR
-#define SONGLIBDIR "../music"
+#define SONGLIBDIR "/home/dkiselev/linthesia/share/linthesia/music/"
 #endif
 
 const int ColumnMargin = Layout::ScreenMarginX * 2;
