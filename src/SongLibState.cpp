@@ -24,7 +24,7 @@ void SongLibState::Init() {
         Compatible::GetDisplayHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
-    m_base_path = SONGLIBDIR;
+    m_base_path = UserSetting::Get("song_lib_path", SONGLIBDIR);
     m_curent_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, SONGLIBDIR);
     m_current_page = 0;
 
