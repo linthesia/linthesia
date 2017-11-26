@@ -15,8 +15,8 @@
 #include <vector>
 #include <string>
 
-#ifndef SONGLIBDIR
-#define SONGLIBDIR "/home/dkiselev/linthesia/share/linthesia/music/"
+#ifndef MUSICDIR
+#define MUSICDIR "../music/"
 #endif
 
 const int ColumnMargin = Layout::ScreenMarginX * 2;
