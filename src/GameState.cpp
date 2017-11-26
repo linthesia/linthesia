@@ -36,6 +36,9 @@ const static char* TextureResourceNames[_TextureEnumCount] = {
   "title_OutputBox",
   "title_SongBox",
   "title_DirBox",
+  "title_BackBox",
+  "title_ButtonPageBack",
+  "title_ButtonPageNext",
 
   "trackbox", // TrackPanel
 

@@ -305,10 +305,10 @@ void SongLibState::Draw(Renderer &renderer) const {
         m_state.midi ? GetTexture(ButtonBackToTitle) : GetTexture(ButtonExit));
     
     if(m_current_page > 0) {
-        Layout::DrawButton(renderer, m_prev_page_button, GetTexture(ButtonExit));
+        Layout::DrawButton(renderer, m_prev_page_button, GetTexture(ButtonPageBack));
     }
     if(m_current_page + 1 < m_page_count) {
-        Layout::DrawButton(renderer, m_next_page_button, GetTexture(ButtonExit));
+        Layout::DrawButton(renderer, m_next_page_button, GetTexture(ButtonPageNext));
     }
 
     Layout::DrawHorizontalRule(renderer,
@@ -332,7 +332,7 @@ void SongLibState::Draw(Renderer &renderer) const {
         TextWriter title(Layout::ScreenMarginX + Layout::ButtonWidth + ColumnMargin, Layout::ScreenMarginY / 2 - 6, renderer, false, 14);
         title << path_title.c_str();
 
-        Layout::DrawButton(renderer, m_path_up_button, GetTexture(ButtonExit));
+        Layout::DrawButton(renderer, m_path_up_button, GetTexture(ButtonDirBack));
     }
 
     //TextWriter dbg(Layout::ScreenMarginX, GetStateHeight() - Layout::ScreenMarginY * 2, renderer, false, 14);
