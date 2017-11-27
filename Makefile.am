@@ -19,7 +19,6 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/title_Exit.tga \
 			graphics/title_GameMusicThemes.tga \
 			graphics/title_InputBox.tga \
-			graphics/title_DirBox.tga \
 			graphics/title_Logo.tga \
 			graphics/title_OutputBox.tga \
 			graphics/title_SongBox.tga \
