@@ -195,6 +195,10 @@ void KeyboardDisplay::DrawWhiteKeys(Renderer &renderer, bool active_only, int ke
 
       const int key_x = i * (key_width + key_space) + x_offset;
       renderer.DrawQuad(key_x, y_offset, key_width, key_height);
+      
+      const Color text_color1 (Renderer::ToColor(0x50,0x50,0x50));
+      TextWriter title(key_x + key_width / 2 - 6, y_offset + key_height - 20, renderer, false, 14);
+      title << Text(note_name.c_str(), text_color1);
     }
 
     current_white++;
