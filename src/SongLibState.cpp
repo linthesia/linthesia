@@ -240,6 +240,7 @@ void SongLibState::Update() {
 
         if (IsKeyPressed(KeyBackward) || m_path_up_button.hit) {
             m_skip_next_mouse_up = true;
+            m_current_page = 0;
             GoUpDirectory();
         }
     }
