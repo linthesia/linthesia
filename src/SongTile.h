@@ -56,6 +56,15 @@ public:
     return whole_tile;
   }
 
+  string GetSortPath() const {
+    // to sort strings, we need to have string to sort
+    // directories "first", right ?
+    if (m_dir)
+      return ("first" + m_path); 
+    else
+      return ("second" + m_path);
+  }
+
 private:
 
   int m_x;
@@ -66,7 +75,7 @@ private:
 
   string m_path;
   string m_name;
-  string m_curent_dir;
+  string m_current_path;
 
   Tga *m_frame_graphics;
 
