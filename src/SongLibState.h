@@ -59,7 +59,7 @@ private:
     ButtonState m_next_page_button;
     ButtonState m_prev_page_button;
 
-    string m_curent_path;
+    string m_current_path;
     string m_base_path;
 
     std::vector<SongTile> m_song_tiles;

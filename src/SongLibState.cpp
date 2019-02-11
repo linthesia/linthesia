@@ -25,7 +25,13 @@ void SongLibState::Init() {
         Layout::ButtonWidth, Layout::ButtonHeight);
 
     m_base_path = UserSetting::Get("song_lib_path", MUSICDIR);
-    m_curent_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
+    m_current_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
+    // since it is unconfortable to crash when no file is present, let's test it now
+    struct stat st;
+    if ( (!stat(m_current_path.c_str(),&st) == 0) || (! st.st_mode & S_IFDIR != 0) ) {
+	    m_current_path = m_base_path;
+    }
+
     m_current_page = 0;
 
     UpdateSongTiles();
@@ -92,6 +98,14 @@ string eraseSubstring(string subj, string erase) {
     
     return t;
 }
+// https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+struct songtile_less_than_key
+{
+    inline bool operator() (const SongTile& struct1, const SongTile& struct2)
+    {
+        return (struct1.GetSortPath() < struct2.GetSortPath());
+    }
+};
 
 void SongLibState::UpdateSongTiles() {
     
@@ -100,7 +114,7 @@ void SongLibState::UpdateSongTiles() {
     DIR *dir;
     struct dirent *ent;
     
-    if ((dir = opendir (m_curent_path.c_str())) != NULL) {
+    if ((dir = opendir (m_current_path.c_str())) != NULL) {
 
         Tga* song_tile_graphics = GetTexture(SongBox);
         Tga* dir_tile_graphics = GetTexture(DirBox);
@@ -111,7 +125,7 @@ void SongLibState::UpdateSongTiles() {
 
                 if (ent->d_type == DT_DIR || isMidiFile(string(ent->d_name))) {
                     Tga * graphics = ent->d_type == DT_DIR ? dir_tile_graphics : song_tile_graphics;
-                    string path = m_curent_path + "/" + ent->d_name;
+                    string path = m_current_path + "/" + ent->d_name;
                     string title = string(FileSelector::TrimFilename(ent->d_name));
                     SongTile song_tile = SongTile(0, 0, path, title,
                                         ent->d_type == DT_DIR,
@@ -123,11 +137,13 @@ void SongLibState::UpdateSongTiles() {
         }
         closedir (dir);
 
+        std::sort(m_song_tiles.begin(),m_song_tiles.end(), songtile_less_than_key());
+
         //Assign coordinates for the first time
         Resize();
     }
     else {
-        throw LinthesiaError("Can't open dir");
+        throw LinthesiaError("Can't open dir : " + m_current_path);
     }
 
 }
@@ -234,7 +250,7 @@ void SongLibState::Update() {
         }
     }
 
-    string path_title = eraseSubstring(m_curent_path, m_base_path);
+    string path_title = eraseSubstring(m_current_path, m_base_path);
     if (path_title.length() > 0) {
         m_path_up_button.Update(mouse);
 
@@ -257,8 +273,8 @@ void SongLibState::Update() {
 
             if (m_song_tiles[i].IsDir()) {
                 m_skip_next_mouse_up = true;
-                m_curent_path = m_song_tiles[i].GetPath();
-                UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_curent_path);
+                m_current_path = m_song_tiles[i].GetPath();
+                UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_current_path);
                 UpdateSongTiles();
             }
             else {
@@ -271,8 +287,8 @@ void SongLibState::Update() {
 }
 
 void SongLibState::GoUpDirectory() {
-    m_curent_path = m_curent_path.substr(0, m_curent_path.find_last_of("\\/"));
-    UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_curent_path);
+    m_current_path = m_current_path.substr(0, m_current_path.find_last_of("\\/"));
+    UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_current_path);
     UpdateSongTiles();
 }
 
@@ -327,7 +343,7 @@ void SongLibState::Draw(Renderer &renderer) const {
         }
     }
 
-    string path_title = eraseSubstring(m_curent_path, m_base_path);
+    string path_title = eraseSubstring(m_current_path, m_base_path);
     if (path_title.length() > 0) {
         // Draw mode text
         TextWriter title(Layout::ScreenMarginX + Layout::ButtonWidth + ColumnMargin, Layout::ScreenMarginY / 2 - 6, renderer, false, 14);
