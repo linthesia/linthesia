@@ -13,7 +13,6 @@
 #include "UserSettings.h"
 
 #include <map>
-#include <X11/Xlib.h>
 
 using namespace std;
 
@@ -22,10 +21,6 @@ static map<int, int> font_size_lookup;
 
 // TODO: This should be deleted at shutdown
 static map<int, Pango::FontDescription*> font_lookup;
-
-// Returns the most suitable font available on the platform
-// or an empty string if no font is available;
-static const std::string get_default_font();
 
 TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
                        bool in_centered, int in_size, string fontname) :
@@ -44,26 +39,38 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
   point_size = size;
 
   if (font_size_lookup[size] == 0) {
+    const char *font_candidates[] = {
+      NULL, NULL,
+      "serif", "sans", "clean", "courier" // Debian suggests using courier
+    };
+    unsigned font_index = 2;
+    unsigned font_count = sizeof(font_candidates) / sizeof(font_candidates[0]);
 
     // Get font from user settings
-    if (fontname.empty()) {
-      string key = "font_desc";
-      fontname = UserSetting::Get(key, "");
+    const std::string userfontname = UserSetting::Get("font_desc", "");
+    if (!userfontname.empty()) {
+      font_candidates[--font_index] = userfontname.c_str();
+    }
 
-      // Or set it if there is no default
-      if (fontname.empty()) {
-        fontname = get_default_font();
-        UserSetting::Set(key, fontname);
-      }
+    // Try to get the requested name first
+    const std::string reqfontname = fontname;
+    if (!reqfontname.empty()) {
+      font_candidates[--font_index] = reqfontname.c_str();
     }
 
     int list_start = glGenLists(128);
-    fontname = STRING(fontname << " " << in_size);
-    Pango::FontDescription* font_desc = new Pango::FontDescription(fontname);
-    Glib::RefPtr<Pango::Font> ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+    Pango::FontDescription *font_desc = NULL;
+    Glib::RefPtr<Pango::Font> ret;
+
+    for (unsigned i = font_index; !ret && i < font_count; ++i) {
+        fontname = STRING(font_candidates[i] << " " << in_size);
+        delete font_desc;
+        font_desc = new Pango::FontDescription(Pango::FontDescription(fontname));
+        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+    }
+
     if (!ret)
-      throw LinthesiaError("An error ocurred while trying to use use_pango_font() with "
-                           "font '" + fontname + "'");
+      throw LinthesiaError("An error ocurred while trying to use pango font");
 
     font_size_lookup[size] = list_start;
     font_lookup[size] = font_desc;
@@ -137,48 +144,3 @@ TextWriter& operator<<(TextWriter& tw, const int& i)           { return tw << Te
 TextWriter& operator<<(TextWriter& tw, const unsigned int& i)  { return tw << Text(i, White); }
 TextWriter& operator<<(TextWriter& tw, const long& l)          { return tw << Text(l, White); }
 TextWriter& operator<<(TextWriter& tw, const unsigned long& l) { return tw << Text(l, White); }
-
-static
-const std::string get_default_font()
-{
-  // populate a vector of candidates with the most common choices
-  vector< string > allCandidates;
-  allCandidates.push_back("serif");
-  allCandidates.push_back("sans");
-  allCandidates.push_back("clean");
-  allCandidates.push_back("courier"); // Debian suggests using courier
-
-  vector< string >::const_iterator candidate;
-  const vector< string >::const_iterator end = allCandidates.end();
-
-  // retrieve all fonts from the X server
-  Display * const display = XOpenDisplay(NULL);
-  int nbFonts = 0, i = 0;
-  char ** const allFonts = XListFonts(display, "-*", 32767, &nbFonts);
-
-  string returnedFont = (nbFonts > 0) ? allFonts[0] : "";
-
-  // check if we have a candidate, and returns it if we do
-  string currentFont;
-  bool found = false;
-  for (i = 0; i < nbFonts && !found; ++i)
-  {
-    currentFont = allFonts[i];
-
-    for (candidate = allCandidates.begin();
-         candidate != end && !found; ++candidate)
-    {
-      // any font that contains the name of the candidate ( "serif" ) will do
-      if (currentFont.find(*candidate) != string::npos)
-      {
-        returnedFont = *candidate;
-        found = true;
-      }
-    }
-  }
-
-  XFreeFontNames(allFonts);
-  XCloseDisplay(display);
-
-  return returnedFont;
-}
