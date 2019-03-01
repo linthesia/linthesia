@@ -13,6 +13,7 @@
 #include "UserSettings.h"
 
 #include <map>
+#include <fontconfig/fontconfig.h>
 
 using namespace std;
 
@@ -21,6 +22,10 @@ static map<int, int> font_size_lookup;
 
 // TODO: This should be deleted at shutdown
 static map<int, Pango::FontDescription*> font_lookup;
+
+// Returns the most suitable font available on the platform
+// or an empty string if no font is available;
+static const std::string get_default_font();
 
 TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
                        bool in_centered, int in_size, string fontname) :
@@ -39,38 +44,41 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
   point_size = size;
 
   if (font_size_lookup[size] == 0) {
-    const char *font_candidates[] = {
-      NULL, NULL,
-      "serif", "sans", "clean", "courier" // Debian suggests using courier
-    };
-    unsigned font_index = 2;
-    unsigned font_count = sizeof(font_candidates) / sizeof(font_candidates[0]);
-
-    // Get font from user settings
-    const std::string userfontname = UserSetting::Get("font_desc", "");
-    if (!userfontname.empty()) {
-      font_candidates[--font_index] = userfontname.c_str();
-    }
-
-    // Try to get the requested name first
-    const std::string reqfontname = fontname;
-    if (!reqfontname.empty()) {
-      font_candidates[--font_index] = reqfontname.c_str();
-    }
-
     int list_start = glGenLists(128);
     Pango::FontDescription *font_desc = NULL;
     Glib::RefPtr<Pango::Font> ret;
 
-    for (unsigned i = font_index; !ret && i < font_count; ++i) {
-        fontname = STRING(font_candidates[i] << " " << in_size);
-        delete font_desc;
-        font_desc = new Pango::FontDescription(Pango::FontDescription(fontname));
+    // Try to get the requested name first
+    font_desc = new Pango::FontDescription(STRING(fontname << " " << in_size));
+    ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+
+    if (!ret) {
+      delete font_desc;
+      font_desc = NULL;
+      // Get font from user settings
+      const std::string userfontname = UserSetting::Get("font_desc", "");
+      if (!userfontname.empty()) {
+        font_desc = new Pango::FontDescription(STRING(userfontname << " " << in_size));
         ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+      }
     }
 
-    if (!ret)
+    if (!ret) {
+      delete font_desc;
+      font_desc = NULL;
+      // Get font from system settings
+      const std::string sysfontname = get_default_font();
+      if (!sysfontname.empty()) {
+        font_desc = new Pango::FontDescription(STRING(sysfontname << " " << in_size));
+        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+      }
+    }
+
+    if (!ret) {
+      delete font_desc;
+      glDeleteLists(list_start, 128);
       throw LinthesiaError("An error ocurred while trying to use pango font");
+    }
 
     font_size_lookup[size] = list_start;
     font_lookup[size] = font_desc;
@@ -144,3 +152,28 @@ TextWriter& operator<<(TextWriter& tw, const int& i)           { return tw << Te
 TextWriter& operator<<(TextWriter& tw, const unsigned int& i)  { return tw << Text(i, White); }
 TextWriter& operator<<(TextWriter& tw, const long& l)          { return tw << Text(l, White); }
 TextWriter& operator<<(TextWriter& tw, const unsigned long& l) { return tw << Text(l, White); }
+
+static
+const std::string get_default_font()
+{
+  std::string returnedFont;
+
+  FcResult fcres;
+  FcConfig *config = FcInitLoadConfigAndFonts();
+
+  FcPattern *pattern = FcPatternCreate();
+  FcConfigSubstitute(config, pattern, FcMatchPattern);
+  FcDefaultSubstitute(pattern);
+  FcPattern *match = FcFontMatch(config, pattern, &fcres);
+
+  FcChar8 *family = NULL;
+  if (fcres == FcResultMatch)
+    fcres = FcPatternGetString(match, FC_FAMILY, 0, &family);
+  if (fcres == FcResultMatch)
+    returnedFont = (char *)family;
+
+  FcPatternDestroy(pattern);
+  FcConfigDestroy(config);
+
+  return returnedFont;
+}

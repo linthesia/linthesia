@@ -58,13 +58,13 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				UserSettings.h \
 				Version.h
 
-linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @ALSA_LIBS@
+linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @FONTCONFIG_LIBS@ @ALSA_LIBS@
 linthesia_LDADD = libmidi.la
 linthesia_CXXFLAGS = -std=c++11 -iquote $(srcdir)/libmidi
-linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
+linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @FONTCONFIG_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
 
 ctags-dependencies:
-	@$(CC) -M -std=c++11 -I/usr/include @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ \
+	@$(CC) -M -std=c++11 -I/usr/include @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @FONTCONFIG_CFLAGS@ @ALSA_CFLAGS@ \
 		$(dist_libmidi_la_SOURCES) $(noinst_HEADERS) $(dist_linthesia_SOURCES) 2>/dev/null | \
 		sed 's/^.*://;s/^ //;s/ \\//;s/ /\n/g' | \
 		sort -u | \
