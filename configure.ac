@@ -27,6 +27,14 @@ AC_ARG_WITH(
 )
 AC_SUBST([graphdir])
 
+AC_ARG_WITH(
+    [musicdir],
+    [AS_HELP_STRING([--with-musicdir=<path to midis>],[load midi files from this directory, default: $(pkgdatadir)/music])],
+    [musicdir="${with_musicdir}"],
+    [musicdir="\$(pkgdatadir)/music"]
+)
+AC_SUBST([musicdir])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_INSTALL

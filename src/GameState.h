@@ -124,6 +124,9 @@ protected:
   // Called every frame
   virtual void Update() = 0;
 
+  // Call when state dimesnsions changed
+  virtual void Resize() = 0;
+
   // Called each frame.  Drawing bounds are [0,
   // GetStateWidth()) and [0, GetStateHeight())
   virtual void Draw(Renderer &renderer) const = 0;
@@ -219,6 +222,8 @@ public:
 
   int GetStateWidth() const { return m_screen_x; }
   int GetStateHeight() const { return m_screen_y; }
+
+  void SetStateDimensions(int w, int h);
 
 private:
   GameState *m_next_state;

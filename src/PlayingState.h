@@ -53,6 +53,7 @@ public:
 protected:
   virtual void Init();
   virtual void Update();
+  virtual void Resize();
   virtual void Draw(Renderer &renderer) const;
 
 private:
@@ -65,6 +66,7 @@ private:
   bool areAllRequiredKeysPressed();
   bool isKeyPressed(int note_number);
   bool isUserPlayableTrack(size_t track_id);
+  bool isNoteInPlayableRange(int note_number);
 
   int CalcKeyboardHeight() const;
   void SetupNoteState();
@@ -76,6 +78,9 @@ private:
   double CalculateScoreMultiplier() const;
 
   bool m_paused;
+
+  int MinPlayableNote = 0;
+  int MaxPlayableNote = 120;
 
   KeyboardDisplay *m_keyboard;
   microseconds_t m_show_duration;

@@ -18,6 +18,7 @@
 #include "Renderer.h"
 #include "Textures.h"
 #include "GameState.h"
+#include "SongLibState.h"
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
@@ -142,6 +143,27 @@ void TitleState::Init() {
                                  GetTexture(InputBox));
 }
 
+void TitleState::Resize() {
+    const bool compress_height = (GetStateHeight() < 750);
+    const int initial_y = (compress_height ? 230 : 360);
+    const int each_y = (compress_height ? 94 : 100);
+
+    m_file_tile->SetX((GetStateWidth() - StringTileWidth) / 2);
+    m_file_tile->SetY(initial_y + each_y * 0);
+
+    m_output_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
+    m_output_tile->SetY(initial_y + each_y * 1);
+    
+    m_input_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
+    m_input_tile->SetY(initial_y + each_y*2);
+
+    m_back_button.SetX(Layout::ScreenMarginX);
+    m_back_button.SetY(GetStateHeight() - Layout::ScreenMarginY / 2 - Layout::ButtonHeight / 2);
+
+    m_continue_button.SetX(GetStateWidth() - Layout::ScreenMarginX - Layout::ButtonWidth);
+    m_continue_button.SetY(GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2);
+}
+
 void TitleState::Update() {
   MidiCommOut::UpdateDeviceList();
   MidiCommIn::UpdateDeviceList();
@@ -182,38 +204,7 @@ void TitleState::Update() {
       m_output_tile->TurnOffPreview();
     }
 
-    Midi *new_midi = 0;
-
-    string filename;
-    string file_title;
-    FileSelector::RequestMidiFilename(&filename, &file_title);
-
-    if (filename != "") {
-      try {
-        new_midi = new Midi(Midi::ReadFromFile(filename));
-      }
-      catch (const MidiError &e) {
-        string description = STRING("Problem while loading file: " <<
-                                    file_title << "\n") + e.GetErrorDescription();
-        Compatible::ShowError(description);
-        new_midi = 0;
-      }
-
-      if (new_midi) {
-
-        SharedState new_state;
-        new_state.midi = new_midi;
-        new_state.midi_in = m_state.midi_in;
-        new_state.midi_out = m_state.midi_out;
-        new_state.song_title = FileSelector::TrimFilename(filename);
-        new_state.dpms_thread = m_state.dpms_thread;
-
-        delete m_state.midi;
-        m_state = new_state;
-
-        m_file_tile->SetString(m_state.song_title);
-      }
-    }
+    ChangeState(new SongLibState(m_state));
   }
 
   // Check to see if we need to switch to a newly selected output device

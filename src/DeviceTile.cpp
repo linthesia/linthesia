@@ -63,6 +63,7 @@ void DeviceTile::Update(const MouseInfo &translated_mouse) {
 
   if (button_preview.hit)
     m_preview_on = !m_preview_on;
+  
 }
 
 int DeviceTile::LookupGraphic(TrackTileGraphic graphic, bool button_hovering) const {
@@ -103,7 +104,7 @@ void DeviceTile::Draw(Renderer &renderer) const {
   renderer.DrawTga(m_button_graphics, BUTTON_RECT(button_mode_right),
                    LookupGraphic(GraphicRightArrow, button_mode_right.hovering),
                    color_offset);
-
+  
   TrackTileGraphic preview_graphic = GraphicPreviewTurnOn;
   if (m_preview_on)
     preview_graphic = GraphicPreviewTurnOff;

@@ -31,7 +31,9 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				PlayingState.cpp \
 				StringTile.cpp \
 				TitleState.cpp \
-				UserSettings.cpp
+				UserSettings.cpp \
+				SongLibState.cpp \
+				SongTile.cpp
 noinst_HEADERS +=		CompatibleSystem.h \
 				DeviceTile.h \
 				FileSelector.h \
@@ -51,6 +53,8 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				Textures.h \
 				TextWriter.h \
 				Tga.h \
+				SongLibState.h \
+				SongTile.h \
 				TitleState.h \
 				TrackProperties.h \
 				TrackSelectionState.h \
@@ -59,9 +63,9 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				Version.h
 
 linthesia_LDFLAGS = @GTKMM_LIBS@ @GCONFMM_LIBS@ @GTKGLEXTMM_LIBS@ @ALSA_LIBS@
-linthesia_LDADD = libmidi.la
+linthesia_LDADD = libmidi.la -lsqlite3
 linthesia_CXXFLAGS = -std=c++11 -iquote $(srcdir)/libmidi
-linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
+linthesia_CPPFLAGS = @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DMUSICDIR="\"${musicdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
 
 ctags-dependencies:
 	@$(CC) -M -std=c++11 -I/usr/include @GTKMM_CFLAGS@ @GCONFMM_CFLAGS@ @GTKGLEXTMM_CFLAGS@ @ALSA_CFLAGS@ \

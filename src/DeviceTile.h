@@ -23,7 +23,6 @@ const int DeviceTileHeight = 80;
 enum TrackTileGraphic;
 
 enum DeviceTileType {
-
    DeviceTileOutput,
    DeviceTileInput
 };
@@ -45,6 +44,14 @@ public:
 
   int GetY() const {
     return m_y;
+  }
+
+  void SetX(const int x) {
+    m_x = x;
+  }
+
+  void SetY(const int y) {
+    m_y = y;
   }
 
   bool HitPreviewButton() const {

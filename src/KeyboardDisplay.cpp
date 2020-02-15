@@ -195,6 +195,10 @@ void KeyboardDisplay::DrawWhiteKeys(Renderer &renderer, bool active_only, int ke
 
       const int key_x = i * (key_width + key_space) + x_offset;
       renderer.DrawQuad(key_x, y_offset, key_width, key_height);
+      
+      const Color text_color1 (Renderer::ToColor(0x50,0x50,0x50));
+      TextWriter title(key_x + key_width / 2 - 6, y_offset + key_height - 20, renderer, false, 14);
+      title << Text(note_name.c_str(), text_color1);
     }
 
     current_white++;
@@ -550,6 +554,10 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
 
       DrawNote(renderer, (drawing_black ? tex_black : tex_white),
                (drawing_black ? BlackNoteDimensions : WhiteNoteDimensions), left, top, width, height, brush_id);
+
+      //const Color text_color (Renderer::ToColor(0x90,0x90,0x90));
+      //TextWriter note_text(left + 3, y + height - 20, renderer, false, 11);
+      //note_text << Text(STRING(i->note_id), text_color);
     }
 
     drawing_black = !drawing_black;

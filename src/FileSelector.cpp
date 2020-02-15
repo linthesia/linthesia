@@ -81,7 +81,6 @@ namespace FileSelector {
   }
 
   string TrimFilename(const string &filename) {
-
     // lowercase
     string lower = StringLower(filename);
 
@@ -91,7 +90,7 @@ namespace FileSelector {
     exts.insert(".midi");
     for (set<string>::const_iterator i = exts.begin(); i != exts.end(); i++) {
       int len = i->length();
-      if (lower.substr(lower.length() - len, len) == *i)
+      if (lower.length() > len && lower.substr(lower.length() - len, len) == *i)
         lower = lower.substr(0, lower.length() - len);
     }
 

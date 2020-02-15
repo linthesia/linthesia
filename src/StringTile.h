@@ -44,6 +44,14 @@ public:
     m_title = s;
   }
 
+  void SetX(const int x) {
+    m_x = x;
+  }
+
+  void SetY(const int y) {
+    m_y = y;
+  }
+
   const ButtonState WholeTile() const {
     return whole_tile;
   }

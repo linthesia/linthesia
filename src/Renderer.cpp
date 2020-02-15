@@ -10,6 +10,10 @@
 #include "Tga.h"
 #include "OSGraphics.h"
 
+//#include <GL/glx.h>
+//#include <GL/glext.h>
+//#include <stdio.h>
+
 #include <limits>
 
 using namespace std;
@@ -68,6 +72,47 @@ void Renderer::SetVSyncInterval(int interval) {
 //    }
 
 // #endif
+
+// X
+/*
+  if (!m_vsync_initialized) {
+    m_vsync_initialized = true;
+    Display * x11_display = XOpenDisplay(0);
+
+    static PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = NULL;
+    static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalMESA = NULL;
+    static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI = NULL;
+
+    string extensions = glXQueryExtensionsString(x11_display, DefaultScreen(x11_display));
+    if (extensions.find("GLX_EXT_swap_control") != -1) {
+      glXSwapIntervalEXT  = (PFNGLXSWAPINTERVALEXTPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalEXT");
+      cout << "GLX_EXT_swap_control supported\n";
+    }
+    if (extensions.find("GLX_MESA_swap_control") != -1) {
+      glXSwapIntervalMESA = (PFNGLXSWAPINTERVALSGIPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalMESA");
+      cout << "GLX_MESA_swap_control supported\n";
+    }
+    if (extensions.find("GLX_SGI_swap_control") != -1) {
+      glXSwapIntervalSGI  = (PFNGLXSWAPINTERVALSGIPROC) glXGetProcAddressARB((const GLubyte*)"glXSwapIntervalSGI");
+      cout << "GLX_SGI_swap_control supported\n";
+    }
+
+    int val = interval != 0 ? 1 : 0;
+    if (glXSwapIntervalMESA) {
+      glXSwapIntervalSGI(val);
+      cout << "glXSwapIntervalSGI set to " << val << "\n";
+    }
+    if (glXSwapIntervalSGI) {
+      glXSwapIntervalMESA(val);
+      cout << "glXSwapIntervalMESA set to " << val << "\n";
+    }
+    if (glXSwapIntervalEXT) {
+      GLXDrawable drawable = glXGetCurrentDrawable();
+      glXSwapIntervalEXT(x11_display, drawable, val);
+      cout << "glXSwapIntervalEXT set to " << val << "\n";
+    }
+  }
+  */
 }
 
 void Renderer::SwapBuffers() {

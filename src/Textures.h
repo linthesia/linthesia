@@ -25,6 +25,10 @@ enum Texture {
   InputBox,
   OutputBox,
   SongBox,
+  DirBox,
+  ButtonDirBack,
+  ButtonPageBack,
+  ButtonPageNext,
 
   TrackPanel,
 
