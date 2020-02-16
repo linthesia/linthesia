@@ -422,11 +422,15 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    const int default_sw = 1024;
+    const int default_sh = 768;
     int sh = Compatible::GetDisplayHeight();
     int sw = Compatible::GetDisplayWidth();
     state_manager = new GameStateManager(sw, sh);
 
     Gtk::Window window;
+
+    window.set_default_size(default_sw, default_sh);
     DrawingArea da(glconfig);
     window.add(da);
     window.show_all();
@@ -435,12 +439,18 @@ int main(int argc, char *argv[]) {
     window.set_icon_from_file(string(GRAPHDIR) + "/app_icon.ico");
 
     if (fullscreen) {
+        printf ("Fullscreen\n");
         window.fullscreen();
-        window.move(
-            Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth() / 2, 
-            Compatible::GetDisplayTop() + Compatible::GetDisplayHeight() / 2);
     }
     else {
+        if (sw < default_sw) {
+          printf ("Your display width is smaller than window size : %d < %d\n", sw, default_sw);
+        }
+
+        if (sh < default_sh) {
+          printf ("Your display width is smaller than window size : %d < %d\n", sh, default_sh);
+        }
+
         window.maximize();
     }
 
@@ -462,21 +472,28 @@ int main(int argc, char *argv[]) {
     }
 
     // get refresh rate from user settings
-    string key = "refresh_rate";
-    int rate = 65;
-    string user_rate = UserSetting::Get(key, "");
-    if (user_rate.empty()) {
-      user_rate = STRING(rate);
-      UserSetting::Set(key, user_rate);
+    int default_rate = 30;
+
+    string user_rate = UserSetting::Get("refresh_rate", "");
+
+    if (std::stoi(user_rate) > default_rate) {
+      printf ("WARNING :: Your refresh_rate is set to %d. I recommand using %d.\n", std::stoi(user_rate), default_rate);
+      printf ("           You may update it using gconf-2.\n");
     }
 
+    if (user_rate.empty()) {
+     user_rate = STRING(default_rate);
+      UserSetting::Set("refresh_rate", user_rate);
+    }
     else {
       istringstream iss(user_rate);
-      if (not (iss >> rate)) {
-        Compatible::ShowError("Invalid setting for '"+ key +"' key.\n\nReset to default value when reload.");
-        UserSetting::Set(key, "");
+      if (not (iss >> default_rate)) {
+        Compatible::ShowError("Invalid setting for 'refresh_rate' key.\n\nReset to default value when reload.");
+        UserSetting::Set("refresh_rate", "");
       }
     }
+
+    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/std::stoi(user_rate));
 
     UserSetting::Set("min_key", "");
     UserSetting::Set("max_key", "");
@@ -491,7 +508,6 @@ int main(int argc, char *argv[]) {
       UserSetting::Set("max_key", max_key);
     }
 
-    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/rate);
 
     main_loop.run(window);
     window_state.Deactivate();
