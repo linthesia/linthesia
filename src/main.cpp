@@ -429,7 +429,6 @@ int main(int argc, char *argv[]) {
     state_manager = new GameStateManager(sw, sh);
 
     Gtk::Window window;
-
     window.set_default_size(default_sw, default_sh);
     DrawingArea da(glconfig);
     window.add(da);
@@ -439,7 +438,6 @@ int main(int argc, char *argv[]) {
     window.set_icon_from_file(string(GRAPHDIR) + "/app_icon.ico");
 
     if (fullscreen) {
-        printf ("Fullscreen\n");
         window.fullscreen();
     }
     else {
@@ -448,7 +446,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (sh < default_sh) {
-          printf ("Your display width is smaller than window size : %d < %d\n", sh, default_sh);
+          printf ("Your display height is smaller than window size : %d < %d\n", sh, default_sh);
         }
 
         window.maximize();
