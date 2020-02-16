@@ -19,9 +19,9 @@ override_dh_install:
 	cp extra/linthesia.desktop debian/linthesia/usr/share/applications
 	cp extra/linthesia.xpm debian/linthesia/usr/share/pixmaps
 
-override_dh_auto_clean:
-	$(RM) debian/linthesia.6
-	$(MAKE) clean
+#override_dh_auto_clean:
+#	$(RM) debian/linthesia.6
+#	$(MAKE) clean
 
 build-orig-source:
 	mkdir -p linthesia-$(VERSION)
