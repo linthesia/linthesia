@@ -27,6 +27,11 @@
 #include "libmidi/MidiUtil.h"
 #include <gconfmm.h>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <sys/stat.h>
+
 #ifndef GRAPHDIR
 #define GRAPHDIR "../graphics"
 #endif
@@ -34,6 +39,9 @@
 using namespace std;
 
 GameStateManager* state_manager;
+
+char *sqlite_db_str;
+sqlite3 *db;
 
 const static string application_name = "Linthesia";
 const static string friendly_app_name = STRING("Linthesia " <<
@@ -422,6 +430,37 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    /* Loading the Sqlite Library
+    */
+    string tmp_user_db_str = UserSetting::Get("sqlite_db", "");
+
+    if (tmp_user_db_str. empty() ) {
+        // no user pref : let's create one !
+        struct passwd *pw = getpwuid(getuid());
+        sqlite_db_str = strcat(pw->pw_dir, "/.local/linthesia");
+        const int dir_err = mkdir(sqlite_db_str, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (-1 == dir_err)
+        {
+          fprintf(stderr, "Error creating directory : %s\n", sqlite_db_str);
+          exit(1);
+        }
+        sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
+        UserSetting::Set("sqlite_db", sqlite_db_str);
+    } else {
+        // user pref exist : let's use it !
+        sqlite_db_str = (char*) tmp_user_db_str.c_str();
+    }
+
+    if (sqlite3_open(sqlite_db_str, &db)) {
+      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      return(0);
+    } else {
+      fprintf(stderr, "Opened database successfully\n");
+    }
+    sqlite3_close(db);
+    exit(0);
+
+
     const int default_sw = 1024;
     const int default_sh = 768;
     int sh = Compatible::GetDisplayHeight();
@@ -442,11 +481,11 @@ int main(int argc, char *argv[]) {
     }
     else {
         if (sw < default_sw) {
-          printf ("Your display width is smaller than window size : %d < %d\n", sw, default_sw);
+          fprintf (stderr, "Your display width is smaller than window size : %d < %d\n", sw, default_sw);
         }
 
         if (sh < default_sh) {
-          printf ("Your display height is smaller than window size : %d < %d\n", sh, default_sh);
+          fprintf (stderr, "Your display height is smaller than window size : %d < %d\n", sh, default_sh);
         }
 
         window.maximize();
@@ -475,12 +514,12 @@ int main(int argc, char *argv[]) {
     string user_rate = UserSetting::Get("refresh_rate", "");
 
     if (std::stoi(user_rate) > default_rate) {
-      printf ("WARNING :: Your refresh_rate is set to %d. I recommand using %d.\n", std::stoi(user_rate), default_rate);
-      printf ("           You may update it using gconf-2.\n");
+      fprintf (stdout, "WARNING :: Your refresh_rate is set to %d. I recommand using %d.\n", std::stoi(user_rate), default_rate);
+      fprintf (stdout, "           You may update it using gconf-2.\n");
     }
 
     if (user_rate.empty()) {
-     user_rate = STRING(default_rate);
+      user_rate = STRING(default_rate);
       UserSetting::Set("refresh_rate", user_rate);
     }
     else {
