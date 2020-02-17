@@ -18,6 +18,7 @@ src/libmidi/.deps/
 src/libmidi/.dirstamp
 src/linthesia
 stamp-h1
+.vscode/
 
 # generated with autoreconf -ivf
 config.guess
