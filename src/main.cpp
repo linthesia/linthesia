@@ -511,7 +511,7 @@ int main(int argc, char *argv[]) {
 
     string user_rate = UserSetting::Get("refresh_rate", "");
 
-    if (std::stoi(user_rate) > default_rate) {
+    if (! user_rate.empty() && std::stoi(user_rate) > default_rate) {
       fprintf (stdout, "WARNING :: Your refresh_rate is set to %d. I recommand using %d.\n", std::stoi(user_rate), default_rate);
       fprintf (stdout, "           You may update it using gconf-2.\n");
     }
