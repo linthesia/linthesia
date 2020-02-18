@@ -21,6 +21,13 @@ namespace Layout {
     title_writer << title;
   }
 
+  void DrawSubTitle(Renderer &renderer, const string &title) {
+
+    TextWriter title_writer(ScreenMarginX, ScreenMarginY * 2 - TitleFontSize - 10,
+                            renderer, false, TitleFontSize);
+    title_writer << title;
+  }
+
   void DrawHorizontalRule(Renderer &renderer, int state_width, int y) {
 
     renderer.SetColor(0x50, 0x50, 0x50);

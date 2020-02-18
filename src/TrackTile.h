@@ -55,6 +55,10 @@ public:
     return m_y;
   }
 
+  void SetMode(Track::Mode mode) {
+    m_mode = mode;
+  }
+
   Track::Mode GetMode() const {
     return m_mode;
   }

@@ -29,6 +29,13 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/trackbox.tga \
 			graphics/tracks_BackToTitle.tga \
 			graphics/tracks_PlaySong.tga \
+			graphics/all_ButtonNotPlayed.tga \
+			graphics/all_ButtonPlayedAuto.tga \
+			graphics/all_ButtonYouPlay.tga \
+			graphics/all_ButtonYouPlaySilent.tga \
+			graphics/all_ButtonLearning.tga \
+			graphics/all_ButtonLearningSilent.tga \
+			graphics/all_ButtonPlayedHidden.tga \
 			extra/linthesia.desktop \
 			music/Popular/Gymnopedie.mid \
 			music/Popular/Jonh_Lennon_-_Imagine.mid \

@@ -455,11 +455,9 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
       return(0);
     } else {
-      fprintf(stderr, "Opened database successfully\n");
+      // fprintf(stderr, "Opened database successfully\n");
+      sqlite3_close(db);
     }
-    sqlite3_close(db);
-    exit(0);
-
 
     const int default_sw = 1024;
     const int default_sh = 768;
