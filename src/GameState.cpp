@@ -32,6 +32,14 @@ const static char* TextureResourceNames[_TextureEnumCount] = {
   "tracks_BackToTitle",
   "tracks_PlaySong",
 
+  "all_ButtonNotPlayed",
+  "all_ButtonPlayedAuto",
+  "all_ButtonYouPlay",
+  "all_ButtonYouPlaySilent",
+  "all_ButtonLearning",
+  "all_ButtonLearningSilent",
+  "all_ButtonPlayedHidden",
+
   "title_InputBox",
   "title_OutputBox",
   "title_SongBox",

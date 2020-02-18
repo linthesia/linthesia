@@ -44,6 +44,36 @@ void TrackSelectionState::Init() {
       track_count++;
   }
 
+  int w = (GetStateWidth() - 2 * Layout::ScreenMarginX-6*5)/7;
+  m_apply_all_not_played       = ButtonState(
+                                    Layout::ScreenMarginX,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_played_auto      = ButtonState(
+                                    Layout::ScreenMarginX + w + 5,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_you_play         = ButtonState(
+                                    Layout::ScreenMarginX + (w + 5) * 2,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_you_play_silent  = ButtonState(
+                                    Layout::ScreenMarginX + (w + 5) * 3,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_learning         = ButtonState(
+                                    Layout::ScreenMarginX + (w + 5) * 4,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_learning_silent  = ButtonState(
+                                    Layout::ScreenMarginX + (w + 5) * 5,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+  m_apply_all_played_hidden    = ButtonState(
+                                    Layout::ScreenMarginX + (w + 5) * 6,
+                                    112 - Layout::ButtonHeight/2,
+                                    w, Layout::ButtonHeight);
+
   m_back_button = ButtonState(
     Layout::ScreenMarginX,
     GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
@@ -85,7 +115,7 @@ void TrackSelectionState::Init() {
   int all_tile_widths = tiles_across * TrackTileWidth + (tiles_across-1) * Layout::ScreenMarginX;
   int global_x_offset = (GetStateWidth() - all_tile_widths) / 2;
 
-  const static int starting_y = 100;
+  const static int starting_y = 180;
 
   int tiles_on_this_line = 0;
   int tiles_on_this_page = 0;
@@ -161,6 +191,14 @@ vector<Track::Properties> TrackSelectionState::BuildTrackProperties() const {
 }
 
 void TrackSelectionState::Update() {
+  m_apply_all_not_played.Update(MouseInfo(Mouse()));
+  m_apply_all_played_auto.Update(MouseInfo(Mouse()));
+  m_apply_all_you_play.Update(MouseInfo(Mouse()));
+  m_apply_all_you_play_silent.Update(MouseInfo(Mouse()));
+  m_apply_all_learning.Update(MouseInfo(Mouse()));
+  m_apply_all_learning_silent.Update(MouseInfo(Mouse()));
+  m_apply_all_played_hidden.Update(MouseInfo(Mouse()));
+
   m_continue_button.Update(MouseInfo(Mouse()));
   m_back_button.Update(MouseInfo(Mouse()));
 
@@ -173,6 +211,49 @@ void TrackSelectionState::Update() {
     ChangeState(new TitleState(m_state));
     return;
   }
+
+  if (m_apply_all_not_played.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModeNotPlayed);
+      }
+  }
+
+  if (m_apply_all_played_auto.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModePlayedAutomatically);
+      }
+  }
+
+  if (m_apply_all_you_play.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModeYouPlay);
+      }
+  }
+
+  if (m_apply_all_you_play_silent.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModeYouPlaySilently);
+      }
+  }
+
+  if (m_apply_all_learning.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModeLearning);
+      }
+  }
+
+  if (m_apply_all_learning_silent.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModeLearningSilently);
+      }
+  }
+
+  if (m_apply_all_played_hidden.hit) {
+      for (size_t i = 0; i < m_track_tiles.size(); ++i) {
+          m_track_tiles[i].SetMode(Track::ModePlayedButHidden);
+      }
+  }
+
 
   if (IsKeyPressed(KeyEnter) || m_continue_button.hit) {
 
@@ -349,9 +430,19 @@ void TrackSelectionState::PlayTrackPreview(microseconds_t delta_microseconds) {
 
 void TrackSelectionState::Draw(Renderer &renderer) const {
 
-  Layout::DrawTitle(renderer, "Choose Tracks To Play");
-
+  Layout::DrawTitle(renderer, "Apply parameters to all tracks");
   Layout::DrawHorizontalRule(renderer, GetStateWidth(), Layout::ScreenMarginY);
+
+  Layout::DrawButton(renderer, m_apply_all_not_played, GetTexture(ButtonNotPlayed));
+  Layout::DrawButton(renderer, m_apply_all_played_auto, GetTexture(ButtonPlayedAuto));
+  Layout::DrawButton(renderer, m_apply_all_you_play, GetTexture(ButtonYouPlay));
+  Layout::DrawButton(renderer, m_apply_all_you_play_silent, GetTexture(ButtonYouPlaySilent));
+  Layout::DrawButton(renderer, m_apply_all_learning, GetTexture(ButtonLearning));
+  Layout::DrawButton(renderer, m_apply_all_learning_silent, GetTexture(ButtonLearningSilent));
+  Layout::DrawButton(renderer, m_apply_all_played_hidden, GetTexture(ButtonPlayedHidden));
+
+  Layout::DrawSubTitle(renderer, "Choose Tracks To Play");
+  Layout::DrawHorizontalRule(renderer, GetStateWidth(), Layout::ScreenMarginY*2);
   Layout::DrawHorizontalRule(renderer, GetStateWidth(), GetStateHeight() - Layout::ScreenMarginY);
 
   Layout::DrawButton(renderer, m_continue_button, GetTexture(ButtonPlaySong));
