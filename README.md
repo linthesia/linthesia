@@ -1,7 +1,6 @@
 # linthesia
 
-[![Build Status](https://travis-ci.org/linthesia/linthesia.svg?branch=master)](https://travis-ci.org/linthesia/linthesia)
-[![Join the chat at https://gitter.im/linthesia/linthesia](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/linthesia/linthesia?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://api.travis-ci.com/mans17/linthesia.svg?branch=master)](https://travis-ci.org/mans17/linthesia)
 
 Linthesia is a fork of the Windows/Mac game called Synthesia. It is a game of playing music using a MIDI keyboard (or your PC keyboard), following a .mid file.
 
@@ -29,6 +28,16 @@ Then:
 
     $ make
     $ sudo make install
+
+## Troubleshooting
+
+### 'no text' issue with ATI Mobility Radeon HD 5470
+
+Setting LIBGL_ALWAYS_SOFTWARE might fix the problem without any noticable adverse effects.
+
+To run linthesia, use :
+`LIBGL_ALWAYS_SOFTWARE=1 linthesia`
+
 
 ## Credits
 
