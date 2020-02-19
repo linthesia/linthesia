@@ -1,11 +1,10 @@
 [Desktop Entry]
 Type=Application
-Version=0.3
 Name=Linthesia
 GenericName=Piano game
 GenericName[fr]=Jeu de piano
-Comment=Piano game
-Comment[fr]=Jeu de piano
-Icon=linthesia.xpm
+Comment=Piano hero like game
+Comment[fr]=Jeu à la Piano Hero
+Icon=linthesia
 Exec=linthesia
-Categories=Game;Music;Education
+Categories=Game;Music;Education;
