@@ -31,6 +31,22 @@ Then:
     $ make
     $ sudo make install
 
+
+Troubleshooting
+---------------
+
+* 'no text' issue with ATI Mobility Radeon HD 5470
+
+Setting LIBGL_ALWAYS_SOFTWARE might fix the problem without any noticable adverse effects.
+
+To run linthesia, use :
+
+    $ LIBGL_ALWAYS_SOFTWARE=1 linthesia
+
+
+Credits
+-------
+
 Visit https://sourceforge.net/projects/linthesia/ for more info.
 
 Join the chat at https://gitter.im/linthesia/linthesia
