@@ -1,6 +1,6 @@
 # linthesia
 
-[![Build Status](https://api.travis-ci.com/mans17/linthesia.svg?branch=master)](https://travis-ci.org/mans17/linthesia)
+[![Build Status](https://api.travis-ci.com/mans17/linthesia.svg?branch=master)](https://travis-ci.com/mans17/linthesia)
 
 Linthesia is a fork of the Windows/Mac game called Synthesia. It is a game of playing music using a MIDI keyboard (or your PC keyboard), following a .mid file.
 
