@@ -92,7 +92,7 @@ void TrackSelectionState::Init() {
 
   tiles_across = max(tiles_across, 1);
 
-  int tiles_down = (GetStateHeight() - Layout::ScreenMarginX - Layout::ScreenMarginY * 2) /
+  int tiles_down = (GetStateHeight() - 60 - Layout::ScreenMarginX - Layout::ScreenMarginY * 2) /
     (TrackTileHeight + Layout::ScreenMarginX);
 
   tiles_down = max(tiles_down, 1);
@@ -120,7 +120,9 @@ void TrackSelectionState::Init() {
   int tiles_on_this_line = 0;
   int tiles_on_this_page = 0;
   int current_y = starting_y;
-
+  
+  m_track_tiles.clear();
+  
   for (size_t i = 0; i < m.Tracks().size(); ++i) {
 
     const MidiTrack &t = m.Tracks()[i];
@@ -168,9 +170,7 @@ void TrackSelectionState::Init() {
 }
 
 void TrackSelectionState::Resize() {
-    /*delete m_back_button;
-    delete m_continue_button;
-    Init();*/
+    Init();
 }
 
 vector<Track::Properties> TrackSelectionState::BuildTrackProperties() const {
@@ -283,10 +283,10 @@ void TrackSelectionState::Update() {
   m_tooltip = "";
 
   if (m_back_button.hovering)
-    m_tooltip = "Click to return to the title screen.";
+    m_tooltip = "Click to return to the title screen.                                      ";
 
   if (m_continue_button.hovering)
-    m_tooltip = "Click to begin playing with these settings.";
+    m_tooltip = "Click to begin playing with these settings.                               ";
 
   // Our delta milliseconds on the first frame after we seek down to the
   // first note is extra long because the seek takes a while.  By skipping
@@ -314,11 +314,11 @@ void TrackSelectionState::Update() {
 
       switch (t.GetMode()) {
       case Track::ModeNotPlayed:
-        m_tooltip = "Track won't be played or shown during the game.";
+        m_tooltip = "Track won't be played or shown during the game.                           ";
         break;
 
       case Track::ModePlayedAutomatically:
-        m_tooltip = "Track will be played automatically by the game.";
+        m_tooltip = "Track will be played automatically by the game.                           ";
         break;
 
       case Track::ModePlayedButHidden:
@@ -326,19 +326,19 @@ void TrackSelectionState::Update() {
         break;
 
       case Track::ModeYouPlay:
-        m_tooltip = "'You Play' means you want to play this track yourself.";
+        m_tooltip = "'You Play' means you want to play this track yourself.                    ";
         break;
 
       case Track::ModeYouPlaySilently:
-        m_tooltip = "Same as 'You Play', ignore velocity from MIDI.";
+        m_tooltip = "Same as 'You Play', ignore velocity from MIDI.                            ";
         break;
 
       case Track::ModeLearning:
-        m_tooltip = "Wait for you to play.";
+        m_tooltip = "Wait for you to play.                                                     ";
         break;
 
       case Track::ModeLearningSilently:
-        m_tooltip = "Wait for you to play, do not produce sounds from MIDI.";
+        m_tooltip = "Wait for you to play, do not produce sounds from MIDI.                    ";
         break;
 
       case Track::ModeCount:
@@ -348,21 +348,21 @@ void TrackSelectionState::Update() {
 
     if (t.ButtonPreview().hovering) {
       if (t.IsPreviewOn())
-        m_tooltip = "Turn track preview off.";
+        m_tooltip = "Turn track preview off.                                                   ";
 
       else
-        m_tooltip = "Preview how this track sounds.";
+        m_tooltip = "Preview how this track sounds.                                            ";
     }
 
     if (t.ButtonColor().hovering)
-      m_tooltip = "Pick a color for this track's notes.";
+        m_tooltip = "Pick a color for this track's notes.                                      ";
 
     if (t.ButtonRetry().hovering) {
       if (t.IsRetryOn())
-        m_tooltip = "Ignore failed tempo blocks.";
+        m_tooltip = "Ignore failed tempo blocks.                                               ";
 
       else
-        m_tooltip = "Repeat failed tempo blocks.";
+        m_tooltip = "Repeat failed tempo blocks.                                               ";
     }
 
     if (t.HitPreviewButton()) {
@@ -449,13 +449,13 @@ void TrackSelectionState::Draw(Renderer &renderer) const {
   Layout::DrawButton(renderer, m_back_button, GetTexture(ButtonBackToTitle));
 
   // Write our page count on the screen
-  TextWriter pagination(GetStateWidth()/2, GetStateHeight() - Layout::SmallFontSize - 30,
+  TextWriter pagination(GetStateWidth()/2+200, GetStateHeight() - Layout::SmallFontSize - 30,
                         renderer, true, Layout::ButtonFontSize);
 
   pagination << Text(STRING("Page " << (m_current_page+1) << " of " <<
-                            m_page_count << " (arrow keys change page)"), Gray);
+                            m_page_count << " (arrow keys change page)                                      "), Gray);
 
-  TextWriter tooltip(GetStateWidth()/2, GetStateHeight() - Layout::SmallFontSize - 54,
+  TextWriter tooltip(GetStateWidth()/2+200, GetStateHeight() - Layout::SmallFontSize - 54,
                      renderer, true, Layout::ButtonFontSize);
 
   tooltip << m_tooltip;
