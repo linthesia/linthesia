@@ -1,7 +1,7 @@
 EXTRA_DIST = BUILD-DEPENDS CHANGELOG graphics extra music
 nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/InterfaceButtons.tga \
-			graphics/linthesia.xpm \
+			graphics/linthesia.png \
 			graphics/play_KeyHits.tga \
 			graphics/play_KeyRail.tga \
 			graphics/play_KeysBlack.tga \
