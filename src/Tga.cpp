@@ -8,8 +8,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <string.h> // Fix Artifact ID: 2927098
-
+#include <string> // Fix Artifact ID: 2927098
+                  // removed ".h" for 0.6.6 : maybe will create bugs ?
+                  //  => removing makes GRAPHDIR work again !
 #include "Tga.h"
 #include "OSGraphics.h"
 #include "StringUtil.h"
@@ -28,7 +29,7 @@ Tga* Tga::Load(const string &resource_name) {
 
   // FIXME this!
   full_name = string(GRAPHDIR) + "/" + full_name;
-
+  //cout <<full_name<< "\n";
   ifstream file(full_name.c_str(), ios::in|ios::binary|ios::ate);
   if (!file.is_open())
     throw LinthesiaError("Couldn't open TGA resource (" + full_name + ").");

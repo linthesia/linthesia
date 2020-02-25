@@ -32,8 +32,11 @@
 #include <pwd.h>
 #include <sys/stat.h>
 
+#include <iostream>
+#include <libgen.h>
+
 #ifndef GRAPHDIR
-#define GRAPHDIR "../graphics"
+  #define GRAPHDIR "../graphics"
 #endif
 
 using namespace std;
@@ -50,8 +53,7 @@ const static string friendly_app_name = STRING("Linthesia " <<
 const static string error_header1 = "Linthesia detected a";
 const static string error_header2 = " problem and must close:\n\n";
 const static string error_footer = "\n\nIf you don't think this should have "
-  "happened, please\ncontact Oscar (on Linthesia sourceforge site) and\n"
-  "describe what you were doing when the problem\noccurred. Thanks.";
+  "happened, please fill a bug report on : \nhttps://github.com/linthesia/linthesia\n\nThank you.";
 
 const static int vsync_interval = 1;
 
@@ -361,6 +363,14 @@ bool cmdOptionExists(char** begin, char** end, const std::string & option)
     return std::find(begin, end, option) != end;
 }
 
+std::string getExePath()
+// https://stackoverflow.com/questions/23943239/how-to-get-path-to-current-exe-file-on-linux
+{
+  char result[ PATH_MAX ];
+  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+  return std::string( dirname(result), (count > 0) ? count : 0 );
+}
+
 int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
   Gtk::GL::init(argc, argv);
@@ -386,7 +396,7 @@ int main(int argc, char *argv[]) {
     if (file_opt.length() > 0 &&
         file_opt[file_opt.length()-1] == '\"')
       file_opt = file_opt.substr(0, file_opt.length() - 1);
-
+    
     Midi *midi = 0;
 
     // attempt to open the midi file given on the command line first
@@ -429,7 +439,7 @@ int main(int argc, char *argv[]) {
         return 1;
       }
     }
-
+    
     /* Loading the Sqlite Library
     */
     string tmp_user_db_str = UserSetting::Get("sqlite_db", "");
@@ -472,7 +482,17 @@ int main(int argc, char *argv[]) {
     window.show_all();
 
     window.set_title(friendly_app_name);
-    window.set_icon_from_file(string(GRAPHDIR) + "/app_icon.ico");
+
+    struct stat st;
+    chdir (getExePath().c_str());  
+    
+    if ( !stat((GRAPHDIR +  std::string("/linthesia.png")).c_str(),&st) == 0) {
+       fprintf(stderr, "FATAL : File not found : make install not done ?\n");
+       cout << (GRAPHDIR +  std::string("/linthesia.png")) << "\n";
+    //   exit(0);
+    }
+
+    window.set_icon_from_file(GRAPHDIR + std::string("/linthesia.png"));
 
     if (fullscreen) {
         window.fullscreen();
