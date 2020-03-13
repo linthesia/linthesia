@@ -31,6 +31,13 @@ Then:
 
 ## Troubleshooting
 
+### What libs/things do I need to compile this thing ?
+
+I've tested the full install on a fresh install of Ubuntu 18.04. (LAST version as of March 2020, AFAIK).
+before autogen, run :
+
+    $ sudo apt-get install libgtkglextmm-x11-1.2 libtool-bin build-essential autoconf libgconfmm-2.6-dev libasound2-dev libsqlite3-dev
+
 ### 'no text' issue with ATI Mobility Radeon HD 5470
 
 Setting LIBGL_ALWAYS_SOFTWARE might fix the problem without any noticable adverse effects.
