@@ -48,6 +48,7 @@ PKG_CHECK_MODULES([GTKMM],[gtkmm-2.4])
 PKG_CHECK_MODULES([GCONFMM],[gconfmm-2.6])
 PKG_CHECK_MODULES([FONTCONFIG],[fontconfig])
 PKG_CHECK_MODULES([ALSA],[alsa])
+AC_CHECK_LIB(sqlite3, sqlite3_open,[echo "checking for sqlite3... yes"] , AC_MSG_ERROR([*** Unable to find sqlite3 library]), )
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
