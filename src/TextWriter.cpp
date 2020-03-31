@@ -45,7 +45,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
   point_size = size;
 
   if (font_size_lookup[size] == 0) {
-    int list_start = glGenLists(128);
+    GLuint list_start = glGenLists(128);
     Pango::FontDescription *font_desc = NULL;
     Glib::RefPtr<Pango::Font> ret;
 
@@ -72,18 +72,21 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
       if (!sysfontname.empty()) {
         font_desc = new Pango::FontDescription(STRING(sysfontname << " " << in_size));
         ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-      }
+      } 
     }
 
     if (!ret) {
-      delete font_desc;
-      glDeleteLists(list_start, 128);
-      fprintf(stderr, "FATAL: An error ocurred while trying to use (any) pango font. (FIXME : we're working on it)\n");
-      throw LinthesiaError("An error ocurred while trying to use pango font");
+      fprintf(stderr, "Warning: An error ocurred while trying to use (any) pango font. \n"); // FIXME ?
+      // Trying to go without a working pango font....
+	    font_size_lookup[size] = list_start;
+	    font_lookup[size] = font_desc;
+      //     delete font_desc;
+      //     glDeleteLists(list_start, 128);
+      //     throw LinthesiaError("An error ocurred while trying to use pango font");
+    } else {
+	    font_size_lookup[size] = list_start;
+	    font_lookup[size] = font_desc;
     }
-
-    font_size_lookup[size] = list_start;
-    font_lookup[size] = font_desc;
   }
 }
 
@@ -100,8 +103,8 @@ TextWriter& TextWriter::next_line() {
 }
 
 TextWriter& Text::operator<<(TextWriter& tw) const {
-  int draw_x;
-  int draw_y;
+  int draw_x = 0;
+  int draw_y = 0;
   calculate_position_and_advance_cursor(tw, &draw_x, &draw_y);
 
   string narrow(m_text.begin(), m_text.end());
@@ -122,7 +125,6 @@ TextWriter& Text::operator<<(TextWriter& tw) const {
 }
 
 void Text::calculate_position_and_advance_cursor(TextWriter &tw, int *out_x, int *out_y) const  {
-
   Glib::RefPtr<Pango::Layout> layout = Pango::Layout::create(tw.renderer.m_pangocontext);
   layout->set_text(m_text);
   layout->set_font_description(*(font_lookup[tw.size]));
@@ -164,16 +166,16 @@ const std::string get_default_font()
   FcConfig *config = FcInitLoadConfigAndFonts();
 
   FcPattern *pattern = FcPatternCreate();
+  //FcPattern *pattern = FcNameParse((const FcChar8*)"serif");
   FcConfigSubstitute(config, pattern, FcMatchPattern);
   FcDefaultSubstitute(pattern);
   FcPattern *match = FcFontMatch(config, pattern, &fcres);
 
   FcChar8 *family = NULL;
-  if (fcres == FcResultMatch)
+  if (fcres == FcResultMatch) {
     fcres = FcPatternGetString(match, FC_FAMILY, 0, &family);
-  if (fcres == FcResultMatch)
     returnedFont = (char *)family;
-
+  }
   FcPatternDestroy(pattern);
   FcConfigDestroy(config);
 
