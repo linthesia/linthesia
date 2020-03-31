@@ -13,6 +13,7 @@
 #include "UserSettings.h"
 
 #include <map>
+#include <iostream>
 #include <fontconfig/fontconfig.h>
 
 using namespace std;
@@ -77,6 +78,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
     if (!ret) {
       delete font_desc;
       glDeleteLists(list_start, 128);
+      fprintf(stderr, "FATAL: An error ocurred while trying to use (any) pango font. (FIXME : we're working on it)\n");
       throw LinthesiaError("An error ocurred while trying to use pango font");
     }
 
