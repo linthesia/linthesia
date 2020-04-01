@@ -76,14 +76,41 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
     }
 
     if (!ret) {
-      fprintf(stderr, "Warning: An error ocurred while trying to use (any) pango font. \n"); // FIXME ?
-      // Trying to go without a working pango font....
+  	FcConfig *config = FcInitLoadConfigAndFonts();
+	FcPattern* pat = FcPatternCreate();
+	FcObjectSet* os = FcObjectSetBuild (FC_FAMILY, FC_STYLE, FC_LANG, FC_FILE, (char *) 0);
+	FcFontSet* fs = FcFontList(config, pat, os);
+
+	printf("Warning : cannot load fonts so far : trying EVERY font you have: %d\n", fs->nfont);
+	for (int i=0; fs && i < fs->nfont; ++i) {
+	   FcPattern* font = fs->fonts[i];
+	   FcChar8 *file, *style, *family;
+	   if (FcPatternGetString(font, FC_FILE, 0, &file) == FcResultMatch &&
+	       FcPatternGetString(font, FC_FAMILY, 0, &family) == FcResultMatch &&
+	       FcPatternGetString(font, FC_STYLE, 0, &style) == FcResultMatch) {
+		      //printf("Filename: %s (family %s, style %s)\n", file, family, style);
+		      font_desc = new Pango::FontDescription(STRING((char *)family << " " << style << " 14" ));
+		      ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+		      //printf ("DEBUG : family = %d    -    ret=%d \n\n", family, ret);
+		      if (ret) {
+			  printf ("DEBUG : FOUND !!!!\n");
+                          font_size_lookup[size] = list_start;
+                          font_lookup[size] = font_desc;
+			  break;
+                      }
+
+            }
+      }
+    }
+    if (!ret) {
+       fprintf(stderr, "FATAL WARNING: An error ocurred while trying to use (any) pango font. \n"); // FIXME ?
+       // Trying to go without a working pango font.... 
 	    font_size_lookup[size] = list_start;
 	    font_lookup[size] = font_desc;
       //     delete font_desc;
       //     glDeleteLists(list_start, 128);
       //     throw LinthesiaError("An error ocurred while trying to use pango font");
-    } else {
+     } else {
 	    font_size_lookup[size] = list_start;
 	    font_lookup[size] = font_desc;
     }
