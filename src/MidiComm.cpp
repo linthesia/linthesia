@@ -34,15 +34,17 @@ void midiInit() {
     return;
 
   int err = snd_seq_open(&alsa_seq, "default", SND_SEQ_OPEN_DUPLEX, 0);
-  int ownid = snd_seq_client_id(alsa_seq);
   midi_initiated = true;
 
   // Could not open sequencer, no out devices
   if (err < 0) {
     alsa_seq = NULL;
-    Compatible::ShowError("Could not open MIDI sequencer. No MIDI available");
+    //Compatible::ShowError("Could not open MIDI sequencer. No MIDI available"); // FIXME ?
+    fprintf (stdout, "WARNING :: could not open MIDI sequencer. No MIDI available\n");
     return;
   }
+
+  int ownid = snd_seq_client_id(alsa_seq);
 
   snd_seq_set_client_name(alsa_seq, "Linthesia");
 
@@ -91,6 +93,8 @@ void midiInit() {
 
 void midiStop() {
 
+  if (alsa_seq == NULL)
+    return;
   snd_seq_close(alsa_seq);
 }
 
