@@ -384,7 +384,8 @@ int main(int argc, char *argv[]) {
       file_opt = string(getCmdOption(argv, argv + argc, "-f"));
 
     // TODO: parse from command line args
-    bool fullscreen = !cmdOptionExists(argv, argv+argc, "-w");
+    bool windowed = cmdOptionExists(argv, argv+argc, "-w");
+    bool fullscreen = cmdOptionExists(argv, argv+argc, "-W");
 
     // strip any leading or trailing quotes from the filename
     // argument (to match the format returned by the open-file
@@ -494,7 +495,12 @@ int main(int argc, char *argv[]) {
 
     window.set_icon_from_file(GRAPHDIR + std::string("/linthesia.png"));
 
-    if (fullscreen) {
+    // Lauch fullscreen if asked for it OR if neither fullllscreen and windowed is asked AND we are not in jail.
+    bool injail = true; // FIXME : how to detect we are injail without doing something nasty ?
+                        // Jail is launched by AppImage, within :
+                        //   firejail --quiet --noprofile --net=none --appimage ./"$FILENAME" &
+
+    if (fullscreen || ( (!windowed && !fullscreen) && (!injail ) ) ) {
         window.fullscreen();
     }
     else {
