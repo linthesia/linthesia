@@ -6,7 +6,7 @@
 // Adaptation to GNU/Linux by Oscar Aceña
 // See COPYING for license information
 
-#include <gconfmm.h>
+#include <gconf/gconf-client.h>
 
 #include "StringUtil.h"
 
@@ -16,15 +16,13 @@ namespace UserSetting {
 
   static bool g_initialized(false);
   static string g_app_name("");
-  static Glib::RefPtr<Gnome::Conf::Client> gconf;
+  static GConfClient* gconf;
 
   void Initialize(const string &app_name) {
     if (g_initialized) 
       return;
 
-    Gnome::Conf::init(); 
-
-    gconf = Gnome::Conf::Client::get_default_client();
+    gconf = gconf_client_get_default();
     g_app_name = "/apps/" + app_name;
     g_initialized = true;
   }
@@ -33,18 +31,18 @@ namespace UserSetting {
     if (!g_initialized) 
       return default_value;
 
-    string result = gconf->get_string(g_app_name + "/" + setting);
-    if (result.empty())
+    const char* value = gconf_client_get_string(gconf, (g_app_name + "/" + setting).c_str(), NULL);
+    if (value == nullptr)
       return default_value;
     
-    return result;
+    return value;
   }
     
   void Set(const string &setting, const string &value) {
     if (!g_initialized) 
       return;
 
-    gconf->set(g_app_name + "/" + setting, value);
+    gconf_client_set_string(gconf,  (g_app_name + "/" + setting).c_str(), value.c_str(), NULL);
   }
 
 }; // End namespace
