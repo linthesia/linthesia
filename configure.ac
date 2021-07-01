@@ -45,7 +45,7 @@ AC_CHECK_HEADERS([string string.h iostream algorithm locale vector sstream queue
 
 PKG_CHECK_MODULES([GTKGLEXTMM],[gtkglextmm-1.2])
 PKG_CHECK_MODULES([GTKMM],[gtkmm-2.4])
-PKG_CHECK_MODULES([GCONFMM],[gconfmm-2.6])
+PKG_CHECK_MODULES([GCONF],[gconf-2.0])
 PKG_CHECK_MODULES([FONTCONFIG],[fontconfig])
 PKG_CHECK_MODULES([ALSA],[alsa])
 PKG_CHECK_MODULES([LIBPANGO],[pango])

@@ -36,7 +36,7 @@ Then:
 I've tested the full install on a fresh install of Ubuntu 18.04. (LAST version as of March 2020, AFAIK).
 before autogen, run :
 
-    $ sudo apt-get install libgtkglextmm-x11-1.2 libtool-bin build-essential autoconf libgconfmm-2.6-dev libasound2-dev libsqlite3-dev
+    $ sudo apt-get install libgtkglextmm-x11-1.2 libtool-bin build-essential autoconf libgconf2-dev libasound2-dev libsqlite3-dev
 
 ### 'no text' issue with ATI Mobility Radeon HD 5470
 

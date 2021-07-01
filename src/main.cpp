@@ -25,7 +25,6 @@
 
 #include "libmidi/Midi.h"
 #include "libmidi/MidiUtil.h"
-#include <gconfmm.h>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -594,16 +593,6 @@ int main(int argc, char *argv[]) {
                                         error_footer);
     Compatible::ShowError(wrapped_description);
   }
-
-  catch (const Gnome::Conf::Error& e) {
-    string wrapped_description = STRING(error_header1 <<
-                                        " Gnome::Conf::Error" <<
-                                        error_header2 <<
-                                        e.what() <<
-                                        error_footer);
-    Compatible::ShowError(wrapped_description);
-  }
-
   catch (const exception &e) {
     string wrapped_description = STRING("Linthesia detected an unknown "
                                         "problem and must close!  '" <<
