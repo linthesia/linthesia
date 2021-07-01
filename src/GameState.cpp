@@ -238,10 +238,9 @@ void GameStateManager::ChangeState(GameState *new_state) {
 void GameStateManager::Update(bool skip_this_update) {
 
   // Manager's timer grows constantly
-  const unsigned long now = Compatible::GetMilliseconds();
-  const unsigned long delta = now - m_last_milliseconds;
-  m_last_milliseconds = now;
-
+  const unsigned long now = Compatible::GetMicroseconds();
+  const unsigned long delta = now - m_last_microseconds;
+  m_last_microseconds = now;
   // Now that we've updated the time, we can return if
   // we've been told to skip this one.
   if (skip_this_update)
@@ -275,8 +274,12 @@ void GameStateManager::Update(bool skip_this_update) {
 
   m_inside_update = true;
 
-  m_current_state->m_last_delta_milliseconds = delta;
-  m_current_state->m_state_milliseconds += delta;
+  m_fps.Frame(delta);
+  m_frameavg.Frame(delta);
+  unsigned long game_delta = m_frameavg.GetAverage();
+
+  m_current_state->m_last_delta_microseconds = game_delta;
+  m_current_state->m_state_microseconds += game_delta;
   m_current_state->Update();
 
   m_inside_update = false;
@@ -314,7 +317,7 @@ void GameStateManager::Draw(Renderer &renderer) {
   if (m_show_fps) {
     TextWriter fps_writer(0, 0, renderer);
     fps_writer << Text("FPS: ", Gray) <<
-      Text(STRING(setprecision(6) << m_fps.GetFramesPerSecond()), White);
+      Text(STRING(setprecision(2) << fixed << m_fps.GetFramesPerSecond()), White);
   }
 
   glFlush ();

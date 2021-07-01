@@ -17,6 +17,12 @@ namespace Compatible {
   // clock (but not necessarily based on app-start)
   unsigned long GetMilliseconds();
    
+  // Some monotonically increasing value tied to the system
+  // clock (but not necessarily based on app-start)
+  // in microseconds
+  unsigned long GetMicroseconds();
+  
+
   // Shows an error box with an OK button
   void ShowError(const std::string &err);
   

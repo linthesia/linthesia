@@ -27,6 +27,7 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				Tga.cpp \
 				TrackTile.cpp \
 				GameState.cpp \
+				FrameAverage.cpp \
 				main.cpp \
 				PlayingState.cpp \
 				StringTile.cpp \
@@ -39,6 +40,7 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				FileSelector.h \
 				FrameCounter.h \
 				GameState.h \
+				FrameAverage.h \
 				KeyboardDisplay.h \
 				LinthesiaError.h \
 				MenuLayout.h \

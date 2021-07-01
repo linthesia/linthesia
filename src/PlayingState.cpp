@@ -389,7 +389,7 @@ void PlayingState::Update() {
   const static double fade_ms = 500.0;
 
   m_title_alpha = 0.0;
-  unsigned long ms = GetStateMilliseconds() * max(m_state.song_speed, 50) / 100;
+  unsigned long ms = GetStateMicroseconds() * max(m_state.song_speed, 50) / 100000;
 
   if (double(ms) <= stay_ms)
     m_title_alpha = min(1.0, ms / fade_in_ms);
@@ -404,7 +404,7 @@ void PlayingState::Update() {
   if (double(ms) > stay_ms)
     m_max_allowed_title_alpha = m_title_alpha;
 
-  microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
+  microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMicroseconds());
 
   // The 100 term is really paired with the playback speed, but this
   // formation is less likely to produce overflow errors.
@@ -577,7 +577,7 @@ void PlayingState::Update() {
         // Should wait after retry for initial keys to be pressed
         m_should_wait_after_retry = true;
 
-        microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000;
+        microseconds_t delta_microseconds = static_cast<microseconds_t>(GetDeltaMicroseconds());
         microseconds_t new_time= m_retry_start-delta_microseconds;
         // Retry
         m_state.midi->GoTo(new_time);
