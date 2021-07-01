@@ -25,6 +25,13 @@ namespace Compatible {
     return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
   }
 
+  unsigned long GetMicroseconds() {
+
+    timeval tv;
+    gettimeofday(&tv, 0);
+    return (tv.tv_sec * 1000000) + tv.tv_usec;
+  }
+
 
   void ShowError(const string &err) {
 

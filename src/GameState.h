@@ -16,6 +16,7 @@
 #include "Textures.h"
 #include "CompatibleSystem.h"
 #include "FrameCounter.h"
+#include "FrameAverage.h"
 #include "Renderer.h"
 
 class GameStateError : public std::exception {
@@ -104,12 +105,12 @@ public:
 
   // Don't initialize anything that is dependent
   // on the protected functions (GetStateWidth,
-  // GetStateMilliseconds, etc) here.  Wait until
+  // GetStateMicroseconds, etc) here.  Wait until
   // Init() to do that.
   GameState() :
     m_manager(0),
-    m_state_milliseconds(0),
-    m_last_delta_milliseconds(0) {
+    m_state_microseconds(0),
+    m_last_delta_microseconds(0) {
   }
 
   virtual ~GameState() {
@@ -132,13 +133,13 @@ protected:
   virtual void Draw(Renderer &renderer) const = 0;
 
   // How long has this state been running
-  unsigned long GetStateMilliseconds() const {
-    return m_state_milliseconds;
+  unsigned long GetStateMicroseconds() const {
+    return m_state_microseconds;
   }
 
   // How much time elapsed since the last update
-  unsigned long GetDeltaMilliseconds() const {
-    return m_last_delta_milliseconds;
+  unsigned long GetDeltaMicroseconds() const {
+    return m_last_delta_microseconds;
   }
 
   int GetStateWidth() const;
@@ -169,13 +170,13 @@ private:
   void SetManager(GameStateManager *manager);
   GameStateManager *m_manager;
 
-  void UpdateStateMicroseconds(unsigned long delta_ms) {
-    m_state_milliseconds += delta_ms;
-    m_last_delta_milliseconds = delta_ms;
+  void UpdateStateMicroseconds(unsigned long delta_us) {
+    m_state_microseconds += delta_us;
+    m_last_delta_microseconds = delta_us;
   }
 
-  unsigned long m_state_milliseconds;
-  unsigned long m_last_delta_milliseconds;
+  unsigned long m_state_microseconds;
+  unsigned long m_last_delta_microseconds;
 
   friend class GameStateManager;
 };
@@ -187,11 +188,12 @@ public:
   GameStateManager(int screen_width, int screen_height) :
     m_next_state(0),
     m_current_state(0),
-    m_last_milliseconds(Compatible::GetMilliseconds()),
+    m_last_microseconds(Compatible::GetMicroseconds()),
     m_key_presses(0),
     m_last_key_presses(0),
     m_inside_update(false),
     m_fps(500.0),
+    m_frameavg(5),
     m_show_fps(false),
     m_screen_x(screen_width),
     m_screen_y(screen_height) {
@@ -229,7 +231,7 @@ private:
   GameState *m_next_state;
   GameState *m_current_state;
 
-  unsigned long m_last_milliseconds;
+  unsigned long m_last_microseconds;
   unsigned long m_key_presses;
   unsigned long m_last_key_presses;
 
@@ -238,6 +240,7 @@ private:
   MouseInfo m_mouse;
 
   FrameCounter m_fps;
+  FrameAverage m_frameavg;
   bool m_show_fps;
 
   int m_screen_x;

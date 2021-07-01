@@ -246,7 +246,7 @@ void TitleState::Update() {
     }
 
     else
-      PlayDevicePreview(static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000);
+      PlayDevicePreview(static_cast<microseconds_t>(GetDeltaMicroseconds()));
 
   }
 

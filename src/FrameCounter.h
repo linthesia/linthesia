@@ -23,10 +23,12 @@ public:
     if (m_average_over_ms <= 50.0) m_average_over_ms = 50.0;
   }
 
-  void Frame(double delta_ms) {
+  void Frame(double delta_us) {
 
-    if (delta_ms < 0.0)
+    if (delta_us < 0.0)
       return;
+
+    double delta_ms = delta_us / 1000.0;
 
     m_period_ms += delta_ms;
     m_frames++;

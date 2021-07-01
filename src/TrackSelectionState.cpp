@@ -293,7 +293,7 @@ void TrackSelectionState::Update() {
   // the "Play" that update, we don't have an artificially fast-forwarded
   // start.
   if (!m_first_update_after_seek)
-    PlayTrackPreview(static_cast<microseconds_t>(GetDeltaMilliseconds()) * 1000);
+    PlayTrackPreview(static_cast<microseconds_t>(GetDeltaMicroseconds()));
 
   m_first_update_after_seek = false;
 

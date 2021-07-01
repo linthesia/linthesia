@@ -532,14 +532,9 @@ int main(int argc, char *argv[]) {
     }
 
     // get refresh rate from user settings
-    int default_rate = 30;
+    int default_rate = 300;
 
     string user_rate = UserSetting::Get("refresh_rate", "");
-
-    if (! user_rate.empty() && std::stoi(user_rate) > default_rate) {
-      fprintf (stdout, "WARNING :: Your refresh_rate is set to %d. I recommand using %d.\n", std::stoi(user_rate), default_rate);
-      fprintf (stdout, "           You may update it using gconf-2.\n");
-    }
 
     if (user_rate.empty()) {
       user_rate = STRING(default_rate);
@@ -553,7 +548,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/std::stoi(user_rate));
+    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/std::stoi(user_rate), Glib::PRIORITY_DEFAULT_IDLE);
 
     UserSetting::Set("min_key", "");
     UserSetting::Set("max_key", "");
