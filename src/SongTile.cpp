@@ -7,12 +7,13 @@
 #include "Renderer.h"
 #include "Tga.h"
 
-SongTile::SongTile(int x, int y, string path, string title, bool dir, Tga *frame_graphics) :
+SongTile::SongTile(int x, int y, string path, string title, bool dir, bool symlink, Tga *frame_graphics) :
   m_x(x),
   m_y(y),
   m_path(path),
   m_name(title),
   m_dir(dir),
+  m_symlink(symlink),
   m_frame_graphics(frame_graphics) {
 
   // Initialize the size and position of each button

@@ -437,7 +437,7 @@ int main(int argc, char *argv[]) {
     if (fullscreen) {
         window.fullscreen();
         window.move(
-            Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth() / 2, 
+            Compatible::GetDisplayLeft() + Compatible::GetDisplayWidth() / 2,
             Compatible::GetDisplayTop() + Compatible::GetDisplayHeight() / 2);
     }
     else {
@@ -489,6 +489,12 @@ int main(int argc, char *argv[]) {
     if (cmdOptionExists(argv, argv+argc, "--max-key")) {
       string max_key = STRING(getCmdOption(argv, argv + argc, "--max-key"));
       UserSetting::Set("max_key", max_key);
+    }
+
+    if (cmdOptionExists(argv, argv+argc, "--lib-path")) {
+      string path = STRING(getCmdOption(argv, argv + argc, "--lib-path"));
+      UserSetting::Set(SONG_LIB_PATH_KEY, path);
+      UserSetting::Set(SONG_LIB_LAST_DIR_KEY, path);
     }
 
     Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/rate);

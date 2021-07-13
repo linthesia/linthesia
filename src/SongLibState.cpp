@@ -15,8 +15,6 @@
 
 using namespace std;
 
-const static string SONG_LIB_DIR_SETTINGS_KEY = "song_lib_last_dir";
-
 void SongLibState::Init() {
 
     m_back_button = ButtonState(
@@ -24,8 +22,8 @@ void SongLibState::Init() {
         Compatible::GetDisplayHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
-    m_base_path = UserSetting::Get("song_lib_path", MUSICDIR);
-    m_current_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
+    m_base_path = UserSetting::Get(SONG_LIB_PATH_KEY, MUSICDIR);
+    m_current_path = UserSetting::Get(SONG_LIB_LAST_DIR_KEY, MUSICDIR);
     // since it is unconfortable to crash when no file is present, let's test it now
     struct stat st;
     if ( (!stat(m_current_path.c_str(),&st) == 0) || (! st.st_mode & S_IFDIR != 0) ) {
@@ -55,7 +53,7 @@ void SongLibState::Init() {
 int SongLibState::ContentLeft() {
     int columns_margins = ColumnMargin * (m_columns - 1);
     int columns_content = SongTileWidth * m_columns;
-    
+
     int content_left_slim  = (GetStateWidth()  - SongTileWidth) / 2;
 
     int content_left_wide  = (GetStateWidth()  - columns_content - columns_margins) / 2;
@@ -66,7 +64,7 @@ int SongLibState::ContentLeft() {
 int SongLibState::ContentRight() {
     int columns_margins = ColumnMargin * (m_columns - 1);
     int columns_content = SongTileWidth * m_columns;
-    
+
     int content_left_slim  = (GetStateWidth()  - SongTileWidth) / 2;
     int content_right_slim = content_left_slim + SongTileWidth;
 
@@ -95,7 +93,7 @@ string eraseSubstring(string subj, string erase) {
 
     if (i != std::string::npos)
         t.erase(i, s.length());
-    
+
     return t;
 }
 // https://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
@@ -108,12 +106,12 @@ struct songtile_less_than_key
 };
 
 void SongLibState::UpdateSongTiles() {
-    
+
     m_song_tiles.clear();
 
     DIR *dir;
     struct dirent *ent;
-    
+
     if ((dir = opendir (m_current_path.c_str())) != NULL) {
 
         Tga* song_tile_graphics = GetTexture(SongBox);
@@ -123,12 +121,13 @@ void SongLibState::UpdateSongTiles() {
             string f_name = string(ent->d_name);
             if (f_name.compare(".") != 0 && f_name.compare("..") != 0) {
 
-                if (ent->d_type == DT_DIR || isMidiFile(string(ent->d_name))) {
-                    Tga * graphics = ent->d_type == DT_DIR ? dir_tile_graphics : song_tile_graphics;
+                if (ent->d_type == DT_DIR || ent->d_type == DT_LNK || isMidiFile(string(ent->d_name))) {
+                    Tga * graphics = dir_tile_graphics;
                     string path = m_current_path + "/" + ent->d_name;
                     string title = string(FileSelector::TrimFilename(ent->d_name));
                     SongTile song_tile = SongTile(0, 0, path, title,
-                                        ent->d_type == DT_DIR,
+                                        ent->d_type == DT_DIR || ent->d_type == DT_LNK,
+                                        ent->d_type == DT_LNK,
                                         graphics);
                     m_song_tiles.push_back(song_tile);
                 }
@@ -173,7 +172,7 @@ void SongLibState::UpdateSongTilesPage() {
 
     int rows = (GetStateHeight() - initial_y - Layout::ScreenMarginY) / each_y;
     int tiles_per_page = rows * m_columns;
-    
+
     std::vector<SongTile>::size_type tiles_total = m_song_tiles.size();
     m_page_count = (tiles_per_page == 0 ? 0 : (tiles_total / tiles_per_page)) + 1;
 
@@ -274,7 +273,7 @@ void SongLibState::Update() {
             if (m_song_tiles[i].IsDir()) {
                 m_skip_next_mouse_up = true;
                 m_current_path = m_song_tiles[i].GetPath();
-                UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_current_path);
+                UserSetting::Set(SONG_LIB_LAST_DIR_KEY, m_current_path);
                 UpdateSongTiles();
             }
             else {
@@ -288,7 +287,7 @@ void SongLibState::Update() {
 
 void SongLibState::GoUpDirectory() {
     m_current_path = m_current_path.substr(0, m_current_path.find_last_of("\\/"));
-    UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, m_current_path);
+    UserSetting::Set(SONG_LIB_LAST_DIR_KEY, m_current_path);
     UpdateSongTiles();
 }
 
@@ -318,9 +317,9 @@ void SongLibState::OpenTitleState(string path) {
 
 void SongLibState::Draw(Renderer &renderer) const {
 
-    Layout::DrawButton(renderer, m_back_button, 
+    Layout::DrawButton(renderer, m_back_button,
         m_state.midi ? GetTexture(ButtonBackToTitle) : GetTexture(ButtonExit));
-    
+
     if(m_current_page > 0) {
         Layout::DrawButton(renderer, m_prev_page_button, GetTexture(ButtonPageBack));
     }
@@ -335,7 +334,7 @@ void SongLibState::Draw(Renderer &renderer) const {
     Layout::DrawHorizontalRule(renderer,
                              GetStateWidth(),
                              Layout::ScreenMarginY);
-    
+
     for(std::vector<SongTile>::size_type i = 0; i < m_song_tiles.size(); i++) {
         if(m_song_tiles[i].IsVisible()) {
             renderer.ForceTexture(0);

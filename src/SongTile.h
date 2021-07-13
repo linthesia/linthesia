@@ -15,7 +15,7 @@ const int SongTileHeight = 80;
 class SongTile {
 public:
 
-  SongTile(int x, int y, string path, string title, bool dir, Tga *frame_graphics);
+  SongTile(int x, int y, string path, string title, bool dir, bool symlink, Tga *frame_graphics);
 
   void Update(const MouseInfo &translated_mouse);
   void Draw(Renderer &renderer) const;
@@ -60,7 +60,7 @@ public:
     // to sort strings, we need to have string to sort
     // directories "first", right ?
     if (m_dir)
-      return ("first" + m_path); 
+      return ("first" + m_path);
     else
       return ("second" + m_path);
   }
@@ -71,6 +71,7 @@ private:
   int m_y;
 
   bool m_dir;
+  bool m_symlink;
   bool m_visible;
 
   string m_path;
