@@ -11,7 +11,6 @@
 #include "CompatibleSystem.h"
 #include "FileSelector.h"
 #include "MenuLayout.h"
-#include <sqlite3.h>
 
 #include <vector>
 #include <string>
