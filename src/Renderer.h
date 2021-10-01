@@ -11,22 +11,16 @@
 
 #include "OSGraphics.h"
 #include "Tga.h"
-
-typedef Glib::RefPtr<Gdk::GL::Context> GLContext;
-typedef Glib::RefPtr<Pango::Context> PGContext;
-
-struct Color {
-  int r, g, b, a;
-};
+#include "SDL2/SDL.h"
 
 static bool m_vsync_initialized;
 
 class Renderer {
 public:
 
-  Renderer(GLContext glcontext, PGContext pangocontext);
+  Renderer(SDL_Window* sdl_window);
 
-  static Color ToColor(int r, int g, int b, int a = 0xFF);
+  static SDL_Color ToColor(int r, int g, int b, int a = 0xFF);
 
   void SwapBuffers();
 
@@ -43,7 +37,7 @@ public:
 
   void ForceTexture(unsigned int texture_id);
 
-  void SetColor(Color c);
+  void SetColor(SDL_Color c);
   void SetColor(int r, int g, int b, int a = 0xFF);
   void DrawQuad(int x, int y, int w, int h);
 
@@ -62,8 +56,7 @@ private:
   int m_xoffset;
   int m_yoffset;
 
-  GLContext m_glcontext;
-  PGContext m_pangocontext;
+  SDL_Window* m_sdl_window;
 
   friend class Text;
   friend class TextWriter;

@@ -118,7 +118,7 @@ void StatsState::Draw(Renderer &renderer) const {
   const double g = max(0.0, 1 - (((p-  1)*4)*((p-  1)*4)));
   const double b = max(0.0, 1 - (((p-.75)*5)*((p-.75)*5)));
 
-  const Color c = Renderer::ToColor(int(r*0xFF), int(g*0xFF), int(b*0xFF));
+  const SDL_Color c = Renderer::ToColor(int(r*0xFF), int(g*0xFF), int(b*0xFF));
 
   TextWriter grade_text(left - 5, InstructionsY - 15, renderer, false, 100);
   grade_text << Text(grade, c);

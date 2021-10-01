@@ -12,6 +12,9 @@
 #include "libmidi/Midi.h"
 
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -21,7 +24,7 @@ void SongLibState::Init() {
 
     m_back_button = ButtonState(
         Layout::ScreenMarginX,
-        Compatible::GetDisplayHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
+        Compatible::GetWindowHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
     m_base_path = UserSetting::Get("song_lib_path", MUSICDIR);
@@ -346,7 +349,7 @@ void SongLibState::Draw(Renderer &renderer) const {
     string path_title = eraseSubstring(m_current_path, m_base_path);
     if (path_title.length() > 0) {
         // Draw mode text
-        TextWriter title(Layout::ScreenMarginX + Layout::ButtonWidth + ColumnMargin, Layout::ScreenMarginY / 2 - 6, renderer, false, 14);
+        TextWriter title(Layout::ScreenMarginX + Layout::ButtonWidth + ColumnMargin, Layout::ScreenMarginY / 2 - 6, renderer, false, Layout::ButtonFontSize);
         title << path_title.c_str();
 
         Layout::DrawButton(renderer, m_path_up_button, GetTexture(ButtonDirBack));

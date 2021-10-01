@@ -36,6 +36,7 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/all_ButtonLearning.tga \
 			graphics/all_ButtonLearningSilent.tga \
 			graphics/all_ButtonPlayedHidden.tga \
+			graphics/FreeSans.ttf \
 			extra/linthesia.desktop \
 			music/Popular/Gymnopedie.mid \
 			music/Popular/Jonh_Lennon_-_Imagine.mid \

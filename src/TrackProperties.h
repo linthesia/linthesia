@@ -48,7 +48,7 @@ namespace Track {
     MissedNote
   };
 
-  const static Color ColorNoteWhite[ColorCount] = {
+  const static SDL_Color ColorNoteWhite[ColorCount] = {
     { 114, 159, 207, 0xFF },
     { 138, 226,  52, 0xFF },
     { 252, 175,  62, 0xFF },
@@ -60,7 +60,7 @@ namespace Track {
     {  60,  60,  60, 0xFF }
   };
 
-  const static Color ColorNoteHit[ColorCount] = {
+  const static SDL_Color ColorNoteHit[ColorCount] = {
     { 192, 222, 255, 0xFF },
     { 203, 255, 152, 0xFF },
     { 255, 216, 152, 0xFF },
@@ -72,7 +72,7 @@ namespace Track {
     {  60,  60,  60, 0xFF }
   };
 
-  const static Color ColorNoteBlack[ColorCount] = {
+  const static SDL_Color ColorNoteBlack[ColorCount] = {
     {  52, 101, 164, 0xFF },
     {  86, 157,  17, 0xFF },
     { 245, 121,   0, 0xFF },

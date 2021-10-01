@@ -113,8 +113,8 @@ void TrackTile::Draw(Renderer &renderer, const Midi *midi, Tga *buttons, Tga *bo
   const MidiTrack &track = midi->Tracks()[m_track_id];
 
   bool gray_out_buttons = false;
-  Color light  = Track::ColorNoteWhite[m_color];
-  Color medium = Track::ColorNoteBlack[m_color];
+  SDL_Color light  = Track::ColorNoteWhite[m_color];
+  SDL_Color medium = Track::ColorNoteBlack[m_color];
 
   if (m_mode == Track::ModePlayedButHidden || m_mode == Track::ModeNotPlayed) {
 
@@ -123,8 +123,8 @@ void TrackTile::Draw(Renderer &renderer, const Midi *midi, Tga *buttons, Tga *bo
     medium = Renderer::ToColor(0x70,0x70,0x70);
   }
 
-  Color color_tile = medium;
-  Color color_tile_hovered = light;
+  SDL_Color color_tile = medium;
+  SDL_Color color_tile_hovered = light;
 
   renderer.SetOffset(m_x, m_y);
 

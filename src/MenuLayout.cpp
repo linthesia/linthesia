@@ -36,8 +36,8 @@ namespace Layout {
 
   void DrawButton(Renderer &renderer, const ButtonState &button, const Tga *tga) {
 
-    const static Color color = Renderer::ToColor(0xE0,0xE0,0xE0);
-    const static Color color_hover = Renderer::ToColor(0xFF,0xFF, 0xFF);
+    const static SDL_Color color = Renderer::ToColor(0xE0,0xE0,0xE0);
+    const static SDL_Color color_hover = Renderer::ToColor(0xFF,0xFF, 0xFF);
 
     renderer.SetColor(button.hovering ? color_hover : color);
     renderer.DrawTga(tga, button.x, button.y);

@@ -676,8 +676,8 @@ void PlayingState::Draw(Renderer &renderer) const {
   if (alpha > 0.001) {
     renderer.SetColor(0, 0, 0, int(alpha * 160));
     renderer.DrawQuad(0, GetStateHeight() / 3, GetStateWidth(), 80);
-    const Color c = Renderer::ToColor(255, 255, 255, int(alpha * 0xFF));
-    TextWriter title(GetStateWidth()/2, GetStateHeight()/3 + 25, renderer, true, 24);
+    const SDL_Color c = Renderer::ToColor(255, 255, 255, int(alpha * 0xFF));
+    TextWriter title(GetStateWidth()/2, GetStateHeight()/3 + 25, renderer, true, Layout::TitleFontSize);
     title << Text(title_text, c);
 
     // While we're at it, show the key legend
@@ -741,7 +741,7 @@ void PlayingState::Draw(Renderer &renderer) const {
   const string percent_complete = STRING(" (" << completion << "%)");
 
   text_y += 30 + Layout::SmallFontSize;
-  TextWriter time_text(Layout::ScreenMarginX + 39, text_y+2, renderer, false, Layout::SmallFontSize);
+  TextWriter time_text(Layout::ScreenMarginX + 39, text_y+2, renderer, false, Layout::TimeFontSize);
   time_text << STRING(current_time << " / " << total_time << percent_complete);
 
   // Draw a song progress bar along the top of the screen

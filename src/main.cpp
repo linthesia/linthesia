@@ -38,9 +38,13 @@
   #define GRAPHDIR "../graphics"
 #endif
 
+#include <SDL2/SDL_image.h>
+
 using namespace std;
 
 GameStateManager* state_manager;
+SDL_Window* sdl_window;
+bool main_loop_running = true;
 
 char *sqlite_db_str;
 sqlite3 *db;
@@ -91,54 +95,106 @@ private:
 
 static EdgeTracker window_state;
 
-class DrawingArea : public Gtk::GL::DrawingArea {
+class DrawingArea {
 public:
 
-  DrawingArea(const Glib::RefPtr<const Gdk::GL::Config>& config) :
-    Gtk::GL::DrawingArea(config) {
-
-    set_events(Gdk::POINTER_MOTION_MASK |
-               Gdk::BUTTON_PRESS_MASK   |
-               Gdk::BUTTON_RELEASE_MASK |
-               Gdk::KEY_PRESS_MASK      |
-               Gdk::KEY_RELEASE_MASK);
-
-    set_can_focus();
-
-    signal_motion_notify_event().connect(sigc::mem_fun(*this, &DrawingArea::on_motion_notify));
-    signal_button_press_event().connect(sigc::mem_fun(*this, &DrawingArea::on_button_press));
-    signal_button_release_event().connect(sigc::mem_fun(*this, &DrawingArea::on_button_press));
-    signal_key_press_event().connect(sigc::mem_fun(*this, &DrawingArea::on_key_press));
-    signal_key_release_event().connect(sigc::mem_fun(*this, &DrawingArea::on_key_release));
+  DrawingArea(SDL_Window* sdl_window) :
+    m_sdl_window(sdl_window)
+  {
   }
 
   bool GameLoop();
 
-protected:
-  virtual void on_realize();
-  virtual bool on_configure_event(GdkEventConfigure* event);
-  virtual bool on_expose_event(GdkEventExpose* event);
+  void PollEvent(SDL_Event& event);
 
-  virtual bool on_motion_notify(GdkEventMotion* event);
-  virtual bool on_button_press(GdkEventButton* event);
-  virtual bool on_key_press(GdkEventKey* event);
-  virtual bool on_key_release(GdkEventKey* event);
+  virtual void on_configure_event();
+protected:
+  virtual void on_expose_event(SDL_WindowEvent& event);
+  virtual void on_hide_event(SDL_WindowEvent& event);
+
+  virtual bool on_motion_notify(SDL_MouseMotionEvent& event);
+  virtual bool on_button_press(SDL_MouseButtonEvent& event);
+  virtual bool on_key_press(SDL_KeyboardEvent& event);
+  virtual bool on_key_release(SDL_KeyboardEvent& event);
+
+  virtual void on_window_event(SDL_WindowEvent& event);
+
+  int get_width()  const
+  {
+    int w;
+    SDL_GetWindowSize(m_sdl_window, &w, nullptr);
+    return w;
+  }
+
+  int get_height()  const
+  {
+    int h;
+    SDL_GetWindowSize(m_sdl_window, nullptr, &h);
+    return h;
+  }
+
+
+  SDL_Window* m_sdl_window;
+
 };
 
-bool DrawingArea::on_motion_notify(GdkEventMotion* event) {
+void DrawingArea::PollEvent(SDL_Event& event)
+{
+  switch (event.type)
+  {
+    case SDL_MOUSEMOTION:
+      on_motion_notify(event.motion);
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP:
+      on_button_press(event.button);
+      break;
+    case SDL_KEYDOWN:
+      on_key_press(event.key);
+      break;
+    case SDL_KEYUP:
+      on_key_release(event.key);
+      break;
+    case SDL_WINDOWEVENT:
+      on_window_event(event.window);
+      break;
 
-  state_manager->MouseMove(event->x, event->y);
+    default:
+      break;
+  }
+}
+
+void DrawingArea::on_window_event(SDL_WindowEvent& event)
+{
+  switch (event.event)
+  {
+    case SDL_WINDOWEVENT_EXPOSED:
+      on_expose_event(event);
+      break;
+    case SDL_WINDOWEVENT_HIDDEN:
+      on_hide_event(event);
+      break;
+    case SDL_WINDOWEVENT_RESIZED:
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+      on_configure_event();
+      break;
+  }
+}
+
+bool DrawingArea::on_motion_notify(SDL_MouseMotionEvent& event) {
+
+  state_manager->MouseMove(event.x, event.y);
   return true;
 }
 
-bool DrawingArea::on_button_press(GdkEventButton* event) {
+bool DrawingArea::on_button_press(SDL_MouseButtonEvent& event) {
 
   MouseButton b;
 
   // left and right click allowed
-  if (event->button == 1)
+  if (event.button == SDL_BUTTON_LEFT)
     b = MouseLeft;
-  else if (event->button == 3)
+  else if (event.button == SDL_BUTTON_RIGHT)
     b = MouseRight;
 
   // ignore other buttons
@@ -146,9 +202,9 @@ bool DrawingArea::on_button_press(GdkEventButton* event) {
     return false;
 
   // press or release?
-  if (event->type == GDK_BUTTON_PRESS)
+  if (event.state == SDL_PRESSED)
     state_manager->MousePress(b);
-  else if (event->type == GDK_BUTTON_RELEASE)
+  else if (event.state == SDL_RELEASED)
     state_manager->MouseRelease(b);
   else
     return false;
@@ -157,44 +213,45 @@ bool DrawingArea::on_button_press(GdkEventButton* event) {
 }
 
 // FIXME: use user settings to do this mapping
-int keyToNote(GdkEventKey* event) {
+int keyToNote(SDL_KeyboardEvent& event) {
   const unsigned short oct = 4;
 
-  switch(event->keyval) {
+  switch(event.keysym.scancode) {
   /* no key for C :( */
-  case GDK_masculine:  return 12*oct + 1;      /* C# */
-  case GDK_Tab:        return 12*oct + 2;      /* D  */
-  case GDK_1:          return 12*oct + 3;      /* D# */
-  case GDK_q:          return 12*oct + 4;      /* E  */
-  case GDK_w:          return 12*oct + 5;      /* F  */
-  case GDK_3:          return 12*oct + 6;      /* F# */
-  case GDK_e:          return 12*oct + 7;      /* G  */
-  case GDK_4:          return 12*oct + 8;      /* G# */
-  case GDK_r:          return 12*oct + 9;      /* A  */
-  case GDK_5:          return 12*oct + 10;     /* A# */
-  case GDK_t:          return 12*oct + 11;     /* B  */
+  case SDL_SCANCODE_GRAVE:        return 12*oct + 1;      /* C# */
+  case SDL_SCANCODE_KP_TAB:       return 12*oct + 2;      /* D  */
+  case SDL_SCANCODE_1:            return 12*oct + 3;      /* D# */
+  case SDL_SCANCODE_Q:            return 12*oct + 4;      /* E  */
+  case SDL_SCANCODE_W:            return 12*oct + 5;      /* F  */
+  case SDL_SCANCODE_3:            return 12*oct + 6;      /* F# */
+  case SDL_SCANCODE_E:            return 12*oct + 7;      /* G  */
+  case SDL_SCANCODE_4:            return 12*oct + 8;      /* G# */
+  case SDL_SCANCODE_R:            return 12*oct + 9;      /* A  */
+  case SDL_SCANCODE_5:            return 12*oct + 10;     /* A# */
+  case SDL_SCANCODE_T:            return 12*oct + 11;     /* B  */
 
-  case GDK_y:          return 12*(oct+1) + 0;  /* C  */
-  case GDK_7:          return 12*(oct+1) + 1;  /* C# */
-  case GDK_u:          return 12*(oct+1) + 2;  /* D  */
-  case GDK_8:          return 12*(oct+1) + 3;  /* D# */
-  case GDK_i:          return 12*(oct+1) + 4;  /* E  */
-  case GDK_o:          return 12*(oct+1) + 5;  /* F  */
-  case GDK_0:          return 12*(oct+1) + 6;  /* F# */
-  case GDK_p:          return 12*(oct+1) + 7;  /* G  */
-  case GDK_apostrophe: return 12*(oct+1) + 8;  /* G# */
-  case GDK_dead_grave: return 12*(oct+1) + 9;  /* A  */
-  case GDK_exclamdown: return 12*(oct+1) + 10; /* A# */
-  case GDK_plus:       return 12*(oct+1) + 11; /* B  */
+  case SDL_SCANCODE_Y:            return 12*(oct+1) + 0;  /* C  */
+  case SDL_SCANCODE_7:            return 12*(oct+1) + 1;  /* C# */
+  case SDL_SCANCODE_U:            return 12*(oct+1) + 2;  /* D  */
+  case SDL_SCANCODE_8:            return 12*(oct+1) + 3;  /* D# */
+  case SDL_SCANCODE_I:            return 12*(oct+1) + 4;  /* E  */
+  case SDL_SCANCODE_O:            return 12*(oct+1) + 5;  /* F  */
+  case SDL_SCANCODE_0:            return 12*(oct+1) + 6;  /* F# */
+  case SDL_SCANCODE_P:            return 12*(oct+1) + 7;  /* G  */
+  case SDL_SCANCODE_MINUS:        return 12*(oct+1) + 8;  /* G# */
+  case SDL_SCANCODE_LEFTBRACKET:  return 12*(oct+1) + 9;  /* A  */
+  case SDL_SCANCODE_EQUALS:       return 12*(oct+1) + 10; /* A# */
+  case SDL_SCANCODE_RIGHTBRACKET: return 12*(oct+1) + 11; /* B  */
   }
 
   return -1;
 }
 
-typedef map<int,sigc::connection> ConnectMap;
+typedef set<int> ConnectMap;
 ConnectMap pressed;
 
-bool __sendNoteOff(int note) {
+bool __sendNoteOff(int note) 
+{
 
   ConnectMap::iterator it = pressed.find(note);
   if (it == pressed.end())
@@ -206,7 +263,7 @@ bool __sendNoteOff(int note) {
   return true;
 }
 
-bool DrawingArea::on_key_press(GdkEventKey* event) {
+bool DrawingArea::on_key_press(SDL_KeyboardEvent& event) {
 
   // if is a note...
   int note = keyToNote(event);
@@ -215,37 +272,38 @@ bool DrawingArea::on_key_press(GdkEventKey* event) {
     // if first press, send Note-On
     ConnectMap::iterator it = pressed.find(note);
     if (it == pressed.end())
+    {
       sendNote(note, true);
-
+      pressed.insert(note);
+    }
     // otherwise, cancel emission of Note-off
-    else
-      it->second.disconnect();
 
     return true;
   }
 
-  switch (event->keyval) {
-  case GDK_Up:       state_manager->KeyPress(KeyUp);      break;
-  case GDK_Down:     state_manager->KeyPress(KeyDown);    break;
-  case GDK_Left:     state_manager->KeyPress(KeyLeft);    break;
-  case GDK_Right:    state_manager->KeyPress(KeyRight);   break;
-  case GDK_space:    state_manager->KeyPress(KeySpace);   break;
-  case GDK_Return:   state_manager->KeyPress(KeyEnter);   break;
-  case GDK_Escape:   state_manager->KeyPress(KeyEscape);  break;
+  switch (event.keysym.sym) 
+  {
+  case SDLK_UP:       state_manager->KeyPress(KeyUp);      break;
+  case SDLK_DOWN:     state_manager->KeyPress(KeyDown);    break;
+  case SDLK_LEFT:     state_manager->KeyPress(KeyLeft);    break;
+  case SDLK_RIGHT:    state_manager->KeyPress(KeyRight);   break;
+  case SDLK_SPACE:    state_manager->KeyPress(KeySpace);   break;
+  case SDLK_RETURN:   state_manager->KeyPress(KeyEnter);   break;
+  case SDLK_ESCAPE:   state_manager->KeyPress(KeyEscape);  break;
 
   // show FPS
-  case GDK_F6:       state_manager->KeyPress(KeyF6);      break;
+  case SDLK_F6:       state_manager->KeyPress(KeyF6);      break;
 
   // increase/decrease octave
-  case GDK_greater:  state_manager->KeyPress(KeyGreater); break;
-  case GDK_less:     state_manager->KeyPress(KeyLess);    break;
+  case SDLK_GREATER:  state_manager->KeyPress(KeyGreater); break;
+  case SDLK_LESS:     state_manager->KeyPress(KeyLess);    break;
 
   // +/- 5 seconds
-  case GDK_Page_Down:state_manager->KeyPress(KeyForward);  break;
-  case GDK_Page_Up:  state_manager->KeyPress(KeyBackward); break;
+  case SDLK_PAGEDOWN: state_manager->KeyPress(KeyForward);  break;
+  case SDLK_PAGEUP:   state_manager->KeyPress(KeyBackward); break;
 
-  case GDK_bracketleft:  state_manager->KeyPress(KeyVolumeDown); break; // [
-  case GDK_bracketright: state_manager->KeyPress(KeyVolumeUp);   break; // ]
+  case SDLK_KP_PLUS:  state_manager->KeyPress(KeyVolumeDown); break; // [
+  case SDLK_KP_MINUS: state_manager->KeyPress(KeyVolumeUp);   break; // ]
 
   default:
     return false;
@@ -254,38 +312,25 @@ bool DrawingArea::on_key_press(GdkEventKey* event) {
   return true;
 }
 
-bool DrawingArea::on_key_release(GdkEventKey* event) {
+bool DrawingArea::on_key_release(SDL_KeyboardEvent& event) {
 
   // if is a note...
   int note = keyToNote(event);
-  if (note >= 0) {
-
-    // setup a timeout with Note-Off
-    pressed[note] = Glib::signal_timeout().connect(
-        sigc::bind<int>(sigc::ptr_fun(&__sendNoteOff), note), 20);
+  if (note >= 0) 
+  {
+    ConnectMap::iterator it = pressed.find(note);
+    if (it != pressed.end())
+    {
+      sendNote(note, false);
+      pressed.erase(it);
+    }
     return true;
   }
 
   return false;
 }
 
-void DrawingArea::on_realize() {
-  // we need to call the base on_realize()
-  Gtk::GL::DrawingArea::on_realize();
-
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-  if (!glwindow->gl_begin(get_gl_context()))
-    return;
-
-  glwindow->gl_end();
-}
-
-bool DrawingArea::on_configure_event(GdkEventConfigure* event) {
-
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-  if (!glwindow->gl_begin(get_gl_context()))
-    return false;
-
+void DrawingArea::on_configure_event() {
   glClearColor(.25, .25, .25, 1.0);
   glClearDepth(1.0);
 
@@ -300,36 +345,22 @@ bool DrawingArea::on_configure_event(GdkEventConfigure* event) {
   glViewport(0, 0, get_width(), get_height());
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, get_width(), 0, get_height());
+  glOrtho(0, get_width(), 0, get_height(), -1, 1);
 
   state_manager->SetStateDimensions(get_width(), get_height());
   state_manager->Update(window_state.JustActivated());
 
-  glwindow->gl_end();
-  return true;
+  glEnd();
 }
 
-bool DrawingArea::on_expose_event(GdkEventExpose* event) {
+void DrawingArea::on_expose_event(SDL_WindowEvent& event) {
+  if (!window_state.IsActive())
+    window_state.Activate();
+}
 
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-  if (!glwindow->gl_begin(get_gl_context()))
-    return false;
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glCallList(1);
-
-  Renderer rend(get_gl_context(), get_pango_context());
-  rend.SetVSyncInterval(vsync_interval);
-  state_manager->Draw(rend);
-
-  // swap buffers.
-  if (glwindow->is_double_buffered())
-     glwindow->swap_buffers();
-  else
-     glFlush();
-
-  glwindow->gl_end();
-  return true;
+void DrawingArea::on_hide_event(SDL_WindowEvent& event) {
+  if (window_state.IsActive())
+    window_state.Deactivate();
 }
 
 bool DrawingArea::GameLoop() {
@@ -338,7 +369,7 @@ bool DrawingArea::GameLoop() {
 
     state_manager->Update(window_state.JustActivated());
 
-    Renderer rend(get_gl_context(), get_pango_context());
+    Renderer rend(m_sdl_window);
     rend.SetVSyncInterval(vsync_interval);
 
     state_manager->Draw(rend);
@@ -371,10 +402,13 @@ std::string getExePath()
 }
 
 int main(int argc, char *argv[]) {
-  Gtk::Main main_loop(argc, argv);
-  Gtk::GL::init(argc, argv);
+
 
   try {
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+      throw LinthesiaSDLError("error initializing SDL");
+
     string file_opt("");
 
     UserSetting::Initialize(application_name);
@@ -416,30 +450,6 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    Glib::RefPtr<Gdk::GL::Config> glconfig;
-
-    // try double-buffered visual
-    glconfig = Gdk::GL::Config::create(Gdk::GL::MODE_RGB    |
-                                       Gdk::GL::MODE_DEPTH  |
-                                       Gdk::GL::MODE_DOUBLE);
-    if (!glconfig) {
-      cerr << "*** Cannot find the double-buffered visual.\n"
-           << "*** Trying single-buffered visual.\n";
-
-      // try single-buffered visual
-      glconfig = Gdk::GL::Config::create(Gdk::GL::MODE_RGB |
-                                         Gdk::GL::MODE_DEPTH);
-      if (!glconfig) {
-        string description = STRING(error_header1 <<
-                                    " OpenGL" <<
-                                    error_header2 <<
-                                    "Cannot find any OpenGL-capable visual." <<
-                                    error_footer);
-        Compatible::ShowError(description);
-        return 1;
-      }
-    }
-    
     /* Loading the Sqlite Library
     */
     string tmp_user_db_str = UserSetting::Get("sqlite_db", "");
@@ -469,30 +479,9 @@ int main(int argc, char *argv[]) {
       sqlite3_close(db);
     }
 
-    const int default_sw = 1024;
-    const int default_sh = 768;
-    int sh = Compatible::GetDisplayHeight();
-    int sw = Compatible::GetDisplayWidth();
-    state_manager = new GameStateManager(sw, sh);
-
-    Gtk::Window window;
-    window.set_default_size(default_sw, default_sh);
-    DrawingArea da(glconfig);
-    window.add(da);
-    window.show_all();
-
-    window.set_title(friendly_app_name);
-
-    struct stat st;
-    chdir (getExePath().c_str());  
-    
-    if ( !stat((GRAPHDIR +  std::string("/linthesia.png")).c_str(),&st) == 0) {
-       fprintf(stderr, "FATAL : File not found : make install not done ?\n");
-       cout << (GRAPHDIR +  std::string("/linthesia.png")) << "\n";
-    //   exit(0);
-    }
-
-    window.set_icon_from_file(GRAPHDIR + std::string("/linthesia.png"));
+    const int default_sw = 1280;
+    const int default_sh = 720;
+    Uint32 flags = SDL_WINDOW_OPENGL;
 
     // Lauch fullscreen if asked for it OR if neither fullllscreen and windowed is asked AND we are not in jail.
     bool injail = true; // FIXME : how to detect we are injail without doing something nasty ?
@@ -500,19 +489,56 @@ int main(int argc, char *argv[]) {
                         //   firejail --quiet --noprofile --net=none --appimage ./"$FILENAME" &
 
     if (fullscreen || ( (!windowed && !fullscreen) && (!injail ) ) ) {
-        window.fullscreen();
+      flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    } else 
+    {
+      flags |= SDL_WINDOW_RESIZABLE;
     }
-    else {
-        if (sw < default_sw) {
-          fprintf (stderr, "Your display width is smaller than window size : %d < %d\n", sw, default_sw);
-        }
 
-        if (sh < default_sh) {
-          fprintf (stderr, "Your display height is smaller than window size : %d < %d\n", sh, default_sh);
-        }
+    sdl_window = SDL_CreateWindow(
+        friendly_app_name.c_str(),         // window title
+        SDL_WINDOWPOS_UNDEFINED,           // initial x position
+        SDL_WINDOWPOS_UNDEFINED,           // initial y position
+        default_sw,                        // width, in pixels
+        default_sh,                        // height, in pixels
+        flags                              // flags - see below
+    );
 
-        window.maximize();
+    // Check that the window was successfully created
+    if (sdl_window == NULL)
+      throw LinthesiaSDLError("Could not create window");
+
+
+    SDL_GLContext gl_context = SDL_GL_CreateContext(sdl_window);
+    if (gl_context == nullptr)
+      throw LinthesiaSDLError("Could not create GL Context");
+
+    {
+      int w,h;
+      SDL_GetWindowSize(sdl_window, &w, &h);
+      state_manager = new GameStateManager(w, h);
     }
+    struct stat st;
+    chdir (getExePath().c_str());  
+    
+    if ( !stat((GRAPHDIR +  std::string("/linthesia.png")).c_str(),&st) == 0) {
+      throw LinthesiaError("FATAL : File not found : make install not done ?" + 
+                            std::string(GRAPHDIR) +  std::string("/linthesia.png"));
+    }
+
+    int imgFlags = IMG_INIT_PNG;
+    if( !( IMG_Init( imgFlags ) & imgFlags ) )
+      throw LinthesiaSDLImageError("SDL_image could not initialize! SDL_image Error");
+
+    if (TTF_Init() == -1)
+      throw LinthesiaSDLTTFError("error in TTF_Init");
+
+    std::string path = GRAPHDIR + std::string("/linthesia.png");
+    SDL_Surface* image = IMG_Load(path.c_str());
+    if (image == nullptr)
+      throw LinthesiaSDLImageError( "Unable to load image " + path + "! SDL_image Error");
+
+    SDL_SetWindowIcon(sdl_window, image);
 
     // Init DHMS thread once for the whole program
     DpmsThread* dpms_thread = new DpmsThread();
@@ -548,8 +574,6 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/std::stoi(user_rate), Glib::PRIORITY_DEFAULT_IDLE);
-
     UserSetting::Set("min_key", "");
     UserSetting::Set("max_key", "");
 
@@ -563,15 +587,33 @@ int main(int argc, char *argv[]) {
       UserSetting::Set("max_key", max_key);
     }
 
-
-    main_loop.run(window);
+    DrawingArea da(sdl_window);
+    da.on_configure_event();
+    while (main_loop_running)
+    {
+      SDL_Event Event;
+      while (SDL_PollEvent(&Event))
+      {
+        if (Event.type == SDL_QUIT)
+        {
+          main_loop_running = false;
+        } else 
+        {
+          da.PollEvent(Event);
+        }
+      }
+      da.GameLoop();
+    }
+    midiStop();
     window_state.Deactivate();
 
+    SDL_GL_DeleteContext(gl_context);
+    SDL_DestroyWindow(sdl_window);
     delete dpms_thread;
+    SDL_Quit();
 
     return 0;
   }
-
   catch (const LinthesiaError &e) {
     string wrapped_description = STRING(error_header1 <<
                                         error_header2 <<

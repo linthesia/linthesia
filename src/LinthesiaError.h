@@ -12,6 +12,10 @@
 #include <iostream>
 #include <string>
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 enum LinthesiaErrorCode {
 
    Error_StringSpecified,
@@ -45,5 +49,28 @@ private:
    const std::string m_optional_string;
    LinthesiaError operator=(const LinthesiaError&);
 };
+
+class LinthesiaSDLError : public LinthesiaError {
+public:
+  LinthesiaSDLError(const std::string base_error) :
+    LinthesiaError(base_error + ": " + std::string(SDL_GetError())) {
+  }
+};
+
+class LinthesiaSDLImageError : public LinthesiaError {
+public:
+  LinthesiaSDLImageError(const std::string base_error) :
+    LinthesiaError(base_error + ": " + std::string(IMG_GetError())) {
+  }
+};
+
+class LinthesiaSDLTTFError : public LinthesiaError {
+public:
+  LinthesiaSDLTTFError(const std::string base_error) :
+    LinthesiaError(base_error + ": " + std::string(TTF_GetError())) {
+  }
+};
+
+
 
 #endif // __LINTHESIA_ERROR_H__

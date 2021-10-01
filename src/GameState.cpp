@@ -144,7 +144,7 @@ Tga *GameStateManager::GetTexture(Texture tex_name, bool smooth) const {
 }
 
 void GameStateManager::SetStateDimensions(int w, int h) {
-  bool dirty = (m_screen_x != w && m_screen_y != h);
+  bool dirty = (m_screen_x != w || m_screen_y != h);
   
   m_screen_x = w;
   m_screen_y = h;
@@ -315,9 +315,9 @@ void GameStateManager::Draw(Renderer &renderer) {
   m_current_state->Draw(renderer);
 
   if (m_show_fps) {
+    renderer.SetColor(White);
     TextWriter fps_writer(0, 0, renderer);
-    fps_writer << Text("FPS: ", Gray) <<
-      Text(STRING(setprecision(2) << fixed << m_fps.GetFramesPerSecond()), White);
+    fps_writer << "FPS: " << STRING(setprecision(2) << fixed << m_fps.GetFramesPerSecond());
   }
 
   glFlush ();

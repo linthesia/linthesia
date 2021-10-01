@@ -1,5 +1,6 @@
-libgtkmm-2.4-dev
 libgconf2-dev
-libgtkglextmm-x11-1.2-dev
 libasound2-dev
 libsqlite3-dev
+libsdl2-dev
+libsdl2-ttf-dev
+libsdl2-image-dev
