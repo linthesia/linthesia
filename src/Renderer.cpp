@@ -31,16 +31,15 @@ void SelectTexture(unsigned int texture_id) {
 }
 
 
-Renderer::Renderer(GLContext glcontext, PGContext pangocontext) :
+Renderer::Renderer(SDL_Window* sdl_window) :
   m_xoffset(0),
   m_yoffset(0),
-  m_glcontext(glcontext),
-  m_pangocontext(pangocontext) {
+  m_sdl_window(sdl_window) {
 }
 
-Color Renderer::ToColor(int r, int g, int b, int a) {
+SDL_Color Renderer::ToColor(int r, int g, int b, int a) {
 
-  Color c;
+  SDL_Color c;
   c.r = r;
   c.g = g;
   c.b = b;
@@ -116,7 +115,7 @@ void Renderer::SetVSyncInterval(int interval) {
 }
 
 void Renderer::SwapBuffers() {
-  m_glcontext->get_gl_drawable()->swap_buffers();
+  SDL_GL_SwapWindow(m_sdl_window);
 }
 
 void Renderer::ForceTexture(unsigned int texture_id) {
@@ -124,7 +123,7 @@ void Renderer::ForceTexture(unsigned int texture_id) {
   SelectTexture(texture_id);
 }
 
-void Renderer::SetColor(Color c) {
+void Renderer::SetColor(SDL_Color c) {
   SetColor(c.r, c.g, c.b, c.a);
 }
 

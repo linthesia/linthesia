@@ -7,14 +7,18 @@
 // See COPYING for license information
 
 #include <sys/time.h>
-#include <gtkmm.h>
 
 #include "MidiComm.h"
 #include "CompatibleSystem.h"
 #include "StringUtil.h"
 #include "Version.h"
 
+#include <SDL2/SDL.h>
+
 using namespace std;
+
+extern SDL_Window* sdl_window;
+extern bool main_loop_running;
 
 namespace Compatible {
 
@@ -40,67 +44,34 @@ namespace Compatible {
     const static string message_box_title =
       STRING(friendly_app_name << " Error");
 
-    Gtk::MessageDialog dialog(err, false, Gtk::MESSAGE_ERROR);
-    dialog.run();
+    printf("%s\n", err.c_str());
+    if (sdl_window)
+    {
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                               message_box_title.c_str(),
+                               err.c_str(),
+                               sdl_window);
+    } 
   }
 
   void HideMouseCursor() {
-    // TODO
+    SDL_ShowCursor(SDL_DISABLE);
   }
 
   void ShowMouseCursor() {
-    // TODO
+    SDL_ShowCursor(SDL_ENABLE);
   }
 
-  void GetDisplayRect(Gdk::Rectangle &rect) {
-	  static bool inited = false;
-	  static Gdk::Rectangle monitor_geometry;
-
-	  if (!inited) {
-		  auto display = Gdk::Display::get_default();
-
-		  int pointer_x, pointer_y;
-		  Gdk::ModifierType pointer_mask;
-		  display->get_pointer(pointer_x, pointer_y, pointer_mask);
-
-		  auto screen = display->get_default_screen();
-
-		  screen->get_monitor_geometry(
-				  screen->get_monitor_at_point(pointer_x, pointer_y),
-				  monitor_geometry
-		  );
-		  inited = true;
-	  }
-	  rect = monitor_geometry;
+  int GetWindowHeight() 
+  {
+    int h;
+    SDL_GetWindowSize(sdl_window, nullptr, &h);
+    return h;
   }
 
-  int GetDisplayLeft() {
-		Gdk::Rectangle rect;
-		GetDisplayRect(rect);
-	    return rect.get_x();
-  }
-
-  int GetDisplayTop() {
-		Gdk::Rectangle rect;
-		GetDisplayRect(rect);
-	    return rect.get_y();
-  }
-
-  int GetDisplayWidth() {
-	Gdk::Rectangle rect;
-	GetDisplayRect(rect);
-    return rect.get_width();
-  }
-
-  int GetDisplayHeight() {
-		Gdk::Rectangle rect;
-		GetDisplayRect(rect);
-	    return rect.get_height();
-  }
 
   void GracefulShutdown() {
-    midiStop();
-    Gtk::Main::instance()->quit();
+    main_loop_running = false;
   }
 
 }; // End namespace

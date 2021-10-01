@@ -12,8 +12,8 @@
 // only for 'Ms. pepis' debugging
 #include <iostream>
 
-#include <gtkmm.h>
-#include <gtkglmm.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>

@@ -14,19 +14,34 @@
 
 #include <map>
 #include <iostream>
-#include <fontconfig/fontconfig.h>
+
+#include <SDL2/SDL_ttf.h>
+
+#ifndef GRAPHDIR
+  #define GRAPHDIR "../graphics"
+#endif
+
 
 using namespace std;
 
-// TODO: This should be deleted at shutdown
-static map<int, int> font_size_lookup;
 
 // TODO: This should be deleted at shutdown
-static map<int, Pango::FontDescription*> font_lookup;
+static map<std::pair<int, string>, TTF_Font*> font_map;
 
-// Returns the most suitable font available on the platform
-// or an empty string if no font is available;
-static const std::string get_default_font();
+static TTF_Font* get_font(int size, string fontname) {
+  auto key = make_pair(size, fontname);
+  TTF_Font* font = font_map[key];
+
+  if (!font) {
+    std::string font_path = GRAPHDIR + std::string("/") + fontname;
+    font = TTF_OpenFont(font_path.c_str(), size);
+    if (!font)
+      throw LinthesiaSDLTTFError("unable to load font " + fontname + " from " + font_path);
+    
+    font_map[key] = font;
+  }
+  return font;
+}
 
 TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
                        bool in_centered, int in_size, string fontname) :
@@ -44,78 +59,9 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
   y += renderer.m_yoffset;
   point_size = size;
 
-  if (font_size_lookup[size] == 0) {
-    GLuint list_start = glGenLists(128);
-    Pango::FontDescription *font_desc = NULL;
-    Glib::RefPtr<Pango::Font> ret;
-
-    // Try to get the requested name first
-    font_desc = new Pango::FontDescription(STRING(fontname << " " << in_size));
-    ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-
-    if (!ret) {
-      delete font_desc;
-      font_desc = NULL;
-      // Get font from user settings
-      const std::string userfontname = UserSetting::Get("font_desc", "");
-      if (!userfontname.empty()) {
-        font_desc = new Pango::FontDescription(STRING(userfontname << " " << in_size));
-        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-      }
-    }
-
-    if (!ret) {
-      delete font_desc;
-      font_desc = NULL;
-      // Get font from system settings
-      const std::string sysfontname = get_default_font();
-      if (!sysfontname.empty()) {
-        font_desc = new Pango::FontDescription(STRING(sysfontname << " " << in_size));
-        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-      } 
-    }
-
-    if (!ret) {
-  	FcConfig *config = FcInitLoadConfigAndFonts();
-	FcPattern* pat = FcPatternCreate();
-	FcObjectSet* os = FcObjectSetBuild (FC_FAMILY, FC_STYLE, FC_LANG, FC_FILE, (char *) 0);
-	FcFontSet* fs = FcFontList(config, pat, os);
-
-	printf("Warning : cannot load fonts so far : trying EVERY font you have: %d\n", fs->nfont);
-	for (int i=0; fs && i < fs->nfont; ++i) {
-	   FcPattern* font = fs->fonts[i];
-	   FcChar8 *file, *style, *family;
-	   if (FcPatternGetString(font, FC_FILE, 0, &file) == FcResultMatch &&
-	       FcPatternGetString(font, FC_FAMILY, 0, &family) == FcResultMatch &&
-	       FcPatternGetString(font, FC_STYLE, 0, &style) == FcResultMatch) {
-		      //printf("Filename: %s (family %s, style %s)\n", file, family, style);
-		      font_desc = new Pango::FontDescription(STRING((char *)family << " " << style << " 14" ));
-		      ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
-		      //printf ("DEBUG : family = %d    -    ret=%d \n\n", family, ret);
-		      if (ret) {
-			  printf ("DEBUG : FOUND !!!!\n");
-                          font_size_lookup[size] = list_start;
-                          font_lookup[size] = font_desc;
-			  break;
-                      }
-
-            }
-      }
-    }
-    if (!ret) {
-       fprintf(stderr, "FATAL WARNING: An error ocurred while trying to use (any) pango font. \n"); // FIXME ?
-       // Trying to go without a working pango font.... 
-	    font_size_lookup[size] = list_start;
-	    font_lookup[size] = font_desc;
-      //     delete font_desc;
-      //     glDeleteLists(list_start, 128);
-      //     throw LinthesiaError("An error ocurred while trying to use pango font");
-     } else {
-	    font_size_lookup[size] = list_start;
-	    font_lookup[size] = font_desc;
-    }
-  }
+  font = get_font(in_size, fontname);
 }
+
 
 int TextWriter::get_point_size() {
   return point_size;
@@ -132,41 +78,55 @@ TextWriter& TextWriter::next_line() {
 TextWriter& Text::operator<<(TextWriter& tw) const {
   int draw_x = 0;
   int draw_y = 0;
+
+  if (m_text.size() == 0)
+    return tw;
+
   calculate_position_and_advance_cursor(tw, &draw_x, &draw_y);
 
-  string narrow(m_text.begin(), m_text.end());
+  SDL_Surface* sFont = TTF_RenderText_Blended(tw.font, m_text.c_str(), m_color);
+  if (sFont == nullptr)
+    throw LinthesiaSDLTTFError("error rendering text");
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  GLuint texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sFont->w, sFont->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, sFont->pixels);
 
   glPushMatrix();
-  tw.renderer.SetColor(m_color);
-  glListBase(font_size_lookup[tw.size]);
-  glRasterPos2i(draw_x, draw_y + tw.size);
-  glCallLists(static_cast<int>(narrow.length()), GL_UNSIGNED_BYTE, narrow.c_str());
-  glPopMatrix();
 
-  // TODO: Should probably delete these on shutdown.
-  //glDeleteLists(1000, 128);
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2f(0,0); glVertex2f(draw_x, draw_y);
+    glTexCoord2f(1,0); glVertex2f(draw_x + sFont->w, draw_y);
+    glTexCoord2f(1,1); glVertex2f(draw_x + sFont->w, draw_y + sFont->h);
+    glTexCoord2f(0,1); glVertex2f(draw_x, draw_y + sFont->h);
+  }
+  glEnd();
+
+  glPopMatrix();
+  glDeleteTextures(1, &texture);
+
+  SDL_FreeSurface(sFont);
 
   return tw;
 }
 
-void Text::calculate_position_and_advance_cursor(TextWriter &tw, int *out_x, int *out_y) const  {
-  Glib::RefPtr<Pango::Layout> layout = Pango::Layout::create(tw.renderer.m_pangocontext);
-  layout->set_text(m_text);
-  layout->set_font_description(*(font_lookup[tw.size]));
-
-  Pango::Rectangle drawing_rect = layout->get_pixel_logical_extents();
-  tw.last_line_height = drawing_rect.get_height();
-
-  if (tw.centered)
-    *out_x = tw.x - drawing_rect.get_width() / 2;
-
+void Text::calculate_position_and_advance_cursor(TextWriter &tw, int *out_x, int *out_y) const {
+  int w, h;
+  if(TTF_SizeUTF8(tw.font, m_text.c_str(), &w, &h)) {
+    throw LinthesiaSDLTTFError("TTF_SizeUTF8 returned an error");
+  }
+  if (tw.centered) {
+    *out_x = tw.x - w / 2;
+  }
   else {
     *out_x = tw.x;
-    tw.x += drawing_rect.get_width();
+    tw.x += w;
   }
-
   *out_y = tw.y;
 }
 
@@ -183,28 +143,3 @@ TextWriter& operator<<(TextWriter& tw, const int& i)           { return tw << Te
 TextWriter& operator<<(TextWriter& tw, const unsigned int& i)  { return tw << Text(i, White); }
 TextWriter& operator<<(TextWriter& tw, const long& l)          { return tw << Text(l, White); }
 TextWriter& operator<<(TextWriter& tw, const unsigned long& l) { return tw << Text(l, White); }
-
-static
-const std::string get_default_font()
-{
-  std::string returnedFont;
-
-  FcResult fcres;
-  FcConfig *config = FcInitLoadConfigAndFonts();
-
-  FcPattern *pattern = FcPatternCreate();
-  //FcPattern *pattern = FcNameParse((const FcChar8*)"serif");
-  FcConfigSubstitute(config, pattern, FcMatchPattern);
-  FcDefaultSubstitute(pattern);
-  FcPattern *match = FcFontMatch(config, pattern, &fcres);
-
-  FcChar8 *family = NULL;
-  if (fcres == FcResultMatch) {
-    fcres = FcPatternGetString(match, FC_FAMILY, 0, &family);
-    returnedFont = (char *)family;
-  }
-  FcPatternDestroy(pattern);
-  FcConfigDestroy(config);
-
-  return returnedFont;
-}

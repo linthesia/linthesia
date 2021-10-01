@@ -11,6 +11,8 @@
 
 #include <string>
 
+#define PATH_MAX 1024
+
 namespace Compatible {
   
   // Some monotonically increasing value tied to the system
@@ -25,12 +27,9 @@ namespace Compatible {
 
   // Shows an error box with an OK button
   void ShowError(const std::string &err);
-  
-  int GetDisplayLeft();
-  int GetDisplayTop();
-  int GetDisplayWidth();
-  int GetDisplayHeight();
-  
+
+  int GetWindowHeight();
+
   void HideMouseCursor();
   void ShowMouseCursor();
    
