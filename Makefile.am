@@ -211,7 +211,7 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			music/Hannon/Lesson_2.mid \
 			music/Hannon/Lesson_3.mid
 
-SUBDIRS = src scripts
+SUBDIRS = src
 ACLOCAL_AMFLAGS = -I m4
 
 ctags-dependencies:

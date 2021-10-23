@@ -55,6 +55,7 @@ protected:
   virtual void Update();
   virtual void Resize();
   virtual void Draw(Renderer &renderer) const;
+  void Finish() override;
 
 private:
 
@@ -88,6 +89,7 @@ private:
   TranslatedNoteSet m_notes_history;
 
   bool m_any_you_play_tracks;
+  bool m_any_learning_track;
   size_t m_look_ahead_you_play_note_count;
 
   ActiveNoteSet m_active_notes;

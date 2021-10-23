@@ -34,7 +34,8 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				TitleState.cpp \
 				UserSettings.cpp \
 				SongLibState.cpp \
-				SongTile.cpp
+				SongTile.cpp\
+				DpmsThread.cpp
 noinst_HEADERS +=		CompatibleSystem.h \
 				DeviceTile.h \
 				FileSelector.h \
@@ -67,7 +68,7 @@ noinst_HEADERS +=		CompatibleSystem.h \
 linthesia_LDFLAGS =  @SDL2_LIBS@ @SDL2_TTF_LIBS@ @SDL2_IMAGE_LIBS@   @GCONF_LIBS@  @ALSA_LIBS@
 linthesia_LDADD = libmidi.la
 linthesia_CXXFLAGS = -std=c++11 -iquote -lsqlite3 -lpthread -lGL $(srcdir)/libmidi
-linthesia_CPPFLAGS = @SDL2_CFLAGS@ @SDL2_TTF_CFLAGS@ @SDL2_IMAGE_CFLAGS@  @GCONF_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DMUSICDIR="\"${musicdir}\"" -DSCRIPTDIR="\"${scriptdir}\""
+linthesia_CPPFLAGS = @SDL2_CFLAGS@ @SDL2_TTF_CFLAGS@ @SDL2_IMAGE_CFLAGS@  @GCONF_CFLAGS@ @ALSA_CFLAGS@ -DGRAPHDIR="\"${graphdir}\"" -DMUSICDIR="\"${musicdir}\""
 
 ctags-dependencies:
 	@$(CC) -M -std=c++11 -I/usr/include @SDL2_CFLAGS@ @SDL2_TTF_CFLAGS@ @SDL2_IMAGE_CFLAGS@  @GCONF_CFLAGS@ @ALSA_CFLAGS@ \
