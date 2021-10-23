@@ -128,6 +128,9 @@ protected:
   // Call when state dimesnsions changed
   virtual void Resize() = 0;
 
+  // Called when the game state is finished
+  virtual void Finish() {};
+
   // Called each frame.  Drawing bounds are [0,
   // GetStateWidth()) and [0, GetStateHeight())
   virtual void Draw(Renderer &renderer) const = 0;

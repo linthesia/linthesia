@@ -12,7 +12,7 @@ VERSION = $(shell grep LinthesiaVersionString $(SRC)/Version.h | cut -f 6 -d " "
 
 override_dh_auto_build:
 	xsltproc -o debian/linthesia.6 --param man.charmap.use.subset "0" --novalid --nonet $(DB2MAN) debian/linthesia.xml
-	$(MAKE) GRAPHDIR=/usr/share/linthesia/graphics MUSICDIR=/usr/share/linthesia/music SCRIPTDIR=/usr/bin
+	$(MAKE) GRAPHDIR=/usr/share/linthesia/graphics MUSICDIR=/usr/share/linthesia/music
 
 override_dh_install:
 	$(MAKE) install DESTDIR=debian/linthesia

@@ -252,6 +252,7 @@ void GameStateManager::Update(bool skip_this_update) {
 
   if (m_next_state && m_current_state) {
 
+    m_current_state->Finish();
     delete m_current_state;
     m_current_state = 0;
 

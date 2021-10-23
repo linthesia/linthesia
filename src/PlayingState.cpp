@@ -94,6 +94,7 @@ PlayingState::PlayingState(const SharedState &state) :
   m_paused(false),
   m_keyboard(0),
   m_any_you_play_tracks(false),
+  m_any_learning_track(false),
   m_first_update(true),
   m_should_retry(false),
   m_should_wait_after_retry(false),
@@ -116,6 +117,12 @@ void PlayingState::Init() {
       m_look_ahead_you_play_note_count += m_state.midi->Tracks()[i].Notes().size();
       m_any_you_play_tracks = true;
     }
+
+    if (m_state.track_properties[i].mode == Track::ModeLearning ||
+        m_state.track_properties[i].mode == Track::ModeLearningSilently)
+    {
+      m_any_learning_track = true;
+    } 
   }
 
   string min_key = UserSetting::Get("min_key", "");
@@ -140,6 +147,13 @@ void PlayingState::Init() {
   Compatible::HideMouseCursor();
 
   ResetSong();
+
+  m_state.dpms_thread->pauseScreensaver(true && !m_any_learning_track);
+}
+
+void PlayingState::Finish() 
+{
+  m_state.dpms_thread->pauseScreensaver(false);
 }
 
 PlayingState::~PlayingState() {
@@ -618,7 +632,10 @@ void PlayingState::Update() {
   }
 
   if (IsKeyPressed(KeySpace))
+  {
     m_paused = !m_paused;
+    m_state.dpms_thread->pauseScreensaver(!m_any_learning_track && !m_paused);
+  }
 
   if (IsKeyPressed(KeyEscape)) {
     if (m_state.midi_out)
