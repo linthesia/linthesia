@@ -219,7 +219,7 @@ int keyToNote(SDL_KeyboardEvent& event) {
   switch(event.keysym.scancode) {
   /* no key for C :( */
   case SDL_SCANCODE_GRAVE:        return 12*oct + 1;      /* C# */
-  case SDL_SCANCODE_KP_TAB:       return 12*oct + 2;      /* D  */
+  case SDL_SCANCODE_TAB:          return 12*oct + 2;      /* D  */
   case SDL_SCANCODE_1:            return 12*oct + 3;      /* D# */
   case SDL_SCANCODE_Q:            return 12*oct + 4;      /* E  */
   case SDL_SCANCODE_W:            return 12*oct + 5;      /* F  */
@@ -295,8 +295,8 @@ bool DrawingArea::on_key_press(SDL_KeyboardEvent& event) {
   case SDLK_F6:       state_manager->KeyPress(KeyF6);      break;
 
   // increase/decrease octave
-  case SDLK_GREATER:  state_manager->KeyPress(KeyGreater); break;
-  case SDLK_LESS:     state_manager->KeyPress(KeyLess);    break;
+  case SDLK_PERIOD:    state_manager->KeyPress(KeyGreater); break;
+  case SDLK_COMMA:     state_manager->KeyPress(KeyLess);    break;
 
   // +/- 5 seconds
   case SDLK_PAGEDOWN: state_manager->KeyPress(KeyForward);  break;
