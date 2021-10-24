@@ -107,6 +107,8 @@ private:
   void DrawBlackKey(Renderer &renderer, const Tga *tex, const KeyTexDimensions &tex_dimensions,
                     int x, int y, int w, int h, Track::TrackColor color) const;
 
+  int GetNoteNameFontSize(int key_width) const;
+
   const Keyboard& m_keyboard;
   KeyNames m_active_keys;
 
