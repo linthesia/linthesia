@@ -32,6 +32,7 @@ enum Texture {
   
   InputBox,
   OutputBox,
+  EmptyBox,
   SongBox,
   DirBox,
   ButtonDirBack,

@@ -15,18 +15,10 @@
 
 #include "TrackTile.h"
 #include "TrackProperties.h"
+#include "Keyboard.h"
 
 #include "libmidi/Note.h"
 #include "libmidi/MidiTypes.h"
-
-enum KeyboardSize {
-
-  KeyboardSize37,
-  KeyboardSize49,
-  KeyboardSize61,
-  KeyboardSize76,
-  KeyboardSize88
-};
 
 typedef std::map<std::string, Track::TrackColor> KeyNames;
 
@@ -35,7 +27,7 @@ public:
 
   const static microseconds_t NoteWindowLength = 330000;
 
-  KeyboardDisplay(KeyboardSize size, int pixelWidth, int pixelHeight);
+  KeyboardDisplay(const Keyboard& keyboard, int pixelWidth, int pixelHeight);
 
   void Draw(Renderer &renderer, const Tga *key_tex[3], const Tga *note_tex[4],
             int x, int y, const TranslatedNoteSet &notes, microseconds_t show_duration,
@@ -115,19 +107,7 @@ private:
   void DrawBlackKey(Renderer &renderer, const Tga *tex, const KeyTexDimensions &tex_dimensions,
                     int x, int y, int w, int h, Track::TrackColor color) const;
 
-  // Retrieves which white-key a piano with the given key count
-  // will start with on the far left side
-  char GetStartingNote() const;
-
-  // Retrieves which octave a piano with the given key count
-  // will start with on the far left side
-  int GetStartingOctave() const;
-
-  // Retrieves the number of white keys a piano with the given
-  // key count will contain
-  int GetWhiteKeyCount() const;
-
-  KeyboardSize m_size;
+  const Keyboard& m_keyboard;
   KeyNames m_active_keys;
 
   int m_width;

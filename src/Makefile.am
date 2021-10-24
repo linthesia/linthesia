@@ -35,7 +35,9 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				UserSettings.cpp \
 				SongLibState.cpp \
 				SongTile.cpp\
-				DpmsThread.cpp
+				DpmsThread.cpp\
+				Keyboard.cpp\
+				EnumTile.cpp
 noinst_HEADERS +=		CompatibleSystem.h \
 				DeviceTile.h \
 				FileSelector.h \
@@ -63,7 +65,9 @@ noinst_HEADERS +=		CompatibleSystem.h \
 				TrackSelectionState.h \
 				TrackTile.h \
 				UserSettings.h \
-				Version.h
+				Version.h\
+				Keyboard.h\
+				EnumTile.h
 
 linthesia_LDFLAGS =  @SDL2_LIBS@ @SDL2_TTF_LIBS@ @SDL2_IMAGE_LIBS@   @GCONF_LIBS@  @ALSA_LIBS@
 linthesia_LDADD = libmidi.la

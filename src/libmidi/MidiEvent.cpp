@@ -318,7 +318,7 @@ string MidiEvent::NoteName(unsigned int note_number) {
     STRING("A"),  STRING("A#"), STRING("B")
   };
 
-  unsigned int octave = (note_number / NotesPerOctave);
+  unsigned int octave = (note_number / NotesPerOctave) - 1;
   const string note_base = NoteBases[note_number % NotesPerOctave];
 
   return STRING(note_base << octave);

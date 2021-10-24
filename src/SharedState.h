@@ -16,6 +16,7 @@
 #include "MidiComm.h"
 #include "libmidi/Midi.h"
 #include "DpmsThread.h"
+#include "Keyboard.h"
 
 struct SongStatistics {
 
@@ -53,7 +54,8 @@ struct SharedState {
     midi_in(0),
     dpms_thread(0),
     song_speed(100),
-    base_volume(1)
+    base_volume(1),
+    keyboard()
     {}
 
   Midi *midi;
@@ -68,6 +70,7 @@ struct SharedState {
 
   std::vector<Track::Properties> track_properties;
   std::string song_title;
+  Keyboard keyboard;
 };
 
 #endif // __SHARED_STATE_H

@@ -32,11 +32,14 @@ const static string OutputKeySpecialDisabled = "[no output device]";
 const static string InputDeviceKey = "last_input_device";
 const static string InputKeySpecialDisabled = "[no input device]";
 
+const static string KeyboardSizeKey = "keyboard_size";
+
 TitleState::~TitleState() {
 
    if (m_output_tile) delete m_output_tile;
    if (m_input_tile) delete m_input_tile;
    if (m_file_tile) delete m_file_tile;
+   if (m_keyboard_size_tile) delete m_keyboard_size_tile;
 }
 
 void TitleState::Init() {
@@ -53,6 +56,7 @@ void TitleState::Init() {
 
    string last_output_device = UserSetting::Get(OutputDeviceKey, "");
    string last_input_device = UserSetting::Get(InputDeviceKey, "");
+   m_keyboard_size = KeyboardSize(UserSetting::Get(KeyboardSizeKey, ""));
 
    // midi_out could be in one of three states right now:
    //    1. We just started and were passed a null MidiCommOut pointer
@@ -141,6 +145,14 @@ void TitleState::Init() {
                                  input_devices,
                                  GetTexture(InterfaceButtons),
                                  GetTexture(InputBox));
+
+  m_keyboard_size_tile = new EnumTile(
+                                 (GetStateWidth() - DeviceTileWidth) / 2,
+                                 initial_y + each_y*3,
+                                 m_keyboard_size,
+                                 "Keyboard Size:",
+                                 GetTexture(InterfaceButtons),
+                                 GetTexture(EmptyBox));
 }
 
 void TitleState::Resize() {
@@ -156,6 +168,9 @@ void TitleState::Resize() {
     
     m_input_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
     m_input_tile->SetY(initial_y + each_y*2);
+
+    m_keyboard_size_tile->SetX((GetStateWidth() - DeviceTileWidth) / 2);
+    m_keyboard_size_tile->SetY(initial_y + each_y*3);
 
     m_back_button.SetX(Layout::ScreenMarginX);
     m_back_button.SetY(GetStateHeight() - Layout::ScreenMarginY / 2 - Layout::ButtonHeight / 2);
@@ -189,6 +204,11 @@ void TitleState::Update() {
   input_mouse.x -= m_input_tile->GetX();
   input_mouse.y -= m_input_tile->GetY();
   m_input_tile->Update(input_mouse);
+
+  MouseInfo keyboard_size_mouse(mouse);
+  keyboard_size_mouse.x -= m_keyboard_size_tile->GetX();
+  keyboard_size_mouse.y -= m_keyboard_size_tile->GetY();
+  m_keyboard_size_tile->Update(keyboard_size_mouse);
 
   MouseInfo file_mouse(mouse);
   file_mouse.x -= m_file_tile->GetX();
@@ -279,32 +299,6 @@ void TitleState::Update() {
 
    }
 
-   if (m_state.midi_in && m_input_tile->IsPreviewOn()) {
-
-     // Read note events to display on screen
-     while (m_state.midi_in->KeepReading()) {
-       MidiEvent ev = m_state.midi_in->Read();
-
-       // send to output (for a possible audio preview)
-       if (m_state.midi_out)
-         m_state.midi_out->Write(ev);
-
-       if (ev.Type() == MidiEventType_NoteOff || ev.Type() == MidiEventType_NoteOn) {
-         string note = MidiEvent::NoteName(ev.NoteNumber());
-
-         if (ev.Type() == MidiEventType_NoteOn && ev.NoteVelocity() > 0)
-           m_last_input_note_name = note;
-
-         else
-           if (note == m_last_input_note_name)
-             m_last_input_note_name = "";
-
-       }
-     }
-   }
-
-   else
-     m_last_input_note_name = "";
 
    if (IsKeyPressed(KeyEscape) || m_back_button.hit) {
      delete m_state.midi_out;
@@ -327,6 +321,10 @@ void TitleState::Update() {
 
      if (m_state.midi_in)
        m_state.midi_in->Reset();
+ 
+ 
+     UserSetting::Set(KeyboardSizeKey, m_keyboard_size.GetValue());
+     m_state.keyboard = Keyboard::GetKeyboardDefaults(m_keyboard_size);
 
      ChangeState(new TrackSelectionState(m_state));
      return;
@@ -368,6 +366,13 @@ void TitleState::Update() {
       else
         m_tooltip = "Click to test MIDI output on this device.";
    }
+
+   if (m_keyboard_size_tile->ButtonLeft().hovering)
+     m_tooltip = "Cycle through keyboard sizes.";
+
+   if (m_keyboard_size_tile->ButtonRight().hovering)
+     m_tooltip = "Cycle through keyboard sizes.";
+
 }
 
 void TitleState::PlayDevicePreview(microseconds_t delta_microseconds) {
@@ -414,6 +419,7 @@ void TitleState::Draw(Renderer &renderer) const {
   m_output_tile->Draw(renderer);
   m_input_tile->Draw(renderer);
   m_file_tile->Draw(renderer);
+  m_keyboard_size_tile->Draw(renderer);
 
   if (m_input_tile->IsPreviewOn()) {
 

@@ -33,8 +33,8 @@ struct KeyTexDimensions {
 
 const KeyboardDisplay::KeyTexDimensions KeyboardDisplay::BlackKeyDimensions = { 32, 128, 8, 20, 15, 109 };
 
-KeyboardDisplay::KeyboardDisplay(KeyboardSize size, int pixelWidth, int pixelHeight) :
-  m_size(size),
+KeyboardDisplay::KeyboardDisplay(const Keyboard& keyboard, int pixelWidth, int pixelHeight) :
+  m_keyboard(keyboard),
   m_width(pixelWidth),
   m_height(pixelHeight) {
   }
@@ -49,7 +49,7 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
   const static double BlackWidthHeightRatio = 7.9166666;
   const static double WhiteBlackWidthRatio = 0.5454545;
 
-  const int white_key_count = GetWhiteKeyCount();
+  const int white_key_count = m_keyboard.GetWhiteKeyCount();
 
   // Calculate the largest white key size we can, and then
   // leave room for a single pixel space between each key
@@ -115,69 +115,12 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
    DrawRail(renderer, key_tex[Rail], x+x_offset, y, ActualKeyboardWidth+1);
 }
 
-int KeyboardDisplay::GetStartingOctave() const {
-
-  // Source: Various "Specification" pages at Yamaha's website
-  const static int StartingOctaveOn37 = 2;
-  const static int StartingOctaveOn49 = 1;
-  const static int StartingOctaveOn61 = 1; // TODO!
-  const static int StartingOctaveOn76 = 0; // TODO!
-  const static int StartingOctaveOn88 = 0;
-
-  switch (m_size) {
-  case KeyboardSize37: return StartingOctaveOn37;
-  case KeyboardSize49: return StartingOctaveOn49;
-  case KeyboardSize61: return StartingOctaveOn61;
-  case KeyboardSize76: return StartingOctaveOn76;
-  case KeyboardSize88: return StartingOctaveOn88;
-  default: throw LinthesiaError(Error_BadPianoType);
-  }
-}
-
-char KeyboardDisplay::GetStartingNote() const {
-
-  // Source: Various "Specification" pages at Yamaha's website
-  const static char StartingKeyOn37 = 'F'; // F3-F6
-  const static char StartingKeyOn49 = 'C'; // C3-C6
-  const static char StartingKeyOn61 = 'C'; // C1-C6 // TODO!
-  const static char StartingKeyOn76 = 'E'; // E0-G6 // TODO!
-  const static char StartingKeyOn88 = 'A'; // A0-C6
-
-  switch (m_size) {
-  case KeyboardSize37: return StartingKeyOn37;
-  case KeyboardSize49: return StartingKeyOn49;
-  case KeyboardSize61: return StartingKeyOn61;
-  case KeyboardSize76: return StartingKeyOn76;
-  case KeyboardSize88: return StartingKeyOn88;
-  default: throw LinthesiaError(Error_BadPianoType);
-  }
-}
-
-int KeyboardDisplay::GetWhiteKeyCount() const {
-
-  // Source: Google Image Search
-  const static int WhiteKeysOn37 = 22;
-  const static int WhiteKeysOn49 = 29;
-  const static int WhiteKeysOn61 = 36;
-  const static int WhiteKeysOn76 = 45;
-  const static int WhiteKeysOn88 = 52;
-
-  switch (m_size) {
-  case KeyboardSize37: return WhiteKeysOn37;
-  case KeyboardSize49: return WhiteKeysOn49;
-  case KeyboardSize61: return WhiteKeysOn61;
-  case KeyboardSize76: return WhiteKeysOn76;
-  case KeyboardSize88: return WhiteKeysOn88;
-  default: throw LinthesiaError(Error_BadPianoType);
-  }
-}
-
 void KeyboardDisplay::DrawWhiteKeys(Renderer &renderer, bool active_only, int key_count, int key_width, int key_height,
                                     int key_space, int x_offset, int y_offset) const {
   SDL_Color white = Renderer::ToColor(255, 255, 255);
 
-  char current_white = GetStartingNote();
-  int current_octave = GetStartingOctave() + 1;
+  char current_white = m_keyboard.GetStartingNote();
+  int current_octave = m_keyboard.GetStartingOctave();
   for (int i = 0; i < key_count; ++i) {
 
     // Check to see if this is one of the active notes
@@ -242,8 +185,8 @@ void KeyboardDisplay::DrawBlackKeys(Renderer &renderer, const Tga *tex, bool act
                                     int white_width, int black_width, int black_height, int key_space,
                                     int x_offset, int y_offset, int black_offset) const {
 
-  char current_white = GetStartingNote();
-  int current_octave = GetStartingOctave() + 1;
+  char current_white = m_keyboard.GetStartingNote();
+  int current_octave = m_keyboard.GetStartingOctave();
   for (int i = 0; i < white_key_count; ++i) {
     // Don't allow a very last black key
     if (i == white_key_count - 1)
@@ -316,8 +259,8 @@ void KeyboardDisplay::DrawGuides(Renderer &renderer, int key_count, int key_widt
   const SDL_Color thick(Renderer::ToColor(0x48,0x48,0x48));
   const SDL_Color thin(Renderer::ToColor(0x50,0x50,0x50));
 
-  char current_white = GetStartingNote() - 1;
-  int current_octave = GetStartingOctave() + 1;
+  char current_white = m_keyboard.GetStartingNote() - 1;
+  int current_octave = m_keyboard.GetStartingOctave();
   for (int i = 0; i < key_count + 1; ++i) {
 
     const int key_x = i * (key_width + key_space) + x_offset - 1;
@@ -461,16 +404,7 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
 
   // The constants used in the switch below refer to the number
   // of white keys off 'C' that type of piano starts on
-  int keyboard_type_offset = 0;
-
-  switch (m_size) {
-  case KeyboardSize37: keyboard_type_offset = 4 - WhiteNotesPerOctave; break;
-  case KeyboardSize49: keyboard_type_offset = 0 - WhiteNotesPerOctave; break;
-  case KeyboardSize61: keyboard_type_offset = 7 - WhiteNotesPerOctave; break; // TODO!
-  case KeyboardSize76: keyboard_type_offset = 5 - WhiteNotesPerOctave; break; // TODO!
-  case KeyboardSize88: keyboard_type_offset = 2 - WhiteNotesPerOctave; break;
-  default: throw LinthesiaError(Error_BadPianoType);
-  }
+  int keyboard_type_offset = m_keyboard.GetKeyboardTypeOffset();
 
   // This array describes how to "stack" notes in a single place.  The IsBlackNote array
   // then tells which one should be shifted slightly to the right
@@ -491,7 +425,7 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
       if (mode == Track::ModeNotPlayed || mode == Track::ModePlayedButHidden)
         continue;
 
-      const int octave = (i->note_id / NotesPerOctave) - GetStartingOctave();
+      const int octave = (i->note_id / NotesPerOctave) - m_keyboard.GetStartingOctave();
       const int octave_base = i->note_id % NotesPerOctave;
       const int stack_offset = NoteToWhiteNoteOffset[octave_base];
       const bool is_black = IsBlackNote[octave_base];
