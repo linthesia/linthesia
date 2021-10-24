@@ -81,22 +81,36 @@ const static SDL_Color Pink        = { 0xA0,0x80,0xFF, 0xFF };
 const static SDL_Color CheatYellow = { 0x00,0xCC,0xFF, 0xFF };
 
 
+struct TextAttributes
+{
+  TextAttributes(SDL_Color color): color(color){};
+  TextAttributes(SDL_Color color, SDL_Color shadow): 
+    color(color), 
+    shadow(shadow),
+    has_shadow(true)
+  {};
+
+  SDL_Color color;
+  SDL_Color shadow;
+  bool has_shadow = false;
+};
+
 // A class to use TextWriter, and write to the screen
 class Text {
 public:
 
-  Text(std::string t, SDL_Color color) :
-    m_color(color),
+  Text(std::string t, TextAttributes attrs) :
+    m_attrs(attrs),
     m_text(t)  {
   }
 
-  Text(int i, SDL_Color color) :
-    m_color(color),
+  Text(int i, TextAttributes attrs) :
+    m_attrs(attrs),
     m_text(STRING(i)) {
   }
 
-  Text(double d, int prec, SDL_Color color) :
-    m_color(color),
+  Text(double d, int prec, TextAttributes attrs) :
+    m_attrs(attrs),
     m_text(STRING(std::setprecision(prec) << d)) {
   }
 
@@ -111,7 +125,9 @@ private:
   void calculate_position_and_advance_cursor(TextWriter &tw, int *out_x,
                                              int *out_y) const;
 
-  SDL_Color m_color;
+  void DrawText(TextWriter& tw, SDL_Color color, int draw_x, int draw_y) const;
+
+  TextAttributes m_attrs;
   std::string m_text;
 };
 

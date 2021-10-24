@@ -75,16 +75,9 @@ TextWriter& TextWriter::next_line() {
   return *this;
 }
 
-TextWriter& Text::operator<<(TextWriter& tw) const {
-  int draw_x = 0;
-  int draw_y = 0;
-
-  if (m_text.size() == 0)
-    return tw;
-
-  calculate_position_and_advance_cursor(tw, &draw_x, &draw_y);
-
-  SDL_Surface* sFont = TTF_RenderText_Blended(tw.font, m_text.c_str(), m_color);
+void Text::DrawText(TextWriter& tw, SDL_Color color, int draw_x, int draw_y) const
+{
+  SDL_Surface* sFont = TTF_RenderText_Blended(tw.font, m_text.c_str(), color);
   if (sFont == nullptr)
     throw LinthesiaSDLTTFError("error rendering text");
 
@@ -92,8 +85,8 @@ TextWriter& Text::operator<<(TextWriter& tw) const {
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sFont->w, sFont->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, sFont->pixels);
 
   glPushMatrix();
@@ -111,6 +104,22 @@ TextWriter& Text::operator<<(TextWriter& tw) const {
   glDeleteTextures(1, &texture);
 
   SDL_FreeSurface(sFont);
+}
+
+TextWriter& Text::operator<<(TextWriter& tw) const {
+  int draw_x = 0;
+  int draw_y = 0;
+
+  if (m_text.size() == 0)
+    return tw;
+
+  calculate_position_and_advance_cursor(tw, &draw_x, &draw_y);
+
+  if (m_attrs.has_shadow)
+    DrawText(tw, m_attrs.shadow, draw_x + 2, draw_y + 2);
+
+  DrawText(tw, m_attrs.color, draw_x, draw_y);
+
 
   return tw;
 }
