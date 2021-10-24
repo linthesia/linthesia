@@ -28,6 +28,7 @@
 #include "libmidi/MidiUtil.h"
 
 #include "MidiComm.h"
+#include "Keyboard.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ void PlayingState::SetupNoteState() {
 }
 
 bool PlayingState::isNoteInPlayableRange(int note_number) {
-  return note_number >= MinPlayableNote && note_number <= MaxPlayableNote;
+  return note_number >= m_state.keyboard.GetMinPlayableNote() && note_number <= m_state.keyboard.GetMaxPlayableNote();
 }
 
 void PlayingState::ResetSong() {
@@ -141,7 +142,7 @@ void PlayingState::Init() {
   const static microseconds_t DefaultShowDurationMicroseconds = 3250000;
   m_show_duration = DefaultShowDurationMicroseconds;
 
-  m_keyboard = new KeyboardDisplay(KeyboardSize88, GetStateWidth() - Layout::ScreenMarginX*2, CalcKeyboardHeight());
+  m_keyboard = new KeyboardDisplay(m_state.keyboard, GetStateWidth() - Layout::ScreenMarginX*2, CalcKeyboardHeight());
 
   // Hide the mouse cursor while we're playing
   Compatible::HideMouseCursor();
@@ -392,7 +393,7 @@ void PlayingState::Listen() {
 
 void PlayingState::Resize() {
     delete  m_keyboard;
-    m_keyboard = new KeyboardDisplay(KeyboardSize88, GetStateWidth() - Layout::ScreenMarginX*2, CalcKeyboardHeight());
+    m_keyboard = new KeyboardDisplay(m_state.keyboard, GetStateWidth() - Layout::ScreenMarginX*2, CalcKeyboardHeight());
 }
 
 void PlayingState::Update() {

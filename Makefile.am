@@ -26,6 +26,7 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/title_BackBox.tga \
 			graphics/title_ButtonPageBack.tga \
 			graphics/title_ButtonPageNext.tga \
+			graphics/title_EmptyBox.tga \
 			graphics/trackbox.tga \
 			graphics/tracks_BackToTitle.tga \
 			graphics/tracks_PlaySong.tga \

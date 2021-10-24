@@ -15,6 +15,8 @@
 #include "libmidi/MidiTypes.h"
 #include "DeviceTile.h"
 #include "StringTile.h"
+#include "EnumTile.h"
+
 
 // class Midi;
 // class MidiCommOut;
@@ -30,6 +32,7 @@ public:
     m_output_tile(0),
     m_input_tile(0),
     m_file_tile(0),
+    m_keyboard_size_tile(nullptr),
     m_skip_next_mouse_up(false) {
   }
 
@@ -44,6 +47,8 @@ protected:
 private:
   void PlayDevicePreview(microseconds_t delta_microseconds);
 
+  KeyboardSize m_keyboard_size;
+
   ButtonState m_continue_button;
   ButtonState m_back_button;
 
@@ -54,6 +59,8 @@ private:
 
   DeviceTile *m_output_tile;
   DeviceTile *m_input_tile;
+
+  EnumTile *m_keyboard_size_tile;
   StringTile *m_file_tile;
 
   bool m_skip_next_mouse_up;
