@@ -48,6 +48,7 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
   const static double WhiteWidthHeightRatio = 6.8181818;
   const static double BlackWidthHeightRatio = 7.9166666;
   const static double WhiteBlackWidthRatio = 0.5454545;
+  constexpr double MaxKeyboardRatio = 0.25; // the keyboard cannot take more than 25% of the height of the screen
 
   const int white_key_count = m_keyboard.GetWhiteKeyCount();
 
@@ -57,9 +58,16 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
   int white_space = 1;
 
   int white_height = static_cast<int>(white_width * WhiteWidthHeightRatio);
+  double white_height_ratio = white_height * 1.0 / m_height;
+  double height_scale = 1.0;
+  if (white_height_ratio > MaxKeyboardRatio)
+  {
+    height_scale = MaxKeyboardRatio / white_height_ratio;
+    white_height = static_cast<int>(white_width * WhiteWidthHeightRatio * height_scale);
+  }
 
   const int black_width = static_cast<int>(white_width * WhiteBlackWidthRatio);
-  const int black_height = static_cast<int>(black_width * BlackWidthHeightRatio);
+  const int black_height = static_cast<int>(black_width * BlackWidthHeightRatio * height_scale);
   const int black_offset = white_width - (black_width / 2);
 
   // The dimensions given to the keyboard object are bounds.  Because of pixel
@@ -140,7 +148,8 @@ void KeyboardDisplay::DrawWhiteKeys(Renderer &renderer, bool active_only, int ke
       renderer.DrawQuad(key_x, y_offset, key_width, key_height);
       
       const SDL_Color text_color1 (Renderer::ToColor(0x50,0x50,0x50));
-      TextWriter title(key_x + key_width / 2 - 6, y_offset + key_height - 20, renderer, false, Layout::NoteNameSize);
+      int font_size = GetNoteNameFontSize(key_width);
+      TextWriter title(key_x + (key_width - font_size) / 2, y_offset + key_height - font_size - 8, renderer, false, font_size);
       title << Text(note_name.c_str(), text_color1);
     }
 
@@ -490,3 +499,9 @@ void KeyboardDisplay::SetKeyActive(const string &key_name, bool active, Track::T
   else
     m_active_keys.erase(key_name);
 }
+
+int KeyboardDisplay::GetNoteNameFontSize(int key_width) const
+{
+  return (key_width * Layout::NoteNameSize / 30);
+}
+
