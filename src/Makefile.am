@@ -38,6 +38,7 @@ dist_linthesia_SOURCES =	CompatibleSystem.cpp \
 				DpmsThread.cpp\
 				Keyboard.cpp\
 				EnumTile.cpp
+				
 noinst_HEADERS +=		CompatibleSystem.h \
 				DeviceTile.h \
 				FileSelector.h \
