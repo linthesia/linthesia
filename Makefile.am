@@ -1,4 +1,12 @@
 EXTRA_DIST = BUILD-DEPENDS CHANGELOG graphics extra music
+
+desktopdir = $(datadir)/applications
+desktop_in_files = extra/linthesia.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+
+icondir = $(datadir)/icons
+icon_DATA = extra/linthesia.xpm
+
 nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/InterfaceButtons.tga \
 			graphics/linthesia.png \
@@ -38,6 +46,7 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/all_ButtonLearningSilent.tga \
 			graphics/all_ButtonPlayedHidden.tga \
 			graphics/FreeSans.ttf \
+			graphics/FreeSerif.ttf \
 			extra/linthesia.desktop \
 			music/Popular/Gymnopedie.mid \
 			music/Popular/Jonh_Lennon_-_Imagine.mid \
