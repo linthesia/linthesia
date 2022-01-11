@@ -1,3 +1,79 @@
+linthesia (0.7.0) unstable; urgency=low
+
+  * Use version from buildsystem
+  * Remove excludes from ignores
+  * fix: add desktop and icon to correct paths
+  * fix: compilation due to missing graphics file
+  * feat: improved keyboard on wide screens (#7)
+  * chore: use c++17
+  * feat: choosing keyboard size in title screen (#6)
+  * feat(text): improved text sharpness and shadows (#5)
+  * fix: fixed keybindings (#4)
+  * fix: delay screensaver using SDL
+  * refactor(graphics): ported to SDL
+  * fix(drawing): support for smooth high fps
+  * fix(user-settings): replaced gconfmm with gconf
+  * Do not lauch FullScreen : - Requires to do -W for fullscreen or -w for windowed. - FIX required for detecting jail (default fullscreen was nice).
+  * Do not try to read seq if seq has failed
+  * Load EVERY font found on system. When one works, use it.
+  * CrashFix : avoid SIGSEGV or throwing kill signals Just play without characters
+  * BUGFIX : print a more verbose error when crashing with pangofont problem
+  * Fix path selection for files
+  * Creating PNG icon. Deleting xpm files (except in "extra" that is not used).
+  * Recalculate "Track Selection" screen on resize.
+  * Add sqlite3
+  * Add musicdir atoutoconf param
+  * Add 'title_Dirbox.tga' in installed tools
+  * Add key names rendering
+  * Fix folder back button behaviour when hit not from the first page
+  * Fix textures and paths
+  * Fix paths
+  * Add cmd options for min and max keys on keyboard
+  * remove options button from device tile
+  * Add simple command line argument parsing for windowed mode and file
+  * Ignore notes out of range
+  * Manage music path
+  * More icons
+  * Save songlib path
+  * Add path navigation for SongLibState
+  * Songs lib - first working iteration
+  * Resize and windw mode
+  * fix with-scriptdir help string
+  * quote SCRIPTDIR and GRAPHDIR to make it compatible with existing code
+  * return bindir as default for scriptdir
+  * make resource directories configurable
+  * choose monitor contains pointer
+  * Add continuous integration
+  * Match bars and retry positions
+  * Hit all notes that start before retry
+  * Use Page Up/Page Down to scroll song position
+  * Keep is_retry_on when switching between Playing and TrackSelection states
+  * Do not count retry until first key press
+  * Fix non-zero note offset in retry-mode
+  * Add retry on and off buttons
+  * Add more sprites: computer, human, retry
+  * Add splited InterfaceButtons
+  * Handle device connecting/disconnecting on the title page
+  * Handle USB keyboard reconnect properly in the playing mode
+  * Avoid learning mode from play my notes
+  * Fix when playing outside KDE
+  * Add background for bar labels
+  * Draw tempo bars
+  * Calculate bar lines times
+  * Add "You Play Silently" mode
+  * Reset playing notes when move forward/backward
+  * Ignore unknown midi meta event types
+  * Copy pointer to DpmsThread when refreshing state
+  * Add volume control (using brackets [])
+  * Disable display power management if receiving MIDI input
+  * Add prefix m_ for class properties
+  * Add keys for moving backward/forward
+  * Add a silent learing mode
+  * Add learning mode
+  * Fix graphics path
+
+ -- Alberto Fanjul <albertofanjul@gmail.com> Tue, 11 Jan 2021 08:38:00 +0100
+
 linthesia (0.4-2) unstable; urgency=low
 
   * Fixed "Unable to load PangoFont" bug on all platforms
