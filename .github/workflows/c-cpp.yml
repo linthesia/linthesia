@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: update distro deps
+      run: sudo apt-get update -y
     - name: install dependencies
       run: sudo apt-get install -y libtool-bin build-essential autoconf libgconf2-dev libasound2-dev libsqlite3-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
     - name: autogen
