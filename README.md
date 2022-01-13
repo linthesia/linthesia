@@ -1,6 +1,6 @@
 # linthesia
 
-![Build Status](https://github.com/rikmg/linthesia/actions/workflows/c-cpp.yml/badge.svg)
+![Build Status](https://github.com/linthesia/linthesia/actions/workflows/c-cpp.yml/badge.svg)
 
 
 Linthesia is a fork of the Windows/Mac game called Synthesia. It is a game of playing music using a MIDI keyboard (or your PC keyboard), following a .mid file.
