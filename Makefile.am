@@ -1,8 +1,13 @@
 EXTRA_DIST = BUILD-DEPENDS CHANGELOG graphics extra music
+CLEANFILES = $(appstream_DATA)
 
 desktopdir = $(datadir)/applications
 desktop_in_files = extra/linthesia.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+
+appstreamdir = $(datadir)/metainfo/
+appstream_in_files = extra/linthesia.metainfo.xml.in
+appstream_DATA = $(appstream_in_files:.xml.in=.xml)
 
 icondir = $(datadir)/icons
 icon_DATA = extra/linthesia.xpm
@@ -48,6 +53,7 @@ nobase_pkgdata_DATA =	graphics/app_icon.ico \
 			graphics/FreeSans.ttf \
 			graphics/FreeSerif.ttf \
 			extra/linthesia.desktop \
+			extra/linthesia.metainfo.xml \
 			music/Popular/Gymnopedie.mid \
 			music/Popular/Jonh_Lennon_-_Imagine.mid \
 			music/Learning/4_-_Hard/Hark!_The_Herald_Angels_Sing.mid \
