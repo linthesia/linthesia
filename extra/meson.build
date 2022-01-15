@@ -16,4 +16,9 @@ i18n.merge_file(
   install_dir: datadir / 'metainfo',
 )
 
+install_data(
+  'com.github.linthesia.linthesia.gschema.xml',
+  install_dir: datadir / 'glib-2.0' / 'schemas'
+)
+
 install_data('linthesia.xpm', install_dir: datadir / project_name / 'icons')

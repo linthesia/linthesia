@@ -1,0 +1,41 @@
+<schemalist>
+    <schema id="com.github.linthesia.linthesia" path="/com/github/linthesia/linthesia/" gettext-domain="linthesia">
+
+    <key name="min-key" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="max-key" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="last-output-device" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="last-input-device" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="keyboard-size" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="sqlite-db" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="refresh-rate" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="song-lib-last-dir" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="song-lib-path" type="s">
+      <default>""</default>
+    </key>
+
+  </schema>
+</schemalist>

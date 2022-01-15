@@ -126,12 +126,12 @@ void PlayingState::Init() {
     } 
   }
 
-  string min_key = UserSetting::Get("min_key", "");
+  string min_key = UserSetting::Get(MIN_KEY_KEY, "");
   if (strtol(min_key.c_str(), NULL, 10) > 0) {
     MinPlayableNote = strtol(min_key.c_str(), NULL, 10);
     printf("Set minimal key to %d\n", MinPlayableNote);
   }
-  string max_key = UserSetting::Get("max_key", "");
+  string max_key = UserSetting::Get(MAX_KEY_KEY, "");
   if (strtol(max_key.c_str(), NULL, 10) > 0) {
     MaxPlayableNote = strtol(max_key.c_str(), NULL, 10);
     printf("Set maximal key to %d\n", MaxPlayableNote);

@@ -6,24 +6,22 @@
 // Adaptation to GNU/Linux by Oscar Aceña
 // See COPYING for license information
 
-#include <gconf/gconf-client.h>
-
+#include "UserSettings.h"
 #include "StringUtil.h"
+#include <giomm/settings.h>
 
 using namespace std;
 
 namespace UserSetting {
 
   static bool g_initialized(false);
-  static string g_app_name("");
-  static GConfClient* gconf;
+  Glib::RefPtr<Gio::Settings> settings;
 
-  void Initialize(const string &app_name) {
+  void Initialize() {
     if (g_initialized) 
       return;
 
-    gconf = gconf_client_get_default();
-    g_app_name = "/apps/" + app_name;
+    settings = Gio::Settings::create(SCHEMA, SCHEMA_PATH);
     g_initialized = true;
   }
 
@@ -31,8 +29,9 @@ namespace UserSetting {
     if (!g_initialized) 
       return default_value;
 
-    const char* value = gconf_client_get_string(gconf, (g_app_name + "/" + setting).c_str(), NULL);
-    if (value == nullptr)
+    const char* value = settings->get_string(Glib::ustring(setting)).data();
+
+    if (strcmp(value, "") == 0)
       return default_value;
     
     return value;
@@ -42,7 +41,7 @@ namespace UserSetting {
     if (!g_initialized) 
       return;
 
-    gconf_client_set_string(gconf,  (g_app_name + "/" + setting).c_str(), value.c_str(), NULL);
+    settings->set_string(setting.c_str(), value.c_str());
   }
 
 }; // End namespace

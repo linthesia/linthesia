@@ -49,7 +49,6 @@ bool main_loop_running = true;
 char *sqlite_db_str;
 sqlite3 *db;
 
-const static string application_name = "Linthesia";
 const static string friendly_app_name = STRING("Linthesia " <<
                                                LinthesiaVersionString);
 
@@ -411,7 +410,7 @@ int main(int argc, char *argv[]) {
 
     string file_opt("");
 
-    UserSetting::Initialize(application_name);
+    UserSetting::Initialize();
 
     if (cmdOptionExists(argv, argv+argc, "-f"))
       file_opt = string(getCmdOption(argv, argv + argc, "-f"));
@@ -452,7 +451,7 @@ int main(int argc, char *argv[]) {
 
     /* Loading the Sqlite Library
     */
-    string tmp_user_db_str = UserSetting::Get("sqlite_db", "");
+    string tmp_user_db_str = UserSetting::Get(SQLITE_DB_KEY, "");
 
     if (tmp_user_db_str. empty() ) {
         // no user pref : let's create one !
@@ -465,7 +464,7 @@ int main(int argc, char *argv[]) {
           exit(1);
         }
         sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
-        UserSetting::Set("sqlite_db", sqlite_db_str);
+        UserSetting::Set(SQLITE_DB_KEY, sqlite_db_str);
     } else {
         // user pref exist : let's use it !
         sqlite_db_str = (char*) tmp_user_db_str.c_str();
@@ -560,31 +559,31 @@ int main(int argc, char *argv[]) {
     // get refresh rate from user settings
     int default_rate = 300;
 
-    string user_rate = UserSetting::Get("refresh_rate", "");
+    string user_rate = UserSetting::Get(REFRESH_RATE_KEY, "");
 
     if (user_rate.empty()) {
       user_rate = STRING(default_rate);
-      UserSetting::Set("refresh_rate", user_rate);
+      UserSetting::Set(REFRESH_RATE_KEY, user_rate);
     }
     else {
       istringstream iss(user_rate);
       if (not (iss >> default_rate)) {
         Compatible::ShowError("Invalid setting for 'refresh_rate' key.\n\nReset to default value when reload.");
-        UserSetting::Set("refresh_rate", "");
+        UserSetting::Set(REFRESH_RATE_KEY, "");
       }
     }
 
-    UserSetting::Set("min_key", "");
-    UserSetting::Set("max_key", "");
+    UserSetting::Set(MIN_KEY_KEY, "");
+    UserSetting::Set(MAX_KEY_KEY, "");
 
     if (cmdOptionExists(argv, argv+argc, "--min-key")) {
       string min_key = STRING(getCmdOption(argv, argv + argc, "--min-key"));
-      UserSetting::Set("min_key", min_key);
+      UserSetting::Set(MIN_KEY_KEY, min_key);
     }
 
     if (cmdOptionExists(argv, argv+argc, "--max-key")) {
       string max_key = STRING(getCmdOption(argv, argv + argc, "--max-key"));
-      UserSetting::Set("max_key", max_key);
+      UserSetting::Set(MAX_KEY_KEY, max_key);
     }
 
     DrawingArea da(sdl_window);
