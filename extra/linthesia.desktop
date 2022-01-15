@@ -2,9 +2,7 @@
 Type=Application
 Name=Linthesia
 GenericName=Piano game
-GenericName[fr]=Jeu de piano
 Comment=Piano hero like game
-Comment[fr]=Jeu à la Piano Hero
 Icon=linthesia
 Exec=linthesia
 Categories=Game;Music;Education;

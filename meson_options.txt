@@ -1,0 +1,3 @@
+option('graphdir', type: 'string', value: '', description: 'graph dir path')
+option('musicdir', type: 'string', value: '', description: 'music dir path')
+option('profile', type: 'combo', choices: ['default', 'development'], value: 'default')

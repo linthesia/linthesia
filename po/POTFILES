@@ -1,0 +1,4 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+extra/linthesia.desktop
+extra/linthesia.metainfo.xml
