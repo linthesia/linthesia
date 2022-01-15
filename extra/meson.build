@@ -21,4 +21,8 @@ install_data(
   install_dir: datadir / 'glib-2.0' / 'schemas'
 )
 
+install_man(
+  'linthesia.1',
+)
+
 install_data('linthesia.xpm', install_dir: datadir / project_name / 'icons')
