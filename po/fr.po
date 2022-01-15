@@ -1,0 +1,66 @@
+# French translations for linthesia package.
+# Copyright (C) 2022 THE linthesia'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linthesia package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: linthesia\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-15 00:43+0100\n"
+"PO-Revision-Date: 2022-01-15 00:43+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: extra/linthesia.desktop:4 extra/linthesia.metainfo.xml:6
+msgid "Linthesia"
+msgstr ""
+
+#: extra/linthesia.desktop:5
+msgid "Piano game"
+msgstr "Jeu de piano"
+
+#: extra/linthesia.desktop:7
+msgid "Piano hero like game"
+msgstr "Jeu à la Piano Hero"
+
+#: extra/linthesia.metainfo.xml:7
+msgid "A game of playing music!"
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:10
+msgid ""
+"Linthesia is a game. A game of playing music! You only need a MIDI file to "
+"play, and a MIDI keyboard (or your PC keyboard)."
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:14
+msgid ""
+"It's a fork of Synthesia, which only runs on Windows and OS X. Linthesia is "
+"for GNU/Linux."
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:31 extra/linthesia.metainfo.xml:41
+msgid "New release"
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:33
+msgid "Migrate to SDL2 framework"
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:34
+msgid "Select midi from application"
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:35
+msgid "Bugfixes"
+msgstr ""
+
+#: extra/linthesia.metainfo.xml:43
+msgid "Fixed \"Unable to load PangoFont\" bug on all platforms"
+msgstr ""

@@ -10,7 +10,7 @@
 #define __LINTHESIA_VERSION_H__
 
 #include <string>
-#include "../config.h"
+#include "config.h"
 
 // See CHANGELOG for a list of what has changed between versions
 static const std::string LinthesiaVersionString = PACKAGE_VERSION;
