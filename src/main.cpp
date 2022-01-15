@@ -462,9 +462,8 @@ int main(int argc, char *argv[]) {
           fprintf(stderr, "Error creating directory : %s\n", sqlite_db_str);
           exit(1);
         }
-      }
-      sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
-      UserSetting::Set(SQLITE_DB_KEY, sqlite_db_str);
+        sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
+        UserSetting::Set(SQLITE_DB_KEY, sqlite_db_str);
     } else {
         // user pref exist : let's use it !
         sqlite_db_str = (char*) tmp_user_db_str.c_str();
