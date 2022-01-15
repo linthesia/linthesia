@@ -26,13 +26,9 @@
 
 using namespace std;
 
-const static string OutputDeviceKey = "last_output_device";
 const static string OutputKeySpecialDisabled = "[no output device]";
-
-const static string InputDeviceKey = "last_input_device";
 const static string InputKeySpecialDisabled = "[no input device]";
 
-const static string KeyboardSizeKey = "keyboard_size";
 
 TitleState::~TitleState() {
 
@@ -54,9 +50,9 @@ void TitleState::Init() {
       GetStateHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
       Layout::ButtonWidth, Layout::ButtonHeight);
 
-   string last_output_device = UserSetting::Get(OutputDeviceKey, "");
-   string last_input_device = UserSetting::Get(InputDeviceKey, "");
-   m_keyboard_size = KeyboardSize(UserSetting::Get(KeyboardSizeKey, ""));
+   string last_output_device = UserSetting::Get(OUTPUT_DEVICE_KEY, "");
+   string last_input_device = UserSetting::Get(INPUT_DEVICE_KEY, "");
+   m_keyboard_size = KeyboardSize(UserSetting::Get(KEYBOARD_SIZE_KEY, ""));
 
    // midi_out could be in one of three states right now:
    //    1. We just started and were passed a null MidiCommOut pointer
@@ -244,10 +240,10 @@ void TitleState::Update() {
       m_state.midi_out = new MidiCommOut(output_id);
       m_state.midi->Reset(0,0);
 
-      UserSetting::Set(OutputDeviceKey, m_state.midi_out->GetDeviceDescription().name);
+      UserSetting::Set(OUTPUT_DEVICE_KEY, m_state.midi_out->GetDeviceDescription().name);
     }
     else
-      UserSetting::Set(OutputDeviceKey, OutputKeySpecialDisabled);
+      UserSetting::Set(OUTPUT_DEVICE_KEY, OutputKeySpecialDisabled);
 
   }
 
@@ -286,7 +282,7 @@ void TitleState::Update() {
 
        try {
          m_state.midi_in = new MidiCommIn(input_id);
-         UserSetting::Set(InputDeviceKey, m_state.midi_in->GetDeviceDescription().name);
+         UserSetting::Set(INPUT_DEVICE_KEY, m_state.midi_in->GetDeviceDescription().name);
        }
 
        catch (MidiErrorCode) {
@@ -295,7 +291,7 @@ void TitleState::Update() {
      }
 
      else
-       UserSetting::Set(InputDeviceKey, InputKeySpecialDisabled);
+       UserSetting::Set(INPUT_DEVICE_KEY, InputKeySpecialDisabled);
 
    }
 
@@ -323,7 +319,7 @@ void TitleState::Update() {
        m_state.midi_in->Reset();
  
  
-     UserSetting::Set(KeyboardSizeKey, m_keyboard_size.GetValue());
+     UserSetting::Set(KEYBOARD_SIZE_KEY, m_keyboard_size.GetValue());
      m_state.keyboard = Keyboard::GetKeyboardDefaults(m_keyboard_size);
 
      ChangeState(new TrackSelectionState(m_state));

@@ -18,8 +18,6 @@
 
 using namespace std;
 
-const static string SONG_LIB_DIR_SETTINGS_KEY = "song_lib_last_dir";
-
 void SongLibState::Init() {
 
     m_back_button = ButtonState(
@@ -27,7 +25,7 @@ void SongLibState::Init() {
         Compatible::GetWindowHeight() - Layout::ScreenMarginY/2 - Layout::ButtonHeight/2,
         Layout::ButtonWidth, Layout::ButtonHeight);
 
-    m_base_path = UserSetting::Get("song_lib_path", MUSICDIR);
+    m_base_path = UserSetting::Get(SONG_LIB_PATH_KEY, MUSICDIR);
     m_current_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
     // since it is unconfortable to crash when no file is present, let's test it now
     struct stat st;

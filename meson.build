@@ -34,11 +34,14 @@ gettext = project_name
 source_root = meson.current_source_dir()
 po_dir = source_root / 'po'
 
-datadir = get_option('datadir')
 subdir('extra')
-install_subdir('music', install_dir: datadir / project_name )
 subdir('graphics')
 subdir('po')
 subdir('src')
 
+meson.add_install_script(
+  'meson_post_install.py',
+  project_name,
+  prefix / datadir
+)
 
