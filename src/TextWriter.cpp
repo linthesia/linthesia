@@ -17,11 +17,6 @@
 
 #include <SDL2/SDL_ttf.h>
 
-#ifndef GRAPHDIR
-  #define GRAPHDIR "../graphics"
-#endif
-
-
 using namespace std;
 
 
