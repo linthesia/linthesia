@@ -453,18 +453,22 @@ int main(int argc, char *argv[]) {
     */
     string tmp_user_db_str = UserSetting::Get(SQLITE_DB_KEY, "");
 
-    if (tmp_user_db_str. empty() ) {
-        // no user pref : let's create one !
-        struct passwd *pw = getpwuid(getuid());
-        sqlite_db_str = strcat(pw->pw_dir, "/.local/linthesia");
+    if (tmp_user_db_str.empty() ) {
+      struct stat st;
+
+      // no user pref : let's create one !
+      struct passwd *pw = getpwuid(getuid());
+      sqlite_db_str = strcat(pw->pw_dir, "/.local/linthesia");
+      if ( stat(sqlite_db_str, &st) == -1) {
         const int dir_err = mkdir(sqlite_db_str, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
         if (-1 == dir_err)
         {
           fprintf(stderr, "Error creating directory : %s\n", sqlite_db_str);
           exit(1);
         }
-        sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
-        UserSetting::Set(SQLITE_DB_KEY, sqlite_db_str);
+      }
+      sqlite_db_str = strcat(sqlite_db_str, "/music.sqlite");
+      UserSetting::Set(SQLITE_DB_KEY, sqlite_db_str);
     } else {
         // user pref exist : let's use it !
         sqlite_db_str = (char*) tmp_user_db_str.c_str();
