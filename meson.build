@@ -1,5 +1,6 @@
 project('linthesia', 'cpp',
   version : '0.7.0',
+  meson_version: '>=0.57.0',
   default_options : ['warning_level=3', 'cpp_std=c++14'])
 
 project_name = meson.project_name()
@@ -39,9 +40,7 @@ subdir('graphics')
 subdir('po')
 subdir('src')
 
-meson.add_install_script(
-  'meson_post_install.py',
-  project_name,
-  prefix / datadir
+import('gnome').post_install(
+  glib_compile_schemas: true,
+  gtk_update_icon_cache: true,
 )
-
