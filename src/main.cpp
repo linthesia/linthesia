@@ -34,10 +34,6 @@
 #include <iostream>
 #include <libgen.h>
 
-#ifndef GRAPHDIR
-  #define GRAPHDIR "../graphics"
-#endif
-
 #include <SDL2/SDL_image.h>
 
 using namespace std;

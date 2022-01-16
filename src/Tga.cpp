@@ -14,10 +14,6 @@
 #include "StringUtil.h"
 #include "LinthesiaError.h"
 
-#ifndef GRAPHDIR
-#define GRAPHDIR "../graphics"
-#endif
-
 using namespace std;
 
 Tga* Tga::Load(const string &resource_name) {

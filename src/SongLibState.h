@@ -16,10 +16,6 @@
 #include <vector>
 #include <string>
 
-#ifndef MUSICDIR
-#define MUSICDIR "../music/"
-#endif
-
 const int ColumnMargin = Layout::ScreenMarginX * 2;
 const int PagesButtonsY = 
     Layout::ScreenMarginY + Layout::ScreenMarginY / 2 + 
