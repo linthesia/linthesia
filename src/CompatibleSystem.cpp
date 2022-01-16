@@ -13,7 +13,7 @@
 #include "StringUtil.h"
 #include "Version.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 using namespace std;
 
@@ -51,7 +51,7 @@ namespace Compatible {
                                message_box_title.c_str(),
                                err.c_str(),
                                sdl_window);
-    } 
+    }
   }
 
   void HideMouseCursor() {
@@ -62,7 +62,7 @@ namespace Compatible {
     SDL_ShowCursor(SDL_ENABLE);
   }
 
-  int GetWindowHeight() 
+  int GetWindowHeight()
   {
     int h;
     SDL_GetWindowSize(sdl_window, nullptr, &h);

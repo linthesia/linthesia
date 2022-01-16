@@ -20,7 +20,7 @@
 #include "StringUtil.h"
 #include "TrackProperties.h"
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 // A nice ostream-like class for drawing OS-specific (or OpenGL) text to the
 // screen in varying colors, fonts, and sizes.
@@ -84,8 +84,8 @@ const static SDL_Color CheatYellow = { 0x00,0xCC,0xFF, 0xFF };
 struct TextAttributes
 {
   TextAttributes(SDL_Color color): color(color){};
-  TextAttributes(SDL_Color color, SDL_Color shadow): 
-    color(color), 
+  TextAttributes(SDL_Color color, SDL_Color shadow):
+    color(color),
     shadow(shadow),
     has_shadow(true)
   {};

@@ -15,7 +15,7 @@
 #include <map>
 #include <iostream>
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 using namespace std;
 
@@ -32,7 +32,7 @@ static TTF_Font* get_font(int size, string fontname) {
     font = TTF_OpenFont(font_path.c_str(), size);
     if (!font)
       throw LinthesiaSDLTTFError("unable to load font " + fontname + " from " + font_path);
-    
+
     font_map[key] = font;
   }
   return font;

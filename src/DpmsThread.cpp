@@ -1,7 +1,7 @@
 #include "DpmsThread.h"
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 bool DpmsThread::expectedState() const
 {
@@ -38,9 +38,9 @@ void DpmsThread::run()
 
     if (expected)
       SDL_EnableScreenSaver();
-    else 
+    else
       SDL_DisableScreenSaver();
-  } 
+  }
 }
 
 DpmsThread::DpmsThread() :

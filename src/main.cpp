@@ -34,7 +34,7 @@
 #include <iostream>
 #include <libgen.h>
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 using namespace std;
 
@@ -245,7 +245,7 @@ int keyToNote(SDL_KeyboardEvent& event) {
 typedef set<int> ConnectMap;
 ConnectMap pressed;
 
-bool __sendNoteOff(int note) 
+bool __sendNoteOff(int note)
 {
 
   ConnectMap::iterator it = pressed.find(note);
@@ -276,7 +276,7 @@ bool DrawingArea::on_key_press(SDL_KeyboardEvent& event) {
     return true;
   }
 
-  switch (event.keysym.sym) 
+  switch (event.keysym.sym)
   {
   case SDLK_UP:       state_manager->KeyPress(KeyUp);      break;
   case SDLK_DOWN:     state_manager->KeyPress(KeyDown);    break;
@@ -311,7 +311,7 @@ bool DrawingArea::on_key_release(SDL_KeyboardEvent& event) {
 
   // if is a note...
   int note = keyToNote(event);
-  if (note >= 0) 
+  if (note >= 0)
   {
     ConnectMap::iterator it = pressed.find(note);
     if (it != pressed.end())
@@ -425,7 +425,7 @@ int main(int argc, char *argv[]) {
     if (file_opt.length() > 0 &&
         file_opt[file_opt.length()-1] == '\"')
       file_opt = file_opt.substr(0, file_opt.length() - 1);
-    
+
     Midi *midi = 0;
 
     // attempt to open the midi file given on the command line first
@@ -489,7 +489,7 @@ int main(int argc, char *argv[]) {
 
     if (fullscreen || ( (!windowed && !fullscreen) && (!injail ) ) ) {
       flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-    } else 
+    } else
     {
       flags |= SDL_WINDOW_RESIZABLE;
     }
@@ -518,10 +518,10 @@ int main(int argc, char *argv[]) {
       state_manager = new GameStateManager(w, h);
     }
     struct stat st;
-    chdir (getExePath().c_str());  
-    
+    chdir (getExePath().c_str());
+
     if ( !stat((GRAPHDIR +  std::string("/linthesia.png")).c_str(),&st) == 0) {
-      throw LinthesiaError("FATAL : File not found : make install not done ?" + 
+      throw LinthesiaError("FATAL : File not found : make install not done ?" +
                             std::string(GRAPHDIR) +  std::string("/linthesia.png"));
     }
 
@@ -596,7 +596,7 @@ int main(int argc, char *argv[]) {
         if (Event.type == SDL_QUIT)
         {
           main_loop_running = false;
-        } else 
+        } else
         {
           da.PollEvent(Event);
         }
@@ -645,4 +645,3 @@ int main(int argc, char *argv[]) {
 
   return 1;
 }
-
