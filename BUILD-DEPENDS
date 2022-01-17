@@ -1,6 +1,6 @@
-libgconf2-dev
 libasound2-dev
 libsqlite3-dev
 libsdl2-dev
 libsdl2-ttf-dev
 libsdl2-image-dev
+libglibmm-2.4-dev
