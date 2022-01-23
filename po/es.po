@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linthesia\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-23 20:02+0100\n"
+"POT-Creation-Date: 2022-02-03 22:01+0100\n"
 "PO-Revision-Date: 2022-01-23 20:02+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -38,14 +38,17 @@ msgstr "Un juego para tocar música"
 msgid ""
 "Linthesia is a game. A game of playing music! You only need a MIDI file to "
 "play, and a MIDI keyboard (or your PC keyboard)."
-msgstr "Linthesia es un juego. Un juego para tocar música! Solo necesitas un fichero MIDI "
-"para tocar, y un teclado MIDI (o tu teclado de PC)"
+msgstr ""
+"Linthesia es un juego. Un juego para tocar música! Solo necesitas un fichero "
+"MIDI para tocar, y un teclado MIDI (o tu teclado de PC)"
 
 #: extra/linthesia.metainfo.xml:14
 msgid ""
 "It's a fork of Synthesia, which only runs on Windows and OS X. Linthesia is "
 "for GNU/Linux."
-msgstr "Es un fork de Synthesia, que solo funciona en Window y OS X. Linthesia es para GNU/Linux"
+msgstr ""
+"Es un fork de Synthesia, que solo funciona en Window y OS X. Linthesia es "
+"para GNU/Linux"
 
 #: extra/linthesia.metainfo.xml:31 extra/linthesia.metainfo.xml:41
 msgid "New release"
@@ -65,19 +68,22 @@ msgstr "Corrección de errores"
 
 #: extra/linthesia.metainfo.xml:43
 msgid "Fixed \"Unable to load PangoFont\" bug on all platforms"
-msgstr "Solucionado error \"Imposible carga fuente Pango\" en todas las plataformas"
+msgstr ""
+"Solucionado error \"Imposible carga fuente Pango\" en todas las plataformas"
 
-#: src/main.cpp:53
+#: src/main.cpp:55
 msgid "Linthesia detected a"
 msgstr "Linthesi detecto un"
 
-#: src/main.cpp:54
+#: src/main.cpp:56
 msgid ""
 " problem and must close:\n"
 "\n"
-msgstr " problema y tiene que cerrar:\n\n"
+msgstr ""
+" problema y tiene que cerrar:\n"
+"\n"
 
-#: src/main.cpp:55
+#: src/main.cpp:57
 msgid ""
 "\n"
 "\n"
@@ -86,106 +92,118 @@ msgid ""
 "https://github.com/linthesia/linthesia\n"
 "\n"
 "Thank you."
-msgstr "\n\nSi crees que esto no debería haber sucedido, por favor rellena un reporte de error en:"
-"https://github.com/linthesia/linthesia\n"
+msgstr ""
+"\n"
+"\n"
+"Si crees que esto no debería haber sucedido, por favor rellena un reporte de "
+"error en:https://github.com/linthesia/linthesia\n"
 "\n"
 "Gracias."
 
-#: src/main.cpp:407
+#: src/main.cpp:409
 msgid "Options: "
 msgstr "Opciones: "
 
-#: src/main.cpp:408
+#: src/main.cpp:410
 msgid "to load files"
 msgstr "para cargar archivos"
 
-#: src/main.cpp:409
+#: src/main.cpp:411
 msgid "to start in window mode"
 msgstr "para empezar en modo ventana"
 
-#: src/main.cpp:410
+#: src/main.cpp:412
 msgid "to start full screem"
 msgstr "para empezar en pantalla completa"
 
-#: src/main.cpp:411
+#: src/main.cpp:413
 msgid "to define min key"
 msgstr "para definir tecla mínima"
 
-#: src/main.cpp:412
+#: src/main.cpp:414
 msgid "to define max key"
 msgstr "para definir tecla máxima"
 
-#: src/main.cpp:413
+#: src/main.cpp:415
+msgid "to define directory for music library"
+msgstr "para definir el directorio de la libreria de música"
+
+#: src/main.cpp:416
+msgid "reset directory for music library to "
+msgstr "Inicializa el directorio de la libreria de música a "
+
+#: src/main.cpp:417
 msgid "show this help"
 msgstr "muestra esta ayuda"
 
-#: src/main.cpp:414
+#: src/main.cpp:418
 msgid "show linthesia version"
 msgstr "muestra la versión de linthesia"
 
-#: src/main.cpp:429
+#: src/main.cpp:433
 msgid "Invalid option: "
 msgstr "Opción inválida: "
 
-#: src/main.cpp:440
+#: src/main.cpp:447
 msgid "error initializing SDL"
 msgstr "error inicializando SDL"
 
-#: src/main.cpp:493
+#: src/main.cpp:504
 msgid "Problem while loading file: "
 msgstr "Problema mientras se cargaba el fichero: "
 
-#: src/main.cpp:517
+#: src/main.cpp:528
 #, c-format
 msgid "Error creating directory : %s\n"
 msgstr "Error creando directorio: %s\n"
 
-#: src/main.cpp:529
+#: src/main.cpp:540
 #, c-format
 msgid "Can't open database: %s\n"
 msgstr "No se puede abrir la base de datos: %s\n"
 
-#: src/main.cpp:563
+#: src/main.cpp:574
 msgid "Could not create window"
 msgstr "No se pudo crear la ventana"
 
-#: src/main.cpp:568
+#: src/main.cpp:579
 msgid "Could not create GL Context"
 msgstr "No se pudo crear el contexto GL"
 
-#: src/main.cpp:579
+#: src/main.cpp:590
 msgid "FATAL : File not found : make install not done ?"
 msgstr "FATAL: Fichero no encontrador: make install no ejecutado?"
 
-#: src/main.cpp:585
+#: src/main.cpp:596
 msgid "SDL_image could not initialize! SDL_image Error"
 msgstr "SDL_image no se pudo inicializar: SDL_image error"
 
-#: src/main.cpp:588
+#: src/main.cpp:599
 msgid "error in TTF_Init"
 msgstr "error en TTF_Init"
 
-#: src/main.cpp:593
+#: src/main.cpp:604
 msgid "Unable to load image "
 msgstr "Imposible cargar imagen"
 
-#: src/main.cpp:593
+#: src/main.cpp:604
 msgid "! SDL_image Error"
 msgstr "! SDL_image error"
 
-#: src/main.cpp:626
+#: src/main.cpp:637
 msgid ""
 "Invalid setting for 'refresh_rate' key.\n"
 "\n"
 "Reset to default value when reload."
-msgstr "Configuración inválida para clave 'refresh_rate'.\n"
+msgstr ""
+"Configuración inválida para clave 'refresh_rate'.\n"
 "\n"
 "Reseteado a por defecto cuando se recarge"
 
-#: src/main.cpp:688
+#: src/main.cpp:699
 msgid "Linthesia detected an unknown problem and must close!  '"
 msgstr "Linthesia detectó un problema desconocida y tiene que cerrar! '"
 
-#: src/main.cpp:695
+#: src/main.cpp:706
 msgid "Linthesia detected an unknown problem and must close!"
 msgstr "Linthesia detectó un problema desconocida y tiene que cerrar! '"

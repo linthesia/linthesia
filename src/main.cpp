@@ -412,6 +412,8 @@ void show_help() {
      << "\t" << "-W" << " " << _("to start full screem") << endl
      << "\t" << "--min-key" << " " << _("to define min key") << endl
      << "\t" << "--max-key" << " " << _("to define max key") << endl
+     << "\t" << "--lib-path" << " " << _("to define directory for music library") << endl
+     << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to "MUSICDIR) << endl
      << "\t" << "--help" << " " << _("show this help") << endl
      << "\t" << "--version" << " " << _("show linthesia version") << endl
      << endl;
@@ -427,6 +429,8 @@ bool has_invalid_options(int argc, char *argv[]) {
                        strcmp(j, "-min-key") != 0 &&
                        strcmp(j, "-max-key") != 0 &&
                        strcmp(j, "-help") != 0 &&
+                       strcmp(j, "-lib-path") != 0 &&
+                       strcmp(j, "-reset-lib-path") != 0 &&
                        strcmp(j, "-version") != 0)) {
       cout << _("Invalid option: ") << *pargv << endl << endl;
       return true;
@@ -469,6 +473,15 @@ int main(int argc, char *argv[]) {
 
     bool windowed = cmdOptionExists(argv, argv+argc, "-w");
     bool fullscreen = cmdOptionExists(argv, argv+argc, "-W");
+    if (cmdOptionExists(argv, argv+argc, "--lib-path")) {
+      string path(getCmdOption(argv, argv + argc, "--lib-path"));
+      UserSetting::Set(SONG_LIB_PATH_KEY, path);
+      UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, path);
+    }
+    if (cmdOptionExists(argv, argv+argc, "--reset-lib-path")) {
+      UserSetting::Set(SONG_LIB_PATH_KEY, MUSICDIR);
+      UserSetting::Set(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
+    }
 
     // strip any leading or trailing quotes from the filename
     // argument (to match the format returned by the open-file
