@@ -396,9 +396,42 @@ std::string getExePath()
   return std::string( dirname(result), (count > 0) ? count : 0 );
 }
 
+void print_version() {
+  cout << friendly_app_name << endl;
+}
+
+void show_help() {
+  print_version();
+  cout << endl << "Options: " << endl << endl
+     << "\t" << "-f" << " " << "to load files" << endl
+     << "\t" << "-w" << " " << "to start in window mode" << endl
+     << "\t" << "-W" << " " << "to start full screem" << endl
+     << "\t" << "--min-key" << " " << "to define min key" << endl
+     << "\t" << "--max-key" << " " << "to define max key" << endl
+     << "\t" << "--help" << " " << "show this help" << endl
+     << "\t" << "--version" << " " << "show linthesia version" << endl
+     << endl;
+}
+
+bool has_invalid_options(int argc, char *argv[]) {
+  for (char **pargv = argv; *pargv != NULL; pargv++) {
+    char i = *pargv[0];
+    char* j = *pargv+1;
+    if ((i == '-') && (strcmp(j, "f") != 0 &&
+                       strcmp(j, "w") != 0 &&
+                       strcmp(j, "W") != 0 &&
+                       strcmp(j, "-min-key") != 0 &&
+                       strcmp(j, "-max-key") != 0 &&
+                       strcmp(j, "-help") != 0 &&
+                       strcmp(j, "-version") != 0)) {
+      cout << "Invalid option: " << *pargv << endl << endl;
+      return true;
+    }
+  }
+  return false;
+}
+
 int main(int argc, char *argv[]) {
-
-
   try {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -408,10 +441,25 @@ int main(int argc, char *argv[]) {
 
     UserSetting::Initialize();
 
+    int show_help_exit_status = 0;
+    bool invalid_options = has_invalid_options(argc, argv);
+    if (invalid_options) {
+      show_help_exit_status = 1;
+    }
+
+    if (invalid_options || cmdOptionExists(argv, argv+argc, "--help")) {
+      show_help();
+      return show_help_exit_status;
+    }
+
+    if (cmdOptionExists(argv, argv+argc, "--version")) {
+      print_version();
+      return 0;
+    }
+
     if (cmdOptionExists(argv, argv+argc, "-f"))
       file_opt = string(getCmdOption(argv, argv + argc, "-f"));
 
-    // TODO: parse from command line args
     bool windowed = cmdOptionExists(argv, argv+argc, "-w");
     bool fullscreen = cmdOptionExists(argv, argv+argc, "-W");
 
