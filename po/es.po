@@ -1,0 +1,191 @@
+# Spanish translations for linthesia package
+# Traducciones al español para el paquete linthesia.
+# Copyright (C) 2022 THE linthesia'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the linthesia package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: linthesia\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-23 20:02+0100\n"
+"PO-Revision-Date: 2022-01-23 20:02+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: extra/linthesia.desktop:4 extra/linthesia.metainfo.xml:6
+msgid "Linthesia"
+msgstr ""
+
+#: extra/linthesia.desktop:5
+msgid "Piano game"
+msgstr "Juego de piano"
+
+#: extra/linthesia.desktop:6
+msgid "Piano hero like game"
+msgstr "Juego similar a Piano Hero"
+
+#: extra/linthesia.metainfo.xml:7
+msgid "A game of playing music!"
+msgstr "Un juego para tocar música"
+
+#: extra/linthesia.metainfo.xml:10
+msgid ""
+"Linthesia is a game. A game of playing music! You only need a MIDI file to "
+"play, and a MIDI keyboard (or your PC keyboard)."
+msgstr "Linthesia es un juego. Un juego para tocar música! Solo necesitas un fichero MIDI "
+"para tocar, y un teclado MIDI (o tu teclado de PC)"
+
+#: extra/linthesia.metainfo.xml:14
+msgid ""
+"It's a fork of Synthesia, which only runs on Windows and OS X. Linthesia is "
+"for GNU/Linux."
+msgstr "Es un fork de Synthesia, que solo funciona en Window y OS X. Linthesia es para GNU/Linux"
+
+#: extra/linthesia.metainfo.xml:31 extra/linthesia.metainfo.xml:41
+msgid "New release"
+msgstr "Nueva versión"
+
+#: extra/linthesia.metainfo.xml:33
+msgid "Migrate to SDL2 framework"
+msgstr "Migración a framework SDL2 "
+
+#: extra/linthesia.metainfo.xml:34
+msgid "Select midi from application"
+msgstr "Elegir midi desde la aplicación"
+
+#: extra/linthesia.metainfo.xml:35
+msgid "Bugfixes"
+msgstr "Corrección de errores"
+
+#: extra/linthesia.metainfo.xml:43
+msgid "Fixed \"Unable to load PangoFont\" bug on all platforms"
+msgstr "Solucionado error \"Imposible carga fuente Pango\" en todas las plataformas"
+
+#: src/main.cpp:53
+msgid "Linthesia detected a"
+msgstr "Linthesi detecto un"
+
+#: src/main.cpp:54
+msgid ""
+" problem and must close:\n"
+"\n"
+msgstr " problema y tiene que cerrar:\n\n"
+
+#: src/main.cpp:55
+msgid ""
+"\n"
+"\n"
+"If you don't think this should have happened, please fill a bug report "
+"on : \n"
+"https://github.com/linthesia/linthesia\n"
+"\n"
+"Thank you."
+msgstr "\n\nSi crees que esto no debería haber sucedido, por favor rellena un reporte de error en:"
+"https://github.com/linthesia/linthesia\n"
+"\n"
+"Gracias."
+
+#: src/main.cpp:407
+msgid "Options: "
+msgstr "Opciones: "
+
+#: src/main.cpp:408
+msgid "to load files"
+msgstr "para cargar archivos"
+
+#: src/main.cpp:409
+msgid "to start in window mode"
+msgstr "para empezar en modo ventana"
+
+#: src/main.cpp:410
+msgid "to start full screem"
+msgstr "para empezar en pantalla completa"
+
+#: src/main.cpp:411
+msgid "to define min key"
+msgstr "para definir tecla mínima"
+
+#: src/main.cpp:412
+msgid "to define max key"
+msgstr "para definir tecla máxima"
+
+#: src/main.cpp:413
+msgid "show this help"
+msgstr "muestra esta ayuda"
+
+#: src/main.cpp:414
+msgid "show linthesia version"
+msgstr "muestra la versión de linthesia"
+
+#: src/main.cpp:429
+msgid "Invalid option: "
+msgstr "Opción inválida: "
+
+#: src/main.cpp:440
+msgid "error initializing SDL"
+msgstr "error inicializando SDL"
+
+#: src/main.cpp:493
+msgid "Problem while loading file: "
+msgstr "Problema mientras se cargaba el fichero: "
+
+#: src/main.cpp:517
+#, c-format
+msgid "Error creating directory : %s\n"
+msgstr "Error creando directorio: %s\n"
+
+#: src/main.cpp:529
+#, c-format
+msgid "Can't open database: %s\n"
+msgstr "No se puede abrir la base de datos: %s\n"
+
+#: src/main.cpp:563
+msgid "Could not create window"
+msgstr "No se pudo crear la ventana"
+
+#: src/main.cpp:568
+msgid "Could not create GL Context"
+msgstr "No se pudo crear el contexto GL"
+
+#: src/main.cpp:579
+msgid "FATAL : File not found : make install not done ?"
+msgstr "FATAL: Fichero no encontrador: make install no ejecutado?"
+
+#: src/main.cpp:585
+msgid "SDL_image could not initialize! SDL_image Error"
+msgstr "SDL_image no se pudo inicializar: SDL_image error"
+
+#: src/main.cpp:588
+msgid "error in TTF_Init"
+msgstr "error en TTF_Init"
+
+#: src/main.cpp:593
+msgid "Unable to load image "
+msgstr "Imposible cargar imagen"
+
+#: src/main.cpp:593
+msgid "! SDL_image Error"
+msgstr "! SDL_image error"
+
+#: src/main.cpp:626
+msgid ""
+"Invalid setting for 'refresh_rate' key.\n"
+"\n"
+"Reset to default value when reload."
+msgstr "Configuración inválida para clave 'refresh_rate'.\n"
+"\n"
+"Reseteado a por defecto cuando se recarge"
+
+#: src/main.cpp:688
+msgid "Linthesia detected an unknown problem and must close!  '"
+msgstr "Linthesia detectó un problema desconocida y tiene que cerrar! '"
+
+#: src/main.cpp:695
+msgid "Linthesia detected an unknown problem and must close!"
+msgstr "Linthesia detectó un problema desconocida y tiene que cerrar! '"
