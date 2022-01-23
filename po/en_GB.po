@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linthesia\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-23 20:21+0100\n"
+"POT-Creation-Date: 2022-02-03 22:01+0100\n"
 "PO-Revision-Date: 2022-01-14 21:23+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -116,74 +116,82 @@ msgid "to define max key"
 msgstr ""
 
 #: src/main.cpp:415
-msgid "show this help"
+msgid "to define directory for music library"
 msgstr ""
 
 #: src/main.cpp:416
+msgid "reset directory for music library to "
+msgstr ""
+
+#: src/main.cpp:417
+msgid "show this help"
+msgstr ""
+
+#: src/main.cpp:418
 msgid "show linthesia version"
 msgstr ""
 
-#: src/main.cpp:431
+#: src/main.cpp:433
 msgid "Invalid option: "
 msgstr ""
 
-#: src/main.cpp:446
+#: src/main.cpp:447
 msgid "error initializing SDL"
 msgstr ""
 
-#: src/main.cpp:499
+#: src/main.cpp:504
 msgid "Problem while loading file: "
 msgstr ""
 
-#: src/main.cpp:523
+#: src/main.cpp:528
 #, c-format
 msgid "Error creating directory : %s\n"
 msgstr ""
 
-#: src/main.cpp:535
+#: src/main.cpp:540
 #, c-format
 msgid "Can't open database: %s\n"
 msgstr ""
 
-#: src/main.cpp:569
+#: src/main.cpp:574
 msgid "Could not create window"
 msgstr ""
 
-#: src/main.cpp:574
+#: src/main.cpp:579
 msgid "Could not create GL Context"
 msgstr ""
 
-#: src/main.cpp:585
+#: src/main.cpp:590
 msgid "FATAL : File not found : make install not done ?"
 msgstr ""
 
-#: src/main.cpp:591
+#: src/main.cpp:596
 msgid "SDL_image could not initialize! SDL_image Error"
 msgstr ""
 
-#: src/main.cpp:594
+#: src/main.cpp:599
 msgid "error in TTF_Init"
 msgstr ""
 
-#: src/main.cpp:599
+#: src/main.cpp:604
 msgid "Unable to load image "
 msgstr ""
 
-#: src/main.cpp:599
+#: src/main.cpp:604
 msgid "! SDL_image Error"
 msgstr ""
 
-#: src/main.cpp:632
+#: src/main.cpp:637
 msgid ""
 "Invalid setting for 'refresh_rate' key.\n"
 "\n"
 "Reset to default value when reload."
 msgstr ""
 
-#: src/main.cpp:694
+#: src/main.cpp:699
 msgid "Linthesia detected an unknown problem and must close!  '"
 msgstr ""
 
-#: src/main.cpp:701
+#: src/main.cpp:706
 msgid "Linthesia detected an unknown problem and must close!"
 msgstr ""
