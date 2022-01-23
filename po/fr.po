@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: linthesia\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-15 00:43+0100\n"
+"POT-Creation-Date: 2022-01-23 20:21+0100\n"
 "PO-Revision-Date: 2022-01-15 00:43+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Piano game"
 msgstr "Jeu de piano"
 
-#: extra/linthesia.desktop:7
+#: extra/linthesia.desktop:6
 msgid "Piano hero like game"
 msgstr "Jeu à la Piano Hero"
 
@@ -63,4 +63,122 @@ msgstr ""
 
 #: extra/linthesia.metainfo.xml:43
 msgid "Fixed \"Unable to load PangoFont\" bug on all platforms"
+msgstr ""
+
+#: src/main.cpp:55
+msgid "Linthesia detected a"
+msgstr ""
+
+#: src/main.cpp:56
+msgid ""
+" problem and must close:\n"
+"\n"
+msgstr ""
+
+#: src/main.cpp:57
+msgid ""
+"\n"
+"\n"
+"If you don't think this should have happened, please fill a bug report "
+"on : \n"
+"https://github.com/linthesia/linthesia\n"
+"\n"
+"Thank you."
+msgstr ""
+
+#: src/main.cpp:409
+msgid "Options: "
+msgstr ""
+
+#: src/main.cpp:410
+msgid "to load files"
+msgstr ""
+
+#: src/main.cpp:411
+msgid "to start in window mode"
+msgstr ""
+
+#: src/main.cpp:412
+msgid "to start full screem"
+msgstr ""
+
+#: src/main.cpp:413
+msgid "to define min key"
+msgstr ""
+
+#: src/main.cpp:414
+msgid "to define max key"
+msgstr ""
+
+#: src/main.cpp:415
+msgid "show this help"
+msgstr ""
+
+#: src/main.cpp:416
+msgid "show linthesia version"
+msgstr ""
+
+#: src/main.cpp:431
+msgid "Invalid option: "
+msgstr ""
+
+#: src/main.cpp:446
+msgid "error initializing SDL"
+msgstr ""
+
+#: src/main.cpp:499
+msgid "Problem while loading file: "
+msgstr ""
+
+#: src/main.cpp:523
+#, c-format
+msgid "Error creating directory : %s\n"
+msgstr ""
+
+#: src/main.cpp:535
+#, c-format
+msgid "Can't open database: %s\n"
+msgstr ""
+
+#: src/main.cpp:569
+msgid "Could not create window"
+msgstr ""
+
+#: src/main.cpp:574
+msgid "Could not create GL Context"
+msgstr ""
+
+#: src/main.cpp:585
+msgid "FATAL : File not found : make install not done ?"
+msgstr ""
+
+#: src/main.cpp:591
+msgid "SDL_image could not initialize! SDL_image Error"
+msgstr ""
+
+#: src/main.cpp:594
+msgid "error in TTF_Init"
+msgstr ""
+
+#: src/main.cpp:599
+msgid "Unable to load image "
+msgstr ""
+
+#: src/main.cpp:599
+msgid "! SDL_image Error"
+msgstr ""
+
+#: src/main.cpp:632
+msgid ""
+"Invalid setting for 'refresh_rate' key.\n"
+"\n"
+"Reset to default value when reload."
+msgstr ""
+
+#: src/main.cpp:694
+msgid "Linthesia detected an unknown problem and must close!  '"
+msgstr ""
+
+#: src/main.cpp:701
+msgid "Linthesia detected an unknown problem and must close!"
 msgstr ""

@@ -7,6 +7,8 @@
 // See COPYING for license information
 
 #include <string>
+#include <locale>
+#include <libintl.h>
 
 #include "OSGraphics.h"
 #include "StringUtil.h"
@@ -36,6 +38,8 @@
 
 #include <SDL2/SDL_image.h>
 
+#define _(String) gettext (String)
+
 using namespace std;
 
 GameStateManager* state_manager;
@@ -48,10 +52,10 @@ sqlite3 *db;
 const static string friendly_app_name = STRING("Linthesia " <<
                                                LinthesiaVersionString);
 
-const static string error_header1 = "Linthesia detected a";
-const static string error_header2 = " problem and must close:\n\n";
-const static string error_footer = "\n\nIf you don't think this should have "
-  "happened, please fill a bug report on : \nhttps://github.com/linthesia/linthesia\n\nThank you.";
+const static string error_header1 = _("Linthesia detected a");
+const static string error_header2 = _(" problem and must close:\n\n");
+const static string error_footer = _("\n\nIf you don't think this should have "
+  "happened, please fill a bug report on : \nhttps://github.com/linthesia/linthesia\n\nThank you.");
 
 const static int vsync_interval = 1;
 
@@ -402,14 +406,14 @@ void print_version() {
 
 void show_help() {
   print_version();
-  cout << endl << "Options: " << endl << endl
-     << "\t" << "-f" << " " << "to load files" << endl
-     << "\t" << "-w" << " " << "to start in window mode" << endl
-     << "\t" << "-W" << " " << "to start full screem" << endl
-     << "\t" << "--min-key" << " " << "to define min key" << endl
-     << "\t" << "--max-key" << " " << "to define max key" << endl
-     << "\t" << "--help" << " " << "show this help" << endl
-     << "\t" << "--version" << " " << "show linthesia version" << endl
+  cout << endl << _("Options: ") << endl << endl
+     << "\t" << "-f" << " " << _("to load files") << endl
+     << "\t" << "-w" << " " << _("to start in window mode") << endl
+     << "\t" << "-W" << " " << _("to start full screem") << endl
+     << "\t" << "--min-key" << " " << _("to define min key") << endl
+     << "\t" << "--max-key" << " " << _("to define max key") << endl
+     << "\t" << "--help" << " " << _("show this help") << endl
+     << "\t" << "--version" << " " << _("show linthesia version") << endl
      << endl;
 }
 
@@ -424,7 +428,7 @@ bool has_invalid_options(int argc, char *argv[]) {
                        strcmp(j, "-max-key") != 0 &&
                        strcmp(j, "-help") != 0 &&
                        strcmp(j, "-version") != 0)) {
-      cout << "Invalid option: " << *pargv << endl << endl;
+      cout << _("Invalid option: ") << *pargv << endl << endl;
       return true;
     }
   }
@@ -432,10 +436,13 @@ bool has_invalid_options(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
+  setlocale (LC_ALL, "");
+  textdomain("linthesia");
+
   try {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
-      throw LinthesiaSDLError("error initializing SDL");
+      throw LinthesiaSDLError(_("error initializing SDL"));
 
     string file_opt("");
 
@@ -483,7 +490,7 @@ int main(int argc, char *argv[]) {
       }
 
       catch (const MidiError &e) {
-        string wrapped_description = STRING("Problem while loading file: " <<
+        string wrapped_description = STRING(_("Problem while loading file: ") <<
                                             file_opt <<
                                             "\n") + e.GetErrorDescription();
         Compatible::ShowError(wrapped_description);
@@ -507,7 +514,7 @@ int main(int argc, char *argv[]) {
         const int dir_err = mkdir(sqlite_db_str, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
         if (-1 == dir_err)
         {
-          fprintf(stderr, "Error creating directory : %s\n", sqlite_db_str);
+          fprintf(stderr, _("Error creating directory : %s\n"), sqlite_db_str);
           exit(1);
         }
       }
@@ -519,10 +526,10 @@ int main(int argc, char *argv[]) {
     }
 
     if (sqlite3_open(sqlite_db_str, &db)) {
-      fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+      fprintf(stderr, _("Can't open database: %s\n"), sqlite3_errmsg(db));
       return(0);
     } else {
-      // fprintf(stderr, "Opened database successfully\n");
+      // fprintf(stderr, _("Opened database successfully\n"));
       sqlite3_close(db);
     }
 
@@ -553,12 +560,12 @@ int main(int argc, char *argv[]) {
 
     // Check that the window was successfully created
     if (sdl_window == NULL)
-      throw LinthesiaSDLError("Could not create window");
+      throw LinthesiaSDLError(_("Could not create window"));
 
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(sdl_window);
     if (gl_context == nullptr)
-      throw LinthesiaSDLError("Could not create GL Context");
+      throw LinthesiaSDLError(_("Could not create GL Context"));
 
     {
       int w,h;
@@ -569,21 +576,21 @@ int main(int argc, char *argv[]) {
     chdir (getExePath().c_str());  
     
     if ( !stat((GRAPHDIR +  std::string("/linthesia.png")).c_str(),&st) == 0) {
-      throw LinthesiaError("FATAL : File not found : make install not done ?" + 
+      throw LinthesiaError(_("FATAL : File not found : make install not done ?") + 
                             std::string(GRAPHDIR) +  std::string("/linthesia.png"));
     }
 
     int imgFlags = IMG_INIT_PNG;
     if( !( IMG_Init( imgFlags ) & imgFlags ) )
-      throw LinthesiaSDLImageError("SDL_image could not initialize! SDL_image Error");
+      throw LinthesiaSDLImageError(_("SDL_image could not initialize! SDL_image Error"));
 
     if (TTF_Init() == -1)
-      throw LinthesiaSDLTTFError("error in TTF_Init");
+      throw LinthesiaSDLTTFError(_("error in TTF_Init"));
 
     std::string path = GRAPHDIR + std::string("/linthesia.png");
     SDL_Surface* image = IMG_Load(path.c_str());
     if (image == nullptr)
-      throw LinthesiaSDLImageError( "Unable to load image " + path + "! SDL_image Error");
+      throw LinthesiaSDLImageError(_("Unable to load image ") + path + _("! SDL_image Error"));
 
     SDL_SetWindowIcon(sdl_window, image);
 
@@ -616,7 +623,7 @@ int main(int argc, char *argv[]) {
     else {
       istringstream iss(user_rate);
       if (not (iss >> default_rate)) {
-        Compatible::ShowError("Invalid setting for 'refresh_rate' key.\n\nReset to default value when reload.");
+        Compatible::ShowError(_("Invalid setting for 'refresh_rate' key.\n\nReset to default value when reload."));
         UserSetting::Set(REFRESH_RATE_KEY, "");
       }
     }
@@ -678,15 +685,15 @@ int main(int argc, char *argv[]) {
     Compatible::ShowError(wrapped_description);
   }
   catch (const exception &e) {
-    string wrapped_description = STRING("Linthesia detected an unknown "
-                                        "problem and must close!  '" <<
+    string wrapped_description = STRING(_("Linthesia detected an unknown "
+                                        "problem and must close!  '") <<
                                         e.what() << "'" << error_footer);
     Compatible::ShowError(wrapped_description);
   }
 
   catch (...) {
-    string wrapped_description = STRING("Linthesia detected an unknown "
-                                        "problem and must close!" <<
+    string wrapped_description = STRING(_("Linthesia detected an unknown "
+                                        "problem and must close!") <<
                                         error_footer);
     Compatible::ShowError(wrapped_description);
   }
