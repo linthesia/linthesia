@@ -26,5 +26,3 @@ if not os.environ.get('DESTDIR'):
   schemadir = os.path.join(datadir, 'glib-2.0', 'schemas')
   print('Compiling gsettings schemas...')
   subprocess.call(['glib-compile-schemas', schemadir])
-
-print('DESTDIR')
