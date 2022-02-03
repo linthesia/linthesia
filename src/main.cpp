@@ -414,8 +414,8 @@ void show_help() {
      << "\t" << "--max-key" << " " << _("to define max key") << endl
      << "\t" << "--lib-path" << " " << _("to define directory for music library") << endl
      << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to "MUSICDIR) << endl
-     << "\t" << "--help" << " " << _("show this help") << endl
-     << "\t" << "--version" << " " << _("show linthesia version") << endl
+     << "\t" << "-h, --help" << " " << _("show this help") << endl
+     << "\t" << "-v, --version" << " " << _("show linthesia version") << endl
      << endl;
 }
 
@@ -426,6 +426,8 @@ bool has_invalid_options(int argc, char *argv[]) {
     if ((i == '-') && (strcmp(j, "f") != 0 &&
                        strcmp(j, "w") != 0 &&
                        strcmp(j, "W") != 0 &&
+                       strcmp(j, "h") != 0 &&
+                       strcmp(j, "v") != 0 &&
                        strcmp(j, "-min-key") != 0 &&
                        strcmp(j, "-max-key") != 0 &&
                        strcmp(j, "-help") != 0 &&
@@ -458,12 +460,13 @@ int main(int argc, char *argv[]) {
       show_help_exit_status = 1;
     }
 
-    if (invalid_options || cmdOptionExists(argv, argv+argc, "--help")) {
+    if (invalid_options || cmdOptionExists(argv, argv+argc, "--help")
+        || cmdOptionExists(argv, argv+argc, "-h")) {
       show_help();
       return show_help_exit_status;
     }
 
-    if (cmdOptionExists(argv, argv+argc, "--version")) {
+    if (cmdOptionExists(argv, argv+argc, "--version") || cmdOptionExists(argv, argv+argc, "-v")) {
       print_version();
       return 0;
     }
