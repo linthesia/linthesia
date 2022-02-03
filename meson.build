@@ -1,5 +1,5 @@
 project('linthesia', 'cpp',
-  version : '0.7.0',
+  version : '0.8.0',
   default_options : ['warning_level=3', 'cpp_std=c++14'])
 
 project_name = meson.project_name()

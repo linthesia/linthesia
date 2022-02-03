@@ -1,3 +1,14 @@
+linthesia (0.8.0) unstable; urgency=low
+
+  * Change music lib path from command line
+  * Add man page
+  * i18n command line options
+  * Add command line options
+  * (rikmg/main) ignore if local dir already exists
+  * GRAPHDIR and MUSIC dir must be explicity defined
+  * Migrate Gconf to GSettings
+  * Meson buildsystem
+
 linthesia (0.7.0) unstable; urgency=low
 
   * Use version from buildsystem
