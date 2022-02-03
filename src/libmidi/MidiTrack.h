@@ -69,6 +69,11 @@ public:
     return m_note_set;
   }
 
+  const std::string LastText() const
+  {
+    return m_last_event == -1 ? "" : m_events[m_last_event].Text();
+  }
+
   void SetTrackId(size_t track_id);
 
   // Reports whether this track contains any Note-On MIDI events
