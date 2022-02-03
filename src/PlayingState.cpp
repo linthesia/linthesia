@@ -762,6 +762,10 @@ void PlayingState::Draw(Renderer &renderer) const {
   TextWriter time_text(Layout::ScreenMarginX + 39, text_y+2, renderer, false, Layout::TimeFontSize);
   time_text << STRING(current_time << " / " << total_time << percent_complete);
 
+  for (int i = 0; i < m_state.midi->Tracks().size(); i++) {
+    time_text << " " << m_state.midi->Tracks()[i].LastText();
+  }
+
   // Draw a song progress bar along the top of the screen
   const int time_pb_width = static_cast<int>(m_state.midi->GetSongPercentageComplete() * (GetStateWidth() -
                                                                                           Layout::ScreenMarginX*2));
