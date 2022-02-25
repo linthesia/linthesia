@@ -187,6 +187,11 @@ MidiCommIn::MidiCommIn(unsigned int device_id) {
 
 MidiCommIn::~MidiCommIn() {
 
+  // disable internal keyboard
+  if (m_description.client == snd_seq_client_id(alsa_seq) and
+      m_description.port == keybd_out)
+    emulate_kb = false;
+
   // Disconnect local in to selected port
   snd_seq_disconnect_from(alsa_seq, local_in, m_description.client, m_description.port);
 }
@@ -325,9 +330,6 @@ MidiCommOut::~MidiCommOut() {
 
   // Disconnect local out to selected port
   snd_seq_disconnect_to(alsa_seq, local_out, m_description.client, m_description.port);
-
-  // This does not harm if done everytime...
-  emulate_kb = false;
 }
 
 void MidiCommOut::UpdateDeviceList()
