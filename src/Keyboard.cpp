@@ -193,7 +193,7 @@ Keyboard Keyboard::GetKeyboardDefaults(KeyboardSize size)
   // The constants used in the switch below refer to the number
   // of white keys off 'C' that type of piano starts on
   constexpr int KeyboardOffsetOn37 = 4;
-  constexpr int KeyboardOffsetOn49 = 0;
+  constexpr int KeyboardOffsetOn49 = 7;
   constexpr int KeyboardOffsetOn61 = 7;
   constexpr int KeyboardOffsetOn76 = 5;
   constexpr int KeyboardOffsetOn88 = 2;
