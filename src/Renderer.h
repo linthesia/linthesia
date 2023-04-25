@@ -49,6 +49,15 @@ public:
   void DrawStretchedTga(const Tga *tga, int x, int y, int w, int h,
                         int src_x, int src_y, int src_w, int src_h) const;
 
+
+  /// @brief draws the tga centered limits to the width and height and keeping the aspect ratio of the tga
+  /// @param tga the image to draw
+  /// @param cx the center x of the tga to draw
+  /// @param cy the center y of the tga to draw
+  /// @param max_w the maximum width of the image
+  /// @param max_h the maximum height of the image
+  void DrawCenteredTga(const Tga *tga, int cx, int cy, int max_w, int max_h) const;
+
 private:
 
   // NOTE: These are used externally by the friend
