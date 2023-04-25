@@ -352,11 +352,10 @@ microseconds_t Midi::GetEventPulseInMicroseconds(unsigned long event_pulses,
 void Midi::Reset(microseconds_t lead_in_microseconds, microseconds_t lead_out_microseconds) {
   m_microsecond_lead_in = lead_in_microseconds;
   m_microsecond_lead_out = lead_out_microseconds;
-  m_microsecond_song_position = m_microsecond_dead_start_air - lead_in_microseconds;
-  m_first_update_after_reset = true;
+  m_microsecond_song_position = GetSongInitialPositionInMicroseconds();
 
   for (MidiTrackList::iterator i = m_tracks.begin(); i != m_tracks.end(); ++i) {
-    i->Reset();
+    i->GoTo(m_microsecond_song_position);
   }
 }
 
@@ -380,22 +379,12 @@ MidiEventListWithTrackId Midi::Update(microseconds_t delta_microseconds) {
   if (!m_initialized)
     return aggregated_events;
 
-  // Move everything forward (fallen keys, the screen keyboard)
-  // These variable is used on redraw later
-  m_microsecond_song_position += delta_microseconds;
-  if (m_first_update_after_reset) {
-    delta_microseconds += m_microsecond_song_position;
-    m_first_update_after_reset = false;
-  }
-
   if (delta_microseconds == 0)
     return aggregated_events;
 
-  if (m_microsecond_song_position < 0)
-    return aggregated_events;
-
-  if (delta_microseconds > m_microsecond_song_position)
-    delta_microseconds = m_microsecond_song_position;
+  // Move everything forward (fallen keys, the screen keyboard)
+  // These variable is used on redraw later
+  m_microsecond_song_position += delta_microseconds;
 
   const size_t track_count = m_tracks.size();
   // These code is not related to fallen keys
@@ -425,6 +414,8 @@ void Midi::GoTo(microseconds_t microsecond_song_position) {
 //    Reset(m_microsecond_lead_in, m_microsecond_lead_out);
 //    return;
 //}
+  microsecond_song_position = max(GetSongInitialPositionInMicroseconds(), microsecond_song_position);
+
 
   m_microsecond_song_position = microsecond_song_position;
 

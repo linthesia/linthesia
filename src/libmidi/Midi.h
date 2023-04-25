@@ -51,6 +51,11 @@ public:
     return m_microsecond_song_position;
   }
 
+  microseconds_t GetSongInitialPositionInMicroseconds() const {
+    return m_microsecond_dead_start_air - m_microsecond_lead_in;
+  }
+
+
   microseconds_t GetSongLengthInMicroseconds() const;
 
   microseconds_t GetDeadAirStartOffsetMicroseconds() const {
@@ -115,7 +120,6 @@ private:
   microseconds_t m_microsecond_lead_out;
   microseconds_t m_microsecond_dead_start_air;
 
-  bool m_first_update_after_reset;
   double m_playback_speed;
   MidiTrackList m_tracks;
   MidiEventMicrosecondList m_bar_line_usecs;
