@@ -51,6 +51,11 @@ public:
     return m_microsecond_song_position;
   }
 
+  microseconds_t GetSongInitialPositionInMicroseconds() const {
+    return m_microsecond_dead_start_air - m_microsecond_lead_in;
+  }
+
+
   microseconds_t GetSongLengthInMicroseconds() const;
 
   microseconds_t GetDeadAirStartOffsetMicroseconds() const {
