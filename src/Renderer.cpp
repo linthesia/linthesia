@@ -189,3 +189,21 @@ void Renderer::DrawStretchedTga(const Tga *tga, int x, int y, int w, int h,
   glTexCoord2d(tx+tw,    ty); glVertex3i(sx+w,   sy, 0);
   glEnd();
 }
+
+void Renderer::DrawCenteredTga(const Tga *tga, int cx, int cy, int max_w, int max_h) const {
+
+  double source_a = static_cast<double>(tga->GetWidth()) / tga->GetHeight();
+  double max_a = static_cast<double>(max_w) / max_h;
+  int w, h;
+  if (max_a <= source_a)
+  {
+    w = max_w;
+    h = max_w / source_a;
+  } else
+  {
+    h = max_h;
+    w = max_h * source_a;
+
+  }
+  DrawStretchedTga(tga, cx - w / 2, cy - h / 2, w, h);
+}
