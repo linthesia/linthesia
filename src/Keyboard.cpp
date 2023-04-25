@@ -186,7 +186,7 @@ Keyboard Keyboard::GetKeyboardDefaults(KeyboardSize size)
 
   constexpr int MinKeyOn37 = 65, MaxKeyOn37 = 101;
   constexpr int MinKeyOn49 = 48, MaxKeyOn49 =  96;
-  constexpr int MinKeyOn61 = 48, MaxKeyOn61 = 108;
+  constexpr int MinKeyOn61 = 36, MaxKeyOn61 =  96;
   constexpr int MinKeyOn76 = 40, MaxKeyOn76 = 115;
   constexpr int MinKeyOn88 =  0, MaxKeyOn88 = 120;
   
