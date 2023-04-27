@@ -733,6 +733,13 @@ void PlayingState::Draw(Renderer &renderer) const {
                    renderer, false, Layout::TitleFontSize+2);
   retry << Text(retry_text, Renderer::ToColor(114, 159, 207));
 
+  string volume_text = STRING(m_state.base_volume * 100 << "% Volume");
+
+  TextWriter volume(Layout::ScreenMarginX + 642, text_y + 12,
+                   renderer, false, Layout::TitleFontSize+2);
+
+  volume << Text(volume_text, Renderer::ToColor(114, 207, 159));
+
   double non_zero_playback_speed = ( (m_state.song_speed == 0) ? 0.1 : (m_state.song_speed/100.0) );
   microseconds_t tot_seconds = static_cast<microseconds_t>((m_state.midi->GetSongLengthInMicroseconds() /
                                                             100000.0) / non_zero_playback_speed);
