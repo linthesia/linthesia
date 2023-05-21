@@ -36,7 +36,7 @@
 #include <iostream>
 #include <libgen.h>
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 #define _(String) gettext (String)
 

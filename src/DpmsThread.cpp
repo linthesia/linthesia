@@ -1,7 +1,7 @@
 #include "DpmsThread.h"
 
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 bool DpmsThread::expectedState() const
 {

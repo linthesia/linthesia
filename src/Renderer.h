@@ -11,7 +11,7 @@
 
 #include "OSGraphics.h"
 #include "Tga.h"
-#include "SDL2/SDL.h"
+#include "SDL.h"
 
 static bool m_vsync_initialized;
 

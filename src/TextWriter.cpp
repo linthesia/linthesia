@@ -15,7 +15,7 @@
 #include <map>
 #include <iostream>
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 using namespace std;
 

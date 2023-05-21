@@ -20,7 +20,7 @@
 #include "StringUtil.h"
 #include "TrackProperties.h"
 
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 // A nice ostream-like class for drawing OS-specific (or OpenGL) text to the
 // screen in varying colors, fonts, and sizes.
