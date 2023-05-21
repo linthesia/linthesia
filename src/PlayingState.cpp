@@ -527,13 +527,13 @@ void PlayingState::Update() {
 
   if (IsKeyPressed(KeyVolumeDown)) {
     m_state.base_volume -= 0.1;
-    if (m_state.base_volume < 0)
+    if (m_state.base_volume < 0.1)
       m_state.base_volume = 0;
   }
 
   if (IsKeyPressed(KeyVolumeUp)) {
     m_state.base_volume += 0.1;
-    if (m_state.base_volume > 2) // Maximum volume is 200%
+    if (m_state.base_volume > 1.9) // Maximum volume is 200%
       m_state.base_volume = 2;
   }
 
