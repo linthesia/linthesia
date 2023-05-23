@@ -93,7 +93,7 @@ private:
 
   void DrawNotePass(Renderer &renderer, const Tga *tex_white, const Tga *tex_black,
                     int white_width, int key_space, int black_width, int black_offset,
-                    int x_offset, int y, int y_offset, int y_roll_under,
+                    int x_offset, int y, int y_offset, int final_width, int y_roll_under,
                     const TranslatedNoteSet &notes, microseconds_t show_duration,
                     microseconds_t current_time, const std::vector<Track::Properties> &track_properties) const;
 

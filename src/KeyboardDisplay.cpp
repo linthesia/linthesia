@@ -98,11 +98,11 @@ void KeyboardDisplay::Draw(Renderer &renderer, const Tga *key_tex[3], const Tga 
   // on top of notes.
   renderer.SetColor(Renderer::ToColor(255, 255, 255));
   DrawNotePass(renderer, note_tex[0], note_tex[1], white_width, white_space, black_width,
-               black_offset, x + x_offset, y, y_offset, y_roll_under, notes, show_duration,
+               black_offset, x + x_offset, y, y_offset, final_width, y_roll_under, notes, show_duration,
                current_time, track_properties);
 
   DrawNotePass(renderer, note_tex[2], note_tex[3], white_width, white_space, black_width,
-               black_offset, x + x_offset, y, y_offset, y_roll_under, notes, show_duration,
+               black_offset, x + x_offset, y, y_offset, final_width, y_roll_under, notes, show_duration,
                current_time, track_properties);
 
   const int ActualKeyboardWidth = white_width*white_key_count + white_space*(white_key_count-1);
@@ -401,7 +401,7 @@ void KeyboardDisplay::DrawNote(Renderer &renderer, const Tga *tex, const NoteTex
 
 void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, const Tga *tex_black, int white_width,
                                    int key_space, int black_width, int black_offset, int x_offset, int y,
-                                   int y_offset, int y_roll_under, const TranslatedNoteSet &notes,
+                                   int y_offset, int final_width, int y_roll_under, const TranslatedNoteSet &notes,
                                    microseconds_t show_duration, microseconds_t current_time,
                                    const vector<Track::Properties> &track_properties) const {
 
@@ -442,7 +442,7 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
       if (drawing_black != is_black)
         continue;
 
-      const int octave_offset = (max(octave - 1, 0) * WhiteNotesPerOctave);
+      const int octave_offset = (octave - 1) * WhiteNotesPerOctave;
       const int inner_octave_offset = (octave_base + stack_offset);
       const int generalized_black_offset = (is_black?black_offset:0);
 
@@ -465,6 +465,8 @@ void KeyboardDisplay::DrawNotePass(Renderer &renderer, const Tga *tex_white, con
       const int left = start_x - 1;
       const int top = y_start;
       const int width = (is_black ? black_width : white_width) + 2;
+      if ((start_x < x_offset) || (left + width > final_width + x_offset ))
+        continue;
       int height = y_end - y_start;
 
       // Force a note to be a minimum height at all times
