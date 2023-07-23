@@ -60,8 +60,8 @@ private:
   DeviceTile *m_output_tile;
   DeviceTile *m_input_tile;
 
-  EnumTile *m_keyboard_size_tile;
   StringTile *m_file_tile;
+  EnumTile *m_keyboard_size_tile;
 
   bool m_skip_next_mouse_up;
 };

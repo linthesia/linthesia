@@ -35,8 +35,8 @@ public:
   unsigned long GetAverage();
 
 private:
-  vector<unsigned long> durations;
   unsigned long sum;
+  vector<unsigned long> durations;
   int pos;
 };
 
