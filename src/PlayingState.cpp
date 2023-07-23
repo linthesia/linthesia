@@ -249,10 +249,21 @@ void PlayingState::Listen() {
   while (m_state.midi_in->KeepReading()) {
 
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
-    MidiEvent ev = m_state.midi_in->Read();
+    MidiEvent ev;
+    try {
+      ev = m_state.midi_in->Read();
+    } catch (const MidiError& ex) {
+      ex.GetErrorDescription();
+      ///TODO display device disconnected
+    }
+
     if (m_state.midi_in->ShouldReconnect())
     {
         m_state.midi_in->Reconnect();
+        continue;
+    }
+    if (m_state.midi_out->ShouldReconnect())
+    {
         m_state.midi_out->Reconnect();
         continue;
     }
