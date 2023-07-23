@@ -13,6 +13,7 @@
 #include "Textures.h"
 #include "CompatibleSystem.h"
 
+#include <chrono>
 #include <stdio.h>
 #include <string>
 #include <iomanip>
@@ -276,7 +277,8 @@ void PlayingState::Listen() {
       const std::set<int> last_notes = {m_last_notes[0].note, m_last_notes[1].note};
       const unsigned long max_ts = std::max(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
       const unsigned long min_ts = std::min(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
-      const unsigned long max_deltatime = 1e9/4;
+      using namespace std::chrono;
+      constexpr unsigned long max_deltatime = duration_cast<nanoseconds>(milliseconds{250}).count();
       if ((last_notes == ref_notes) && ((max_ts-min_ts) < max_deltatime))
         m_paused = !m_paused;
 
