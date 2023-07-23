@@ -29,7 +29,7 @@ void SongLibState::Init() {
     m_current_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
     // since it is unconfortable to crash when no file is present, let's test it now
     struct stat st;
-    if ( (!stat(m_current_path.c_str(),&st) == 0) || (! st.st_mode & S_IFDIR != 0) ) {
+    if ( (!stat(m_current_path.c_str(),&st) == 0) || !((st.st_mode & S_IFDIR) != 0) ) {
 	    m_current_path = m_base_path;
     }
 
