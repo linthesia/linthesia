@@ -257,11 +257,6 @@ void PlayingState::Listen() {
         continue;
     }
 
-
-    // Just eat input if we're paused
-    if (m_paused)
-      continue;
-
     // We're only interested in NoteOn and NoteOff
     if (ev.Type() != MidiEventType_NoteOn && ev.Type() != MidiEventType_NoteOff)
       continue;
@@ -271,6 +266,26 @@ void PlayingState::Listen() {
 
     int note_number = ev.NoteNumber();
     string note_name = MidiEvent::NoteName(note_number);
+
+    if (ev.NoteVelocity() != 0)
+      m_last_notes.push_back(NoteWithTime{static_cast<int>(ev.NoteNumber()), ev.NoteTimestamp()});
+
+    if (m_last_notes.size() == 2)
+    {
+      const std::set<int> ref_notes = {m_keyboard->GetMinPlayableNote(),m_keyboard->GetMaxPlayableNote()};
+      const std::set<int> last_notes = {m_last_notes[0].note, m_last_notes[1].note};
+      const unsigned long max_ts = std::max(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
+      const unsigned long min_ts = std::min(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
+      const unsigned long max_deltatime = 1e9/4;
+      if ((last_notes == ref_notes) && ((max_ts-min_ts) < max_deltatime))
+        m_paused = !m_paused;
+
+      m_last_notes = {};
+    }
+
+    // Just eat input if we're paused
+    if (m_paused)
+      continue;
 
     // On key release we have to look for existing "active" notes and turn them off.
     if (ev.Type() == MidiEventType_NoteOff || ev.NoteVelocity() == 0) {
