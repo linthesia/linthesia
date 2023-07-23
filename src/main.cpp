@@ -101,6 +101,7 @@ public:
     m_sdl_window(sdl_window)
   {
   }
+  virtual ~DrawingArea() = default;
 
   bool GameLoop();
 

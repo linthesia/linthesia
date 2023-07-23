@@ -28,6 +28,8 @@ public:
   virtual void previous() = 0;
 
   virtual std::string AsText() const = 0;
+
+  virtual ~EnumValue() = default;
 };
 
 
