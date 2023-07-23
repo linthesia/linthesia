@@ -27,7 +27,7 @@ FrameAverage::FrameAverage(int n) :
  * 
  * @param[in] delta_us frame time in microseconds
  */
-void FrameAverage::Frame(unsigned long delta_us) {
+void FrameAverage::Frame(long delta_us) {
 
   if (delta_us < 0)
     return;

@@ -26,7 +26,7 @@ public:
    * 
    * @param[in] delta_us frame time in microseconds
    */
-  void Frame(unsigned long delta_us);
+  void Frame(long delta_us);
 
   /**
    * returns the average time of the last frames

@@ -769,7 +769,7 @@ void PlayingState::Draw(Renderer &renderer) const {
   TextWriter time_text(Layout::ScreenMarginX + 39, text_y+2, renderer, false, Layout::TimeFontSize);
   time_text << STRING(current_time << " / " << total_time << percent_complete);
 
-  for (int i = 0; i < m_state.midi->Tracks().size(); i++) {
+  for (unsigned i = 0; i < m_state.midi->Tracks().size(); i++) {
     time_text << " " << m_state.midi->Tracks()[i].LastText();
   }
 

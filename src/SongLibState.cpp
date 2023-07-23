@@ -173,7 +173,7 @@ void SongLibState::UpdateSongTilesPage() {
     m_columns = slim ? 1 : max_columns;
 
     int rows = (GetStateHeight() - initial_y - Layout::ScreenMarginY) / each_y;
-    int tiles_per_page = rows * m_columns;
+    unsigned tiles_per_page = rows * m_columns;
     
     std::vector<SongTile>::size_type tiles_total = m_song_tiles.size();
     m_page_count = (tiles_per_page == 0 ? 0 : (tiles_total / tiles_per_page)) + 1;
