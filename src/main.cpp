@@ -242,9 +242,9 @@ int keyToNote(SDL_KeyboardEvent& event) {
   case SDL_SCANCODE_LEFTBRACKET:  return 12*(oct+1) + 9;  /* A  */
   case SDL_SCANCODE_EQUALS:       return 12*(oct+1) + 10; /* A# */
   case SDL_SCANCODE_RIGHTBRACKET: return 12*(oct+1) + 11; /* B  */
-  }
 
-  return -1;
+  default: return -1;
+  }
 }
 
 typedef set<int> ConnectMap;
@@ -414,7 +414,7 @@ void show_help() {
      << "\t" << "--min-key" << " " << _("to define min key") << endl
      << "\t" << "--max-key" << " " << _("to define max key") << endl
      << "\t" << "--lib-path" << " " << _("to define directory for music library") << endl
-     << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to "MUSICDIR) << endl
+     << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to " MUSICDIR) << endl
      << "\t" << "-h, --help" << " " << _("show this help") << endl
      << "\t" << "-v, --version" << " " << _("show linthesia version") << endl
      << endl;
