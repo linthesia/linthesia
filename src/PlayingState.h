@@ -115,7 +115,7 @@ private:
     int note;
     unsigned long timestamp;
   };
-  std::vector<NoteWithTime> m_last_notes;
+  NoteWithTime m_last_note;
 
   void eraseUntilTime(microseconds_t time);
 

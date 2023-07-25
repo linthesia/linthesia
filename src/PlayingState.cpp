@@ -268,21 +268,18 @@ void PlayingState::Listen() {
     int note_number = ev.NoteNumber();
     string note_name = MidiEvent::NoteName(note_number);
 
-    if (ev.NoteVelocity() != 0)
-      m_last_notes.push_back(NoteWithTime{static_cast<int>(ev.NoteNumber()), ev.NoteTimestamp()});
-
-    if (m_last_notes.size() == 2)
-    {
-      const std::set<int> ref_notes = {m_keyboard->GetMinPlayableNote(),m_keyboard->GetMaxPlayableNote()};
-      const std::set<int> last_notes = {m_last_notes[0].note, m_last_notes[1].note};
-      const unsigned long max_ts = std::max(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
-      const unsigned long min_ts = std::min(m_last_notes[0].timestamp, m_last_notes[1].timestamp);
-      using namespace std::chrono;
-      constexpr unsigned long max_deltatime = duration_cast<nanoseconds>(milliseconds{250}).count();
-      if ((last_notes == ref_notes) && ((max_ts-min_ts) < max_deltatime))
-        m_paused = !m_paused;
-
-      m_last_notes = {};
+    const int min_note = m_keyboard->GetMinPlayableNote();
+    const int max_note = m_keyboard->GetMaxPlayableNote();
+    if ( (ev.NoteVelocity() != 0) && (note_number ==  min_note || note_number == max_note)) {
+      if (std::abs(note_number-m_last_note.note) == max_note-min_note)
+      {
+        using namespace std::chrono;
+        constexpr unsigned long max_deltatime = duration_cast<nanoseconds>(milliseconds{250}).count();
+        const unsigned long delta_ts = std::abs(static_cast<long>(ev.NoteTimestamp()-m_last_note.timestamp));
+        if (delta_ts < max_deltatime)
+          m_paused = !m_paused;
+      }
+      m_last_note = NoteWithTime{note_number, ev.NoteTimestamp()};
     }
 
     // Just eat input if we're paused
