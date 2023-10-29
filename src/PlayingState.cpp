@@ -105,6 +105,8 @@ PlayingState::PlayingState(const SharedState &state) :
 
 void PlayingState::Init() {
 
+  glClearColor(.25, .25, .25, 1.0); //allways gray, independed from theme
+
   if (!m_state.midi)
     throw GameStateError("PlayingState: Init was passed a null MIDI!");
 

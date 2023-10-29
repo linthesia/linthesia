@@ -23,6 +23,8 @@
 #define REFRESH_RATE_KEY "refresh-rate"
 #define SONG_LIB_DIR_SETTINGS_KEY "song-lib-last-dir"
 #define SONG_LIB_PATH_KEY "song-lib-path"
+#define THEME "theme"
+#define BG_COLOR "bg-color"
 
 namespace UserSetting {
 

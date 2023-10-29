@@ -37,5 +37,13 @@
       <default>""</default>
     </key>
 
+    <key name="theme" type="s">
+      <default>""</default>
+    </key>
+
+    <key name="bg-color" type="s">
+      <default>"3F3F3F"</default>
+    </key>
+
   </schema>
 </schemalist>
