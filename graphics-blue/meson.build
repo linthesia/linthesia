@@ -1,0 +1,26 @@
+install_data(
+  'color.txt'
+  ,'all_ButtonLearningSilent.tga'
+  ,'all_ButtonLearning.tga'
+  ,'all_ButtonNotPlayed.tga'
+  ,'all_ButtonPlayedAuto.tga'
+  ,'all_ButtonPlayedHidden.tga'
+  ,'all_ButtonYouPlaySilent.tga'
+  ,'all_ButtonYouPlay.tga'
+  ,'score_RetrySong.tga'
+  ,'title_BackBox.tga'
+  ,'title_ButtonPageBack.tga'
+  ,'title_ButtonPageNext.tga'
+  ,'title_ChooseTracks.tga'
+  ,'title_DirBox.tga'
+  ,'title_EmptyBox.tga'
+  ,'title_Exit.tga'
+  ,'title_GameMusicThemes.tga'
+  ,'title_InputBox.tga'
+  ,'title_OutputBox.tga'
+  ,'title_SongBox.tga'
+  ,'tracks_BackToTitle.tga'
+  ,'tracks_PlaySong.tga'
+  ,install_dir: graphdir_blue
+)
+

@@ -1,3 +1,4 @@
 option('graphdir', type: 'string', value: '', description: 'graph dir path')
+option('graphdir_blue', type: 'string', value: '', description: 'graph dir blue theme path')
 option('musicdir', type: 'string', value: '', description: 'music dir path')
 option('profile', type: 'combo', choices: ['default', 'development'], value: 'default')

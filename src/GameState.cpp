@@ -7,6 +7,7 @@
 // See COPYING for license information
 
 #include "GameState.h"
+#include "UserSettings.h"
 #include "Renderer.h"
 #include "Textures.h"
 #include "CompatibleSystem.h"
@@ -81,6 +82,20 @@ void GameState::ChangeState(GameState *new_state) {
     throw GameStateError("Cannot change state if manager not set!");
 
   m_manager->ChangeState(new_state);
+
+  string color = UserSetting::Get(BG_COLOR, "");
+  float R,G,B;
+
+  unsigned int hexcolor;   
+  std::stringstream ss;
+  ss << std::hex << color;
+  ss >> hexcolor;
+
+  R = ((hexcolor >> 16) & 0xff)/255.0; 
+  G = ((hexcolor >>  8) & 0xff)/255.0; 
+  B = ((hexcolor >>  0) & 0xff)/255.0; 
+
+  glClearColor(R, G, B, 1.0);
 }
 
 int GameState::GetStateWidth() const {
@@ -304,8 +319,6 @@ void GameStateManager::Draw(Renderer &renderer) {
   // the previous state *and* the current state during some transition
   // would be really easy.
 
-  const static float gray = 64.0f / 255.0f;
-  glClearColor(gray, gray, gray, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);

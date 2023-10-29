@@ -14,6 +14,7 @@ override_dh_auto_build:
 
 override_dh_install:
 	cp extra/linthesia.desktop debian/linthesia/usr/share/applications
+	debian/linthesia/usr/share/linthesia/createlinks.sh
 
 build-orig-source:
 	mkdir -p linthesia-$(VERSION)

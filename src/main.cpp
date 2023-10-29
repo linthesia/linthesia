@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 
 #include <iostream>
+#include <fstream> 
 #include <libgen.h>
 
 #include <SDL_image.h>
@@ -330,7 +331,19 @@ bool DrawingArea::on_key_release(SDL_KeyboardEvent& event) {
 }
 
 void DrawingArea::on_configure_event() {
-  glClearColor(.25, .25, .25, 1.0);
+  string color = UserSetting::Get(BG_COLOR, "");
+  float R,G,B;
+
+  unsigned int hexcolor;   
+  std::stringstream ss;
+  ss << std::hex << color;
+  ss >> hexcolor;
+
+  R = ((hexcolor >> 16) & 0xff)/255.0; 
+  G = ((hexcolor >>  8) & 0xff)/255.0; 
+  B = ((hexcolor >>  0) & 0xff)/255.0; 
+
+  glClearColor(R, G, B, 1.0);
   glClearDepth(1.0);
 
   glDisable(GL_DEPTH_TEST);
@@ -414,6 +427,7 @@ void show_help() {
      << "\t" << "--max-key" << " " << _("to define max key") << endl
      << "\t" << "--lib-path" << " " << _("to define directory for music library") << endl
      << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to "MUSICDIR) << endl
+     << "\t" << "--theme" << " " << _("to select theme") << endl
      << "\t" << "-h, --help" << " " << _("show this help") << endl
      << "\t" << "-v, --version" << " " << _("show linthesia version") << endl
      << endl;
@@ -433,6 +447,7 @@ bool has_invalid_options(int argc, char *argv[]) {
                        strcmp(j, "-help") != 0 &&
                        strcmp(j, "-lib-path") != 0 &&
                        strcmp(j, "-reset-lib-path") != 0 &&
+                       strcmp(j, "-theme") != 0 &&
                        strcmp(j, "-version") != 0)) {
       cout << _("Invalid option: ") << *pargv << endl << endl;
       return true;
@@ -464,6 +479,41 @@ int main(int argc, char *argv[]) {
         || cmdOptionExists(argv, argv+argc, "-h")) {
       show_help();
       return show_help_exit_status;
+    }
+
+    if (cmdOptionExists(argv, argv+argc, "--theme")) {
+      string theme = STRING(getCmdOption(argv, argv + argc, "--theme"));    
+      string path_theme = string(GRAPHDIR);
+
+      path_theme.append("-");
+      path_theme.append(theme);
+
+      struct stat sb;
+
+      if (stat(path_theme.c_str(), &sb) == 0) {
+        // "The path is valid!"
+        UserSetting::Set(THEME, theme);
+        string color_name = path_theme + "/color.txt";
+
+        ifstream file(color_name.c_str(), ios::in|ios::binary|ios::ate);
+        if (file.is_open()) {
+          int size = file.tellg();
+          unsigned char *bytes = new unsigned char[size+1];
+
+          file.seekg(0, ios::beg);
+          file.read((char*)bytes, size);
+          file.close();
+          bytes[size] = 0;
+          UserSetting::Set(BG_COLOR, std::string((const char*)bytes));
+          delete bytes;
+        }
+      }
+      else
+      {
+        // "The Path is invalid!"
+        UserSetting::Set(THEME, "");
+        UserSetting::Set(BG_COLOR, "3f3f3f");
+      }
     }
 
     if (cmdOptionExists(argv, argv+argc, "--version") || cmdOptionExists(argv, argv+argc, "-v")) {

@@ -15,6 +15,38 @@ To compile, you need a basic c++ toolchain, and satisfy all dependences which ar
     $ ninja -C build
     $ ninja -C build install #probably with sudo
 
+## Build deb
+
+    $ debuild -b -uc -us
+
+## Themes support
+
+Textures for a new theme are in folder graphics-xxx, e. g. graphics-blue.
+
+Select a theme "blue":
+
+    $ linthesia --theme blue
+
+Select default gray theme:
+
+    $ linthesia --theme
+
+## Creating new themes for installed program
+
+Create directory for new theme e.g. /usr/share/linthesia/graphics-red.
+
+Create color.txt wich contains a hex RGB value for background.
+
+Run createlinks.sh
+
+    $ /usr/share/linthesia/createlinks.sh
+
+Replace one or more textures with your own textures.
+
+Select a theme "red":
+
+    $ linthesia --theme red
+
 ## Credits
 
 Visit https://github.com/linthesia/linthesia for more info.
