@@ -47,6 +47,11 @@ subdir('graphics-blue')
 subdir('po')
 subdir('src')
 
+install_data(
+  'createlinks.sh'
+  ,install_dir: datadir / project_name
+)
+
 import('gnome').post_install(
   glib_compile_schemas: true,
   gtk_update_icon_cache: true,
