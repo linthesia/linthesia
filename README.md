@@ -31,6 +31,22 @@ Select default gray theme:
 
     $ linthesia --theme
 
+## Creating new themes for installed program
+
+Create directory for new theme e.g. /usr/share/linthesia/graphics-red.
+
+Create color.txt wich contains a hex RGB value for background.
+
+Run createlinks.sh
+
+    $ /usr/share/linthesia/createlinks.sh
+
+Replace one or more textures with your own textures.
+
+Select a theme "red":
+
+    $ linthesia --theme red
+
 ## Credits
 
 Visit https://github.com/linthesia/linthesia for more info.
