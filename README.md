@@ -31,15 +31,6 @@ Select default gray theme:
 
     $ linthesia --theme
 
-TODO:
-
-Add post install step to create link to common textures in {prefix}/share/linthesia/graphics-xxx.
-
-At the moment you must manually create links.
-
-    $ cd /usr/share/linthesia/graphics-blue/
-    $ ln -s ../graphics/* .
-
 ## Credits
 
 Visit https://github.com/linthesia/linthesia for more info.

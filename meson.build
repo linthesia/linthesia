@@ -51,3 +51,8 @@ import('gnome').post_install(
   glib_compile_schemas: true,
   gtk_update_icon_cache: true,
 )
+meson.add_install_script(
+  'createlinks.sh',
+  project_name,
+  prefix / datadir
+  )
