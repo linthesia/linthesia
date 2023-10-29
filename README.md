@@ -15,6 +15,10 @@ To compile, you need a basic c++ toolchain, and satisfy all dependences which ar
     $ ninja -C build
     $ ninja -C build install #probably with sudo
 
+## Build deb
+
+    $ debuild -b -uc -us
+
 ## Themes support
 
 Textures for a new theme are in folder graphics-xxx, e. g. graphics-blue.
@@ -28,8 +32,6 @@ Select default gray theme:
     $ linthesia --theme
 
 TODO:
-
-Add post install step to copy a new theme folder to {prefix}/share/linthesia/.
 
 Add post install step to create link to common textures in {prefix}/share/linthesia/graphics-xxx.
 

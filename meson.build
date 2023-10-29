@@ -23,6 +23,12 @@ graphdir = datadir / project_name / 'graphics'
 if get_option('graphdir') != ''
   graphdir = get_option('graphdir')
 endif
+
+graphdir_blue = datadir / project_name / 'graphics-blue'
+if get_option('graphdir_blue') != ''
+  graphdir_blue = get_option('graphdir_blue')
+endif
+
 common_flags += [
   '-DGRAPHDIR="@0@"'.format(prefix / graphdir)
 ]
@@ -37,6 +43,7 @@ po_dir = source_root / 'po'
 
 subdir('extra')
 subdir('graphics')
+subdir('graphics-blue')
 subdir('po')
 subdir('src')
 
