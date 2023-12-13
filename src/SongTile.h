@@ -70,12 +70,12 @@ private:
   int m_x;
   int m_y;
 
-  bool m_dir;
-  bool m_visible;
-
   string m_path;
   string m_name;
   string m_current_path;
+
+  bool m_dir;
+  bool m_visible;
 
   Tga *m_frame_graphics;
 

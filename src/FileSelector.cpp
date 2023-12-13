@@ -29,7 +29,7 @@ namespace FileSelector {
     exts.insert(".mid");
     exts.insert(".midi");
     for (set<string>::const_iterator i = exts.begin(); i != exts.end(); i++) {
-      int len = i->length();
+      size_t len = i->length();
       if (lower.length() > len && lower.substr(lower.length() - len, len) == *i)
         lower = lower.substr(0, lower.length() - len);
     }

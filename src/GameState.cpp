@@ -240,7 +240,7 @@ void GameStateManager::Update(bool skip_this_update) {
 
   // Manager's timer grows constantly
   const unsigned long now = Compatible::GetMicroseconds();
-  const unsigned long delta = now - m_last_microseconds;
+  const long delta = now - m_last_microseconds;
   m_last_microseconds = now;
   // Now that we've updated the time, we can return if
   // we've been told to skip this one.

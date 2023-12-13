@@ -101,6 +101,7 @@ public:
     m_sdl_window(sdl_window)
   {
   }
+  virtual ~DrawingArea() = default;
 
   bool GameLoop();
 
@@ -108,8 +109,8 @@ public:
 
   virtual void on_configure_event();
 protected:
-  virtual void on_expose_event(SDL_WindowEvent& event);
-  virtual void on_hide_event(SDL_WindowEvent& event);
+  virtual void on_expose_event();
+  virtual void on_hide_event();
 
   virtual bool on_motion_notify(SDL_MouseMotionEvent& event);
   virtual bool on_button_press(SDL_MouseButtonEvent& event);
@@ -168,10 +169,10 @@ void DrawingArea::on_window_event(SDL_WindowEvent& event)
   switch (event.event)
   {
     case SDL_WINDOWEVENT_EXPOSED:
-      on_expose_event(event);
+      on_expose_event();
       break;
     case SDL_WINDOWEVENT_HIDDEN:
-      on_hide_event(event);
+      on_hide_event();
       break;
     case SDL_WINDOWEVENT_RESIZED:
     case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -241,9 +242,9 @@ int keyToNote(SDL_KeyboardEvent& event) {
   case SDL_SCANCODE_LEFTBRACKET:  return 12*(oct+1) + 9;  /* A  */
   case SDL_SCANCODE_EQUALS:       return 12*(oct+1) + 10; /* A# */
   case SDL_SCANCODE_RIGHTBRACKET: return 12*(oct+1) + 11; /* B  */
-  }
 
-  return -1;
+  default: return -1;
+  }
 }
 
 typedef set<int> ConnectMap;
@@ -352,12 +353,12 @@ void DrawingArea::on_configure_event() {
   glEnd();
 }
 
-void DrawingArea::on_expose_event(SDL_WindowEvent& event) {
+void DrawingArea::on_expose_event() {
   if (!window_state.IsActive())
     window_state.Activate();
 }
 
-void DrawingArea::on_hide_event(SDL_WindowEvent& event) {
+void DrawingArea::on_hide_event() {
   if (window_state.IsActive())
     window_state.Deactivate();
 }
@@ -369,7 +370,7 @@ bool DrawingArea::GameLoop() {
     state_manager->Update(window_state.JustActivated());
 
     Renderer rend(m_sdl_window);
-    rend.SetVSyncInterval(vsync_interval);
+    // rend.SetVSyncInterval(vsync_interval);
 
     state_manager->Draw(rend);
   }
@@ -413,13 +414,13 @@ void show_help() {
      << "\t" << "--min-key" << " " << _("to define min key") << endl
      << "\t" << "--max-key" << " " << _("to define max key") << endl
      << "\t" << "--lib-path" << " " << _("to define directory for music library") << endl
-     << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to "MUSICDIR) << endl
+     << "\t" << "--reset-lib-path" << " " << _("reset directory for music library to " MUSICDIR) << endl
      << "\t" << "-h, --help" << " " << _("show this help") << endl
      << "\t" << "-v, --version" << " " << _("show linthesia version") << endl
      << endl;
 }
 
-bool has_invalid_options(int argc, char *argv[]) {
+bool has_invalid_options(char *argv[]) {
   for (char **pargv = argv; *pargv != NULL; pargv++) {
     char i = *pargv[0];
     char* j = *pargv+1;
@@ -455,7 +456,7 @@ int main(int argc, char *argv[]) {
     UserSetting::Initialize();
 
     int show_help_exit_status = 0;
-    bool invalid_options = has_invalid_options(argc, argv);
+    bool invalid_options = has_invalid_options(argv);
     if (invalid_options) {
       show_help_exit_status = 1;
     }
