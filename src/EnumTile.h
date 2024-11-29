@@ -28,6 +28,8 @@ public:
   virtual void previous() = 0;
 
   virtual std::string AsText() const = 0;
+
+  virtual ~EnumValue() = default;
 };
 
 
@@ -76,17 +78,16 @@ private:
   int m_x;
   int m_y;
 
-  Tga *m_button_graphics;
-  Tga *m_frame_graphics;
-
   EnumValue& m_value;
 
+  std::string m_tile_title;
+
+  Tga *m_button_graphics;
+  Tga *m_frame_graphics;
 
   ButtonState whole_tile;
   ButtonState button_mode_left;
   ButtonState button_mode_right;
-
-  std::string m_tile_title;
 
   int LookupGraphic(TrackTileGraphic graphic, bool button_hovering) const;
 };

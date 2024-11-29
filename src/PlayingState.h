@@ -95,6 +95,11 @@ private:
   ActiveNoteSet m_active_notes;
 
   bool m_first_update;
+  
+  // For retries
+  bool m_should_retry;
+  bool m_should_wait_after_retry;
+  microseconds_t m_retry_start;
 
   SharedState m_state;
   int m_current_combo;
@@ -104,11 +109,6 @@ private:
 
   // For octave sliding
   int m_note_offset;
-
-  // For retries
-  bool m_should_retry;
-  bool m_should_wait_after_retry;
-  microseconds_t m_retry_start;
 
   void eraseUntilTime(microseconds_t time);
 
