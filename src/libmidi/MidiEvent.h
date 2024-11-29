@@ -28,6 +28,7 @@ struct MidiEventSimple {
   unsigned char status;
   unsigned char byte1;
   unsigned char byte2;
+  unsigned long timestamp = 0;
 };
 
 class MidiEvent {
@@ -79,6 +80,9 @@ public:
   // Off event).  Returns -1 for other event types.
   int NoteVelocity() const;
 
+  // Returns the timestamp of a Note
+  unsigned long NoteTimestamp() const;
+
   void SetVelocity(int velocity);
 
   // Returns which type of meta event this is (or
@@ -119,6 +123,7 @@ private:
   unsigned char m_status;
   unsigned char m_data1;
   unsigned char m_data2;
+  unsigned long m_timestamp;
   unsigned long m_delta_pulses;
 
   unsigned char m_meta_type;

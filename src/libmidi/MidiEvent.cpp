@@ -60,6 +60,7 @@ MidiEvent MidiEvent::Build(const MidiEventSimple &simple) {
   ev.m_status = simple.status;
   ev.m_data1 = simple.byte1;
   ev.m_data2 = simple.byte2;
+  ev.m_timestamp = simple.timestamp;
 
   if (ev.Type() == MidiEventType_Meta)
     throw MidiError(MidiError_MetaEventOnInput);
@@ -332,6 +333,10 @@ int MidiEvent::NoteVelocity() const {
     return -1;
 
   return static_cast<int>(m_data2);
+}
+
+unsigned long MidiEvent::NoteTimestamp() const {
+  return m_timestamp;
 }
 
 string MidiEvent::Text() const {
