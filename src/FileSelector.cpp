@@ -42,16 +42,17 @@ namespace FileSelector {
     }
 
     // Set file filters
-    Gtk::FileFilter filter_midi;
-    filter_midi.set_name("MIDI files (*.mid, *.midi)");
-    filter_midi.add_pattern("*.mid");
-    filter_midi.add_pattern("*.midi");
+    auto filter_midi = Gtk::FileFilter::create();
+    filter_midi->set_name("MIDI files (*.mid, *.midi)");
+    filter_midi->add_pattern("*.mid");
+    filter_midi->add_pattern("*.midi");
     dialog.add_filter(filter_midi);
 
-    Gtk::FileFilter filter_all;
-    filter_all.set_name("All files (*.*)");
-    filter_all.add_pattern("*.*");
+    auto filter_all = Gtk::FileFilter::create();
+    filter_all->set_name("All files (*.*)");
+    filter_all->add_pattern("*.*");
     dialog.add_filter(filter_all);
+
 
     int response = dialog.run();
     switch (response) {
