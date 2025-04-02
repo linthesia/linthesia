@@ -33,6 +33,7 @@
 
 #include <iostream>
 #include <libgen.h>
+#include <gdk/gdkkeysyms-compat.h>
 
 #ifndef GRAPHDIR
   #define GRAPHDIR "../graphics"
