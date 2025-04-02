@@ -8,6 +8,7 @@
 
 #include <sys/time.h>
 #include <gtkmm.h>
+#include <gdkmm.h>
 
 #include "MidiComm.h"
 #include "CompatibleSystem.h"
@@ -58,10 +59,10 @@ namespace Compatible {
 
 	  if (!inited) {
 		  auto display = Gdk::Display::get_default();
+		  auto device = display->get_device_manager()->list_devices(Gdk::DEVICE_TYPE_MASTER).front();
 
 		  int pointer_x, pointer_y;
-		  Gdk::ModifierType pointer_mask;
-		  display->get_pointer(pointer_x, pointer_y, pointer_mask);
+		  device->get_position(pointer_x, pointer_y);
 
 		  auto screen = display->get_default_screen();
 
