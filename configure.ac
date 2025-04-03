@@ -43,7 +43,7 @@ AC_PROG_MKDIR_P
 # Checks for header files.
 AC_CHECK_HEADERS([string string.h iostream algorithm locale vector sstream queue functional map iomanip set exception sys/time.h])
 
-PKG_CHECK_MODULES([GTKGLEXTMM],[gtkglextmm-1.2])
+PKG_CHECK_MODULES([GL],[gl])
 PKG_CHECK_MODULES([GTKMM],[gtkmm-3.0])
 PKG_CHECK_MODULES([GCONF],[gconf-2.0])
 PKG_CHECK_MODULES([FONTCONFIG],[fontconfig])

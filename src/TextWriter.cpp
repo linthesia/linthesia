@@ -51,7 +51,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
 
     // Try to get the requested name first
     font_desc = new Pango::FontDescription(STRING(fontname << " " << in_size));
-    ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+    //ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
 
     if (!ret) {
       delete font_desc;
@@ -60,7 +60,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
       const std::string userfontname = UserSetting::Get("font_desc", "");
       if (!userfontname.empty()) {
         font_desc = new Pango::FontDescription(STRING(userfontname << " " << in_size));
-        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+        //ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
       }
     }
 
@@ -71,7 +71,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
       const std::string sysfontname = get_default_font();
       if (!sysfontname.empty()) {
         font_desc = new Pango::FontDescription(STRING(sysfontname << " " << in_size));
-        ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+        //ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
       } 
     }
 
@@ -90,7 +90,7 @@ TextWriter::TextWriter(int in_x, int in_y, Renderer &in_renderer,
 	       FcPatternGetString(font, FC_STYLE, 0, &style) == FcResultMatch) {
 		      //printf("Filename: %s (family %s, style %s)\n", file, family, style);
 		      font_desc = new Pango::FontDescription(STRING((char *)family << " " << style << " 14" ));
-		      ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
+		      //ret = Gdk::GL::Font::use_pango_font(*font_desc, 0, 128, list_start);
 		      //printf ("DEBUG : family = %d    -    ret=%d \n\n", family, ret);
 		      if (ret) {
 			  printf ("DEBUG : FOUND !!!!\n");

@@ -116,7 +116,7 @@ void Renderer::SetVSyncInterval(int interval) {
 }
 
 void Renderer::SwapBuffers() {
-  m_glcontext->get_gl_drawable()->swap_buffers();
+  //m_glcontext->get_gl_drawable()->swap_buffers();
 }
 
 void Renderer::ForceTexture(unsigned int texture_id) {

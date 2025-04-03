@@ -65,7 +65,7 @@ void Tga::SetSmooth(bool smooth) {
   if (smooth)
     filter = GL_LINEAR;
 
-  glBindTexture(GL_TEXTURE_2D, m_texture_id);
+  //glBindTexture(GL_TEXTURE_2D, m_texture_id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 }

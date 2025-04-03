@@ -34,6 +34,7 @@
 #include <iostream>
 #include <libgen.h>
 #include <gdk/gdkkeysyms-compat.h>
+#include <GL/gl.h>
 
 #ifndef GRAPHDIR
   #define GRAPHDIR "../graphics"
@@ -47,8 +48,7 @@ char *sqlite_db_str;
 sqlite3 *db;
 
 const static string application_name = "Linthesia";
-const static string friendly_app_name = STRING("Linthesia " <<
-                                               LinthesiaVersionString);
+const static string friendly_app_name = STRING("Linthesia " << LinthesiaVersionString);
 
 const static string error_header1 = "Linthesia detected a";
 const static string error_header2 = " problem and must close:\n\n";
@@ -92,11 +92,10 @@ private:
 
 static EdgeTracker window_state;
 
-class DrawingArea : public Gtk::GL::DrawingArea {
+class GLArea : public Gtk::GLArea {
 public:
 
-  DrawingArea(const Glib::RefPtr<const Gdk::GL::Config>& config) :
-    Gtk::GL::DrawingArea(config) {
+    GLArea(): Gtk::GLArea() {
 
     set_events(Gdk::POINTER_MOTION_MASK |
                Gdk::BUTTON_PRESS_MASK   |
@@ -106,12 +105,14 @@ public:
 
     set_can_focus();
 
-    signal_motion_notify_event().connect(sigc::mem_fun(*this, &DrawingArea::on_motion_notify));
-    signal_button_press_event().connect(sigc::mem_fun(*this, &DrawingArea::on_button_press));
-    signal_button_release_event().connect(sigc::mem_fun(*this, &DrawingArea::on_button_press));
-    signal_key_press_event().connect(sigc::mem_fun(*this, &DrawingArea::on_key_press));
-    signal_key_release_event().connect(sigc::mem_fun(*this, &DrawingArea::on_key_release));
+    signal_motion_notify_event().connect(sigc::mem_fun(*this, &GLArea::on_motion_notify));
+    signal_button_press_event().connect(sigc::mem_fun(*this, &GLArea::on_button_press));
+    signal_button_release_event().connect(sigc::mem_fun(*this, &GLArea::on_button_press));
+    signal_key_press_event().connect(sigc::mem_fun(*this, &GLArea::on_key_press));
+    signal_key_release_event().connect(sigc::mem_fun(*this, &GLArea::on_key_release));
   }
+
+  ~GLArea() {}
 
   bool GameLoop();
 
@@ -126,13 +127,13 @@ protected:
   virtual bool on_key_release(GdkEventKey* event);
 };
 
-bool DrawingArea::on_motion_notify(GdkEventMotion* event) {
+bool GLArea::on_motion_notify(GdkEventMotion* event) {
 
   state_manager->MouseMove(event->x, event->y);
   return true;
 }
 
-bool DrawingArea::on_button_press(GdkEventButton* event) {
+bool GLArea::on_button_press(GdkEventButton* event) {
 
   MouseButton b;
 
@@ -207,7 +208,7 @@ bool __sendNoteOff(int note) {
   return true;
 }
 
-bool DrawingArea::on_key_press(GdkEventKey* event) {
+bool GLArea::on_key_press(GdkEventKey* event) {
 
   // if is a note...
   int note = keyToNote(event);
@@ -255,7 +256,7 @@ bool DrawingArea::on_key_press(GdkEventKey* event) {
   return true;
 }
 
-bool DrawingArea::on_key_release(GdkEventKey* event) {
+bool GLArea::on_key_release(GdkEventKey* event) {
 
   // if is a note...
   int note = keyToNote(event);
@@ -270,19 +271,22 @@ bool DrawingArea::on_key_release(GdkEventKey* event) {
   return false;
 }
 
-void DrawingArea::on_realize() {
+void GLArea::on_realize() {
   // we need to call the base on_realize()
-  Gtk::GL::DrawingArea::on_realize();
+  Gtk::GLArea::on_realize();
 
+/*
   Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
   if (!glwindow->gl_begin(get_gl_context()))
     return;
 
   glwindow->gl_end();
+*/
 }
 
-bool DrawingArea::on_configure_event(GdkEventConfigure* event) {
+bool GLArea::on_configure_event(GdkEventConfigure* event) {
 
+/*
   Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
   if (!glwindow->gl_begin(get_gl_context()))
     return false;
@@ -307,39 +311,40 @@ bool DrawingArea::on_configure_event(GdkEventConfigure* event) {
   state_manager->Update(window_state.JustActivated());
 
   glwindow->gl_end();
+*/
   return true;
 }
 
-bool DrawingArea::on_expose_event(GdkEventExpose* event) {
+bool GLArea::on_expose_event(GdkEventExpose* event) {
 
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-  if (!glwindow->gl_begin(get_gl_context()))
-    return false;
+  //Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
+  //if (!glwindow->gl_begin(get_gl_context()))
+  //  return false;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCallList(1);
 
-  Renderer rend(get_gl_context(), get_pango_context());
+  Renderer rend(get_context(), get_pango_context());
   rend.SetVSyncInterval(vsync_interval);
   state_manager->Draw(rend);
 
   // swap buffers.
-  if (glwindow->is_double_buffered())
-     glwindow->swap_buffers();
-  else
-     glFlush();
+  //if (glwindow->is_double_buffered())
+  //   glwindow->swap_buffers();
+  //else
+  //   glFlush();
 
-  glwindow->gl_end();
+  //glwindow->gl_end();
   return true;
 }
 
-bool DrawingArea::GameLoop() {
+bool GLArea::GameLoop() {
 
   if (window_state.IsActive()) {
 
     state_manager->Update(window_state.JustActivated());
 
-    Renderer rend(get_gl_context(), get_pango_context());
+    Renderer rend(get_context(), get_pango_context());
     rend.SetVSyncInterval(vsync_interval);
 
     state_manager->Draw(rend);
@@ -373,7 +378,6 @@ std::string getExePath()
 
 int main(int argc, char *argv[]) {
   Gtk::Main main_loop(argc, argv);
-  Gtk::GL::init(argc, argv);
 
   try {
     string file_opt("");
@@ -417,6 +421,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
+/*
     Glib::RefPtr<Gdk::GL::Config> glconfig;
 
     // try double-buffered visual
@@ -440,6 +445,7 @@ int main(int argc, char *argv[]) {
         return 1;
       }
     }
+*/
     
     /* Loading the Sqlite Library
     */
@@ -470,16 +476,16 @@ int main(int argc, char *argv[]) {
       sqlite3_close(db);
     }
 
-    const int default_sw = 1024;
-    const int default_sh = 768;
+    const int default_sw = 800;
+    const int default_sh = 600;
     int sh = Compatible::GetDisplayHeight();
     int sw = Compatible::GetDisplayWidth();
     state_manager = new GameStateManager(sw, sh);
 
     Gtk::Window window;
     window.set_default_size(default_sw, default_sh);
-    DrawingArea da(glconfig);
-    window.add(da);
+    GLArea gla;
+    window.add(gla);
     window.show_all();
 
     window.set_title(friendly_app_name);
@@ -549,7 +555,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    Glib::signal_timeout().connect(sigc::mem_fun(da, &DrawingArea::GameLoop), 1000/std::stoi(user_rate), Glib::PRIORITY_DEFAULT_IDLE);
+    //Glib::signal_timeout().connect(sigc::mem_fun(da, &GLArea::GameLoop), 1000/std::stoi(user_rate), Glib::PRIORITY_DEFAULT_IDLE);
 
     UserSetting::Set("min_key", "");
     UserSetting::Set("max_key", "");
@@ -605,4 +611,3 @@ int main(int argc, char *argv[]) {
 
   return 1;
 }
-

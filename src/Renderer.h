@@ -12,7 +12,7 @@
 #include "OSGraphics.h"
 #include "Tga.h"
 
-typedef Glib::RefPtr<Gdk::GL::Context> GLContext;
+typedef Glib::RefPtr<Gdk::GLContext> GLContext;
 typedef Glib::RefPtr<Pango::Context> PGContext;
 
 struct Color {
