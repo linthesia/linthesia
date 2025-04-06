@@ -330,7 +330,7 @@ void TrackSelectionState::Update() {
         break;
 
       case Track::ModeYouPlaySilently:
-        m_tooltip = "Same as 'You Play', ignore velocity from MIDI.                            ";
+        m_tooltip = "Same as 'You Play', do not produce sounds from MIDI.                      ";
         break;
 
       case Track::ModeLearning:
