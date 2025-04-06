@@ -22,49 +22,49 @@ using namespace std;
 // only used on here
 const static char* TextureResourceNames[_TextureEnumCount] = {
 
-  "title_Logo",
-  "InterfaceButtons",
-  "title_GameMusicThemes",
+  "title_Logo",  //0
+  "InterfaceButtons", //1
+  "title_GameMusicThemes", //2
 
-  "score_RetrySong",
-  "title_ChooseTracks",
-  "title_Exit",
-  "tracks_BackToTitle",
-  "tracks_PlaySong",
+  "score_RetrySong", //3
+  "title_ChooseTracks", //4
+  "title_Exit", //5
+  "tracks_BackToTitle", //6
+  "tracks_PlaySong", //7
 
-  "all_ButtonNotPlayed",
-  "all_ButtonPlayedAuto",
-  "all_ButtonYouPlay",
-  "all_ButtonYouPlaySilent",
-  "all_ButtonLearning",
-  "all_ButtonLearningSilent",
-  "all_ButtonPlayedHidden",
+  "all_ButtonNotPlayed", //8
+  "all_ButtonPlayedAuto", //9
+  "all_ButtonYouPlay", //10
+  "all_ButtonYouPlaySilent", //11
+  "all_ButtonLearning", //12
+  "all_ButtonLearningSilent", //13
+  "all_ButtonPlayedHidden", //14
 
-  "title_InputBox",
-  "title_OutputBox",
-  "title_EmptyBox",
-  "title_SongBox",
-  "title_DirBox",
-  "title_BackBox",
-  "title_ButtonPageBack",
-  "title_ButtonPageNext",
+  "title_InputBox", //15
+  "title_OutputBox", //16
+  "title_EmptyBox", //17
+  "title_SongBox", //18
+  "title_DirBox", //19
+  "title_BackBox", //20
+  "title_ButtonPageBack", //21
+  "title_ButtonPageNext", //22
 
-  "trackbox", // TrackPanel
+  "trackbox", // TrackPanel //23
 
-  "stats_text",
+  "stats_text", //24
 
-  "play_Status",
-  "play_Status2",
-  "play_Keys",
+  "play_Status", //25
+  "play_Status2", //26
+  "play_Keys", //27
 
-  "play_NotesBlackColor",
-  "play_NotesBlackShadow",
-  "play_NotesWhiteColor",
-  "play_NotesWhiteShadow",
+  "play_NotesBlackColor", //28
+  "play_NotesBlackShadow", //29
+  "play_NotesWhiteColor", //30
+  "play_NotesWhiteShadow", //31
 
-  "play_KeyRail",
-  "play_KeyShadow",
-  "play_KeysBlack"
+  "play_KeyRail", //32
+  "play_KeyShadow", //33
+  "play_KeysBlack" //34
 };
 
 Tga *GameState::GetTexture(Texture tex_name, bool smooth) const {

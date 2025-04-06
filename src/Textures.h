@@ -12,51 +12,51 @@
 enum Texture {
 
   // TextureResourceNames should have the same order
-  TitleLogo,
-  InterfaceButtons,
-  GameMusicThemes,
+  TitleLogo, //0
+  InterfaceButtons, //1
+  GameMusicThemes, //2
 
-  ButtonRetrySong,
-  ButtonChooseTracks,
-  ButtonExit,
-  ButtonBackToTitle,
-  ButtonPlaySong,
+  ButtonRetrySong, //3
+  ButtonChooseTracks, //4
+  ButtonExit, //5
+  ButtonBackToTitle, //6
+  ButtonPlaySong, //7
 
-  ButtonNotPlayed,
-  ButtonPlayedAuto,
-  ButtonYouPlay,
-  ButtonYouPlaySilent,
-  ButtonLearning,
-  ButtonLearningSilent,
-  ButtonPlayedHidden,
+  ButtonNotPlayed, //8
+  ButtonPlayedAuto, //9
+  ButtonYouPlay, //10
+  ButtonYouPlaySilent, //11
+  ButtonLearning, //12
+  ButtonLearningSilent, //13
+  ButtonPlayedHidden, //14
   
-  InputBox,
-  OutputBox,
-  EmptyBox,
-  SongBox,
-  DirBox,
-  ButtonDirBack,
-  ButtonPageBack,
-  ButtonPageNext,
+  InputBox, //15
+  OutputBox, //16
+  EmptyBox, //17
+  SongBox, //18
+  DirBox, //19
+  ButtonDirBack, //20
+  ButtonPageBack, //21
+  ButtonPageNext, //22
 
-  TrackPanel,
+  TrackPanel, //23
 
-  StatsText,
+  StatsText, //24
 
-  PlayStatus,
-  PlayStatus2,
-  PlayKeys,
+  PlayStatus, //25
+  PlayStatus2, //26
+  PlayKeys, //27
 
-  PlayNotesBlackColor,
-  PlayNotesBlackShadow,
-  PlayNotesWhiteColor,
-  PlayNotesWhiteShadow,
+  PlayNotesBlackColor, //28
+  PlayNotesBlackShadow, //29
+  PlayNotesWhiteColor, //30
+  PlayNotesWhiteShadow, //31
 
-  PlayKeyRail,
-  PlayKeyShadow,
-  PlayKeysBlack,
+  PlayKeyRail, //32
+  PlayKeyShadow, //33
+  PlayKeysBlack, //34
 
-  _TextureEnumCount
+  _TextureEnumCount //35
 };
 
 #endif // __TEXTURES_H
