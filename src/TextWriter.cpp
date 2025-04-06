@@ -88,7 +88,7 @@ void Text::DrawText(TextWriter& tw, SDL_Color color, int draw_x, int draw_y) con
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   glPushMatrix();
-
+  tw.renderer.SetColor(color);
   glBegin(GL_QUADS);
   {
     glTexCoord2f(0,0); glVertex2f(draw_x, draw_y);

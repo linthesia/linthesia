@@ -456,7 +456,7 @@ void TitleState::Draw(Renderer &renderer) const {
     renderer.SetColor(0, 0, 0);
     renderer.DrawQuad(x+1, y+1, PreviewWidth-2, PreviewHeight-2);
 
-    renderer.SetColor(0xFF, 0xFF, 0xFF);
+    //renderer.SetColor(0xFF, 0xFF, 0xFF);
     TextWriter last_note(x + PreviewWidth/2 - 1,
                          m_input_tile->GetY() + 49,
                          renderer, true, Layout::TitleFontSize);
