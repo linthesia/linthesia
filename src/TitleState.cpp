@@ -247,6 +247,31 @@ void TitleState::Update() {
 
   }
 
+  if (m_state.midi_in && m_input_tile->IsPreviewOn()) {
+
+    // Read note events to display on screen
+    while (m_state.midi_in->KeepReading()) {
+      MidiEvent ev = m_state.midi_in->Read();
+
+      // send to output (for a possible audio preview)
+      if (m_state.midi_out)
+        m_state.midi_out->Write(ev);
+
+      if (ev.Type() == MidiEventType_NoteOff || ev.Type() == MidiEventType_NoteOn) {
+        string note = MidiEvent::NoteName(ev.NoteNumber());
+
+        if (ev.Type() == MidiEventType_NoteOn && ev.NoteVelocity() > 0)
+          m_last_input_note_name = note;
+
+        else
+          if (note == m_last_input_note_name)
+            m_last_input_note_name = "";
+      }
+    }
+  }
+  else
+    m_last_input_note_name = "";
+
   if (m_state.midi_out) {
     if (m_output_tile->HitPreviewButton()) {
       m_state.midi_out->Reset();
