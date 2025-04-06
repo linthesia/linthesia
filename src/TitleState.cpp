@@ -458,7 +458,7 @@ void TitleState::Draw(Renderer &renderer) const {
 
     renderer.SetColor(0xFF, 0xFF, 0xFF);
     TextWriter last_note(x + PreviewWidth/2 - 1,
-                         m_input_tile->GetY() + 44,
+                         m_input_tile->GetY() + 49,
                          renderer, true, Layout::TitleFontSize);
 
     Widen<char> w;
