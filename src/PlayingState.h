@@ -110,6 +110,13 @@ private:
   bool m_should_wait_after_retry;
   microseconds_t m_retry_start;
 
+
+  struct NoteWithTime {
+    int note;
+    unsigned long timestamp;
+  };
+  NoteWithTime m_last_note;
+
   void eraseUntilTime(microseconds_t time);
 
   NoteState findNodeState(const TranslatedNote& note, TranslatedNoteSet& notes, NoteState default_note_state);

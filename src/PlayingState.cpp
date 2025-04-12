@@ -13,6 +13,7 @@
 #include "Textures.h"
 #include "CompatibleSystem.h"
 
+#include <chrono>
 #include <stdio.h>
 #include <string>
 #include <iomanip>
@@ -257,11 +258,6 @@ void PlayingState::Listen() {
         continue;
     }
 
-
-    // Just eat input if we're paused
-    if (m_paused)
-      continue;
-
     // We're only interested in NoteOn and NoteOff
     if (ev.Type() != MidiEventType_NoteOn && ev.Type() != MidiEventType_NoteOff)
       continue;
@@ -271,6 +267,24 @@ void PlayingState::Listen() {
 
     int note_number = ev.NoteNumber();
     string note_name = MidiEvent::NoteName(note_number);
+
+    const int min_note = m_keyboard->GetMinPlayableNote();
+    const int max_note = m_keyboard->GetMaxPlayableNote();
+    if ( (ev.NoteVelocity() != 0) && (note_number ==  min_note || note_number == max_note)) {
+      if (std::abs(note_number-m_last_note.note) == max_note-min_note)
+      {
+        using namespace std::chrono;
+        constexpr unsigned long max_deltatime = duration_cast<nanoseconds>(milliseconds{250}).count();
+        const unsigned long delta_ts = std::abs(static_cast<long>(ev.NoteTimestamp()-m_last_note.timestamp));
+        if (delta_ts < max_deltatime)
+          m_paused = !m_paused;
+      }
+      m_last_note = NoteWithTime{note_number, ev.NoteTimestamp()};
+    }
+
+    // Just eat input if we're paused
+    if (m_paused)
+      continue;
 
     // On key release we have to look for existing "active" notes and turn them off.
     if (ev.Type() == MidiEventType_NoteOff || ev.NoteVelocity() == 0) {

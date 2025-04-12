@@ -7,6 +7,7 @@
 // See COPYING for license information
 
 #include <string>
+#include <chrono>
 #include <sstream>
 #include <alsa/asoundlib.h>
 
@@ -225,17 +226,20 @@ MidiEvent MidiCommIn::Read() {
   snd_seq_event_t* ev;
   snd_seq_event_input(alsa_seq, &ev);
 
+  using std::chrono::high_resolution_clock;
   switch(ev->type) {
   case SND_SEQ_EVENT_NOTEON:
     simple.status = 0x90 | (ev->data.note.channel & 0x0F); // Type and Channel
     simple.byte1 = ev->data.note.note;                     // Note number
     simple.byte2 = ev->data.note.velocity;                 // Velocity
+    simple.timestamp = high_resolution_clock::now().time_since_epoch().count();  // Time
     break;
 
   case SND_SEQ_EVENT_NOTEOFF:
     simple.status = 0x80 | (ev->data.note.channel & 0x0F); // Type and Channel
     simple.byte1 = ev->data.note.note;                     // Note number
     simple.byte2 = 0;                                      // Velocity
+    simple.timestamp = high_resolution_clock::now().time_since_epoch().count();  // Time
     break;
 
   case SND_SEQ_EVENT_PGMCHANGE:

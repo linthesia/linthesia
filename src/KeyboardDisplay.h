@@ -36,6 +36,9 @@ public:
 
   void SetKeyActive(const std::string &key_name, bool active, Track::TrackColor color);
 
+  int GetMinPlayableNote() const { return m_keyboard.GetMinPlayableNote(); }
+  int GetMaxPlayableNote() const { return m_keyboard.GetMaxPlayableNote(); }
+
   void ResetActiveKeys() {
     m_active_keys.clear();
   }
