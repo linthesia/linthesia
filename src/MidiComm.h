@@ -90,12 +90,14 @@ public:
   void Reset();
 
   void Reconnect();
+  bool ShouldReconnect() const;
 
 private:
   void Release();
 
   MidiCommDescription m_description;
   std::vector<std::pair<int,int> > notes_on;
+  bool m_should_reconnect = false;
 
 };
 

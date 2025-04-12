@@ -49,6 +49,7 @@ SDL_Color Renderer::ToColor(int r, int g, int b, int a) {
 }
 
 void Renderer::SetVSyncInterval(int interval) {
+  std::cout << "Vsync interval: " << interval << std::endl;
 // #ifdef WIN32
 
 //    const char *extensions = reinterpret_cast<const char*>(static_cast<const unsigned char*>(glGetString( GL_EXTENSIONS )));

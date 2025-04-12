@@ -75,6 +75,8 @@ enum MidiErrorCode {
 class MidiError : public std::exception {
 public:
    MidiError(MidiErrorCode error) : m_error(error) { }
+   MidiError(const MidiError& error) = default;
+   
    std::string GetErrorDescription() const;
 
    const MidiErrorCode m_error;

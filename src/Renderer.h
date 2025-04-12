@@ -13,7 +13,7 @@
 #include "Tga.h"
 #include "SDL.h"
 
-static bool m_vsync_initialized;
+// static bool m_vsync_initialized;
 
 class Renderer {
 public:

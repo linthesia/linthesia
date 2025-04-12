@@ -29,16 +29,18 @@ const string_type StringLower(string_type s) {
 
   std::locale loc;
   
-  std::transform(s.begin(), s.end(), s.begin(),
-		 std::bind1st( std::mem_fun( &std::ctype<typename string_type::value_type>::tolower ),
-			       &std::use_facet< std::ctype<typename string_type::value_type> >( loc ) ) );
+  using charType = typename std::remove_cv<typename std::remove_reference<string_type>::type>::type::value_type;
+  std::transform(s.begin(), s.end(), s.begin(), [&loc] (charType c) -> charType {
+    auto &facet = std::use_facet<std::ctype<charType>>(loc);
+    return facet.tolower(c);
+  });
   
   return s;
 }
 
 // E here is usually wchar_t
 template<class E, class T = std::char_traits<E>, class A = std::allocator<E> >
-class Widen : public std::unary_function< const std::string&, std::basic_string<E, T, A> > {
+class Widen{
 
 public:
   

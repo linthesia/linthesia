@@ -29,7 +29,7 @@ void SongLibState::Init() {
     m_current_path = UserSetting::Get(SONG_LIB_DIR_SETTINGS_KEY, MUSICDIR);
     // since it is unconfortable to crash when no file is present, let's test it now
     struct stat st;
-    if ( (!stat(m_current_path.c_str(),&st) == 0) || (! st.st_mode & S_IFDIR != 0) ) {
+    if ( (!stat(m_current_path.c_str(),&st) == 0) || !((st.st_mode & S_IFDIR) != 0) ) {
 	    m_current_path = m_base_path;
     }
 
@@ -173,7 +173,7 @@ void SongLibState::UpdateSongTilesPage() {
     m_columns = slim ? 1 : max_columns;
 
     int rows = (GetStateHeight() - initial_y - Layout::ScreenMarginY) / each_y;
-    int tiles_per_page = rows * m_columns;
+    unsigned tiles_per_page = rows * m_columns;
     
     std::vector<SongTile>::size_type tiles_total = m_song_tiles.size();
     m_page_count = (tiles_per_page == 0 ? 0 : (tiles_total / tiles_per_page)) + 1;

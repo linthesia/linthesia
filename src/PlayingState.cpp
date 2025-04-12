@@ -249,10 +249,21 @@ void PlayingState::Listen() {
   while (m_state.midi_in->KeepReading()) {
 
     microseconds_t cur_time = m_state.midi->GetSongPositionInMicroseconds();
-    MidiEvent ev = m_state.midi_in->Read();
+    MidiEvent ev;
+    try {
+      ev = m_state.midi_in->Read();
+    } catch (const MidiError& ex) {
+      ex.GetErrorDescription();
+      ///TODO display device disconnected
+    }
+
     if (m_state.midi_in->ShouldReconnect())
     {
         m_state.midi_in->Reconnect();
+        continue;
+    }
+    if (m_state.midi_out->ShouldReconnect())
+    {
         m_state.midi_out->Reconnect();
         continue;
     }
@@ -769,7 +780,7 @@ void PlayingState::Draw(Renderer &renderer) const {
   TextWriter time_text(Layout::ScreenMarginX + 39, text_y+2, renderer, false, Layout::TimeFontSize);
   time_text << STRING(current_time << " / " << total_time << percent_complete);
 
-  for (int i = 0; i < m_state.midi->Tracks().size(); i++) {
+  for (unsigned i = 0; i < m_state.midi->Tracks().size(); i++) {
     time_text << " " << m_state.midi->Tracks()[i].LastText();
   }
 
